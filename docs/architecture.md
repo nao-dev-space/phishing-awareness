@@ -47,7 +47,7 @@ flowchart TD
 
 Cloudflare Workers Static Assetsへ配布する`public/_headers`では、CSPによってスクリプトとスタイルを同一オリジンへ限定し、外部通信、フォーム送信、Worker、iframe埋め込みを禁止します。あわせてMIMEスニッフィング、リファラー送信、不要なブラウザー権限を制限します。CSPで`unsafe-inline`を許可しないため、動的な表示状態はインラインstyleではなく定義済みCSSクラスで表現します。
 
-`wrangler.jsonc`では`dist`を静的アセットの配信対象とし、`not_found_handling`を`single-page-application`に設定します。存在しない静的ファイルへのナビゲーションには`index.html`を返し、その後Vue Routerがルートまたはアプリ内404画面を表示します。Workerコードやバックエンド処理は追加しません。
+`wrangler.jsonc`では`dist`を静的アセットの配信対象とし、`not_found_handling`を`single-page-application`に設定します。存在しない静的ファイルへのナビゲーションには`index.html`を返し、その後Vue Routerがルートまたはアプリ内404画面を表示します。一般公開する本番`workers.dev` URLは明示的に有効化し、不要なバージョン別プレビューURLは無効化します。Workerコードやバックエンド処理は追加しません。
 
 ## アクセシビリティ
 

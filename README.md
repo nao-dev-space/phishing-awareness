@@ -97,7 +97,7 @@ npm run build
 - Production branch: `main`
 - Root directory: 空欄
 
-`wrangler.jsonc`の`assets.directory`で`dist`を配信対象とし、`not_found_handling`を`single-page-application`に設定しています。このため、履歴モードの直接URLでも`index.html`からルート画面を表示できます。`public/_headers`では外部通信、フォーム送信、iframe埋め込み、不要なブラウザー権限を制限します。WranglerはCloudflareのビルド環境が`npx`で実行し、公開アプリの依存関係や成果物には含めません。
+`wrangler.jsonc`の`assets.directory`で`dist`を配信対象とし、`not_found_handling`を`single-page-application`に設定しています。このため、履歴モードの直接URLでも`index.html`からルート画面を表示できます。`workers_dev`で本番URLを有効化し、`preview_urls`を無効化してバージョン別のプレビューURLを作成しません。`public/_headers`では外部通信、フォーム送信、iframe埋め込み、不要なブラウザー権限を制限します。WranglerはCloudflareのビルド環境が`npx`で実行し、公開アプリの依存関係や成果物には含めません。
 
 ## 外部リンクの変更
 

@@ -10,6 +10,8 @@ interface WranglerAssetsConfiguration {
 interface WranglerConfiguration {
   readonly name: string;
   readonly compatibility_date: string;
+  readonly workers_dev: boolean;
+  readonly preview_urls: boolean;
   readonly assets: WranglerAssetsConfiguration;
 }
 
@@ -23,6 +25,8 @@ describe("Cloudflare Workersの公開設定", (): void => {
     ) as WranglerConfiguration;
 
     expect(configuration.name).toBe("phishing-awareness");
+    expect(configuration.workers_dev).toBe(true);
+    expect(configuration.preview_urls).toBe(false);
     expect(configuration.assets.directory).toBe("./dist");
     expect(configuration.assets.not_found_handling).toBe("single-page-application");
   });
