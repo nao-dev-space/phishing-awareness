@@ -3,7 +3,7 @@
     :class="['app-button', `app-button-${variant}`]"
     :type="type"
     :disabled="disabled"
-    @click="emit('click')"
+    @click="handleClick"
   >
     {{ label }}
   </button>
@@ -20,7 +20,7 @@ interface Props {
 }
 
 interface Emits {
-  (event: "click"): void;
+  (event: "click", mouseEvent: MouseEvent): void;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -30,6 +30,15 @@ withDefaults(defineProps<Props>(), {
 });
 
 const emit: Emits = defineEmits<Emits>();
+
+/**
+ * ボタンのクリックを、既定動作を制御できる元のイベントとともに親へ通知する。
+ * @param mouseEvent ブラウザーが発行したクリックイベント。
+ * @returns 戻り値はなく、親コンポーネントへクリックイベントをemitする。
+ */
+function handleClick(mouseEvent: MouseEvent): void {
+  emit("click", mouseEvent);
+}
 </script>
 
 <style scoped>

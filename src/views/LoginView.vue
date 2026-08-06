@@ -44,22 +44,24 @@
         <form class="login-view-form" autocomplete="off" novalidate @submit.prevent="handleSubmit">
           <AppFormField
             :id="emailFieldId"
-            v-model="emailInput"
+            :model-value="emailInput"
             :name="emailFieldName"
             :label="emailLabel"
             :inputmode="emailInputMode"
             :described-by="demoDescriptionId"
+            @update:model-value="updateEmailInput"
           />
           <AppFormField
             :id="passwordFieldId"
-            v-model="passwordInput"
+            :model-value="passwordInput"
             :name="passwordFieldName"
             :label="passwordLabel"
             :type="passwordFieldType"
             :autocomplete="passwordAutocomplete"
             :described-by="demoDescriptionId"
+            @update:model-value="updatePasswordInput"
           />
-          <AppButton :label="loginLabel" :type="submitType" />
+          <AppButton :label="loginLabel" :type="submitType" @click="handleSubmitButtonClick" />
         </form>
       </div>
     </div>
@@ -160,6 +162,24 @@ const quietVariant: "quiet" = "quiet";
 const secondaryVariant: "secondary" = "secondary";
 
 /**
+ * メールアドレス欄の子コンポーネントから通知された値を一時状態へ反映する。
+ * @param value 子コンポーネントがemitした現在の入力値。
+ * @returns 戻り値はなく、画面内だけで保持するメールアドレス入力値を更新する。
+ */
+function updateEmailInput(value: string): void {
+  emailInput.value = value;
+}
+
+/**
+ * パスワード欄の子コンポーネントから通知された値を一時状態へ反映する。
+ * @param value 子コンポーネントがemitした現在の入力値。
+ * @returns 戻り値はなく、画面内だけで保持するパスワード入力値を更新する。
+ */
+function updatePasswordInput(value: string): void {
+  passwordInput.value = value;
+}
+
+/**
  * 固定された体験用文字列だけをクリップボードへコピーする。
  * @param trainingValue 画面上に定義済みの体験用文字列。
  * @param successMessage コピー成功時の案内文。
@@ -182,6 +202,16 @@ function handleSubmit(): void {
   emailInput.value = "";
   passwordInput.value = "";
   void router.push({ name: revealRoute });
+}
+
+/**
+ * 子ボタンのクリック通知を受け、フォームの既定送信を止めて疑似送信処理を一度だけ実行する。
+ * @param mouseEvent 子コンポーネントがemitしたクリックイベント。
+ * @returns 戻り値はなく、既定送信を防止して疑似送信処理を呼び出す。
+ */
+function handleSubmitButtonClick(mouseEvent: MouseEvent): void {
+  mouseEvent.preventDefault();
+  handleSubmit();
 }
 
 /**
