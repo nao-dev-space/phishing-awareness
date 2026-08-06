@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="mail-view">
     <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
-    <NoticeBox :title="safetyTitle" :message="safetyMessage" />
+    <NoticeBox class="mail-view-safety-notice" :title="safetyTitle" :message="safetyMessage" />
     <div class="mail-view-mail" :aria-label="mailBodyLabel">
       <div class="mail-view-toolbar">
         <CloudLetterLogo :service-name="serviceName" :accessible-label="logoLabel" />
@@ -86,9 +86,7 @@ const greeting: string = messages.greeting;
 const mailParagraphOne: string = messages.paragraphOne;
 const mailParagraphTwo: string = messages.paragraphTwo;
 const mailParagraphThree: string = messages.paragraphThree;
-const fakeLinkLabel: string = messages.fakeLink;
-const fakeLinkUrl: string = messages.fakeUrl;
-const fakeLinkButtonLabel: string = `${fakeLinkLabel}\n${fakeLinkUrl}`;
+const fakeLinkButtonLabel: string = messages.fakeLink;
 const choiceTitle: string = messages.choiceTitle;
 const goodChoiceTitle: string = messages.goodChoiceTitle;
 const reviewLabel: string = messages.review;
@@ -135,10 +133,13 @@ function followMailLink(): void {
 }
 .mail-view-mail {
   background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  border: var(--border-width) solid var(--color-cloud);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-card);
   overflow: hidden;
+}
+.mail-view-safety-notice {
+  border-color: var(--color-border);
 }
 .mail-view-toolbar {
   align-items: center;
