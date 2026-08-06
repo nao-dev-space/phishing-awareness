@@ -3,7 +3,7 @@
     <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
     <div v-if="!isComplete" class="quiz-view-question-card">
       <div class="quiz-view-progress" :aria-label="progressLabel">
-        <div class="quiz-view-progress-bar" :style="progressStyle"></div>
+        <div :class="['quiz-view-progress-bar', progressClass]"></div>
       </div>
       <AppText :text="questionCountLabel" :tone="accentTone" />
       <AppHeading
@@ -103,10 +103,8 @@ const progressLabel: ComputedRef<string> = computed((): string =>
     .replace("{current}", String(currentQuestionIndex.value + 1))
     .replace("{total}", String(questions.length)),
 );
-const progressStyle: ComputedRef<Readonly<Record<string, string>>> = computed(
-  (): Readonly<Record<string, string>> => ({
-    width: `${((currentQuestionIndex.value + 1) / questions.length) * 100}%`,
-  }),
+const progressClass: ComputedRef<string> = computed(
+  (): string => `quiz-view-progress-bar-${currentQuestionIndex.value + 1}`,
 );
 const feedbackTitle: ComputedRef<string> = computed((): string =>
   currentAnswer.value?.isCorrect ? messages.correct : messages.incorrect,
@@ -199,6 +197,21 @@ function resetQuiz(): void {
   border-radius: var(--radius-pill);
   height: 100%;
   transition: width var(--motion-medium);
+}
+.quiz-view-progress-bar-1 {
+  width: 20%;
+}
+.quiz-view-progress-bar-2 {
+  width: 40%;
+}
+.quiz-view-progress-bar-3 {
+  width: 60%;
+}
+.quiz-view-progress-bar-4 {
+  width: 80%;
+}
+.quiz-view-progress-bar-5 {
+  width: 100%;
 }
 .quiz-view-options {
   display: grid;
