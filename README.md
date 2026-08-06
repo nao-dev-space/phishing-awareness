@@ -21,7 +21,7 @@ Cloud Letterは完全な架空サービスであり、実在する企業、団�
 - ログイン操作時は入力状態を空にしてから種明かしへ移動します。
 - 外部アクセス解析、広告、エラー監視SDKを導入していません。
 - コピー機能は画面上に定義された体験用文字列だけを扱います。
-- Cloudflare Pagesでは`public/_headers`から厳格なCSPなどのHTTPセキュリティヘッダーを適用します。
+- Cloudflare Workers Static Assetsでは`public/_headers`から厳格なCSPなどのHTTPセキュリティヘッダーを適用します。
 
 ブラウザーのパスワードマネージャーによる自動入力は、HTML属性だけでは完全に防止できません。疑似ログイン画面では`autocomplete`を抑制していますが、実際に使用しているメールアドレスやパスワードは絶対に入力せず、表示された体験用アカウントだけを使用してください。
 
@@ -46,7 +46,7 @@ src/
   views/       ルート画面
 tests/         自動テスト
 docs/          詳細設計
-public/        Cloudflare Pages用リダイレクト
+public/        公開時のHTTPセキュリティヘッダー
 ```
 
 ## 必要環境とセットアップ
@@ -90,13 +90,14 @@ npm run build
 
 順に型検査、Vue／TypeScriptの静的解析、CSS検査、自動テスト、本番ビルドを行います。
 
-## Cloudflare Pagesへの公開
+## Cloudflare Workersへの公開
 
-- Framework preset: `Vue`
 - Build command: `npm run build`
-- Build output directory: `dist`
+- Deploy command: `npx wrangler deploy`
+- Production branch: `main`
+- Root directory: 空欄
 
-Cloudflare Pagesはトップレベルに`404.html`がない本構成をSPAとして扱うため、履歴モードの直接URLでもルート画面を配信します。`_redirects`は`_headers`より先に評価されるため使用せず、すべてのパスでセキュリティヘッダーが確実に適用される構成としています。`public/_headers`では外部通信、フォーム送信、iframe埋め込み、不要なブラウザー権限を制限します。
+`wrangler.jsonc`の`assets.directory`で`dist`を配信対象とし、`not_found_handling`を`single-page-application`に設定しています。このため、履歴モードの直接URLでも`index.html`からルート画面を表示できます。`public/_headers`では外部通信、フォーム送信、iframe埋め込み、不要なブラウザー権限を制限します。WranglerはCloudflareのビルド環境が`npx`で実行し、公開アプリの依存関係や成果物には含めません。
 
 ## 外部リンクの変更
 

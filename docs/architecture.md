@@ -43,11 +43,11 @@ flowchart TD
 
 参考情報ページの外部リンクを利用者が明示的に開いた場合だけ、リンク先への通常のブラウザー通信が発生します。すべての外部リンクに`target="_blank"`と`rel="noopener noreferrer"`を付けています。
 
-公開時にはCloudflare Pagesが一般的なアクセスログを処理する可能性がありますが、本アプリは独自の分析・監視機能を持ちません。
+公開時にはCloudflare Workersが一般的なアクセスログを処理する可能性がありますが、本アプリは独自の分析・監視機能を持ちません。
 
-Cloudflare Pagesへ配布する`public/_headers`では、CSPによってスクリプトとスタイルを同一オリジンへ限定し、外部通信、フォーム送信、Worker、iframe埋め込みを禁止します。あわせてMIMEスニッフィング、リファラー送信、不要なブラウザー権限を制限します。CSPで`unsafe-inline`を許可しないため、動的な表示状態はインラインstyleではなく定義済みCSSクラスで表現します。
+Cloudflare Workers Static Assetsへ配布する`public/_headers`では、CSPによってスクリプトとスタイルを同一オリジンへ限定し、外部通信、フォーム送信、Worker、iframe埋め込みを禁止します。あわせてMIMEスニッフィング、リファラー送信、不要なブラウザー権限を制限します。CSPで`unsafe-inline`を許可しないため、動的な表示状態はインラインstyleではなく定義済みCSSクラスで表現します。
 
-Cloudflare Pagesはトップレベルに`404.html`がなければSPAとしてルート画面を配信します。リダイレクトがヘッダーより先に評価されることによる競合を避けるため、catch-allの`_redirects`は使用しません。
+`wrangler.jsonc`では`dist`を静的アセットの配信対象とし、`not_found_handling`を`single-page-application`に設定します。存在しない静的ファイルへのナビゲーションには`index.html`を返し、その後Vue Routerがルートまたはアプリ内404画面を表示します。Workerコードやバックエンド処理は追加しません。
 
 ## アクセシビリティ
 
