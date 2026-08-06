@@ -1,0 +1,40 @@
+﻿<template>
+  <div class="cloud-logo" :aria-label="accessibleLabel" role="img">
+    <span class="cloud-logo-mark" aria-hidden="true">✉</span>
+    <span class="cloud-logo-name">{{ serviceName }}</span>
+  </div>
+</template>
+
+<script setup lang="ts">
+interface Props {
+  readonly serviceName: string;
+  readonly accessibleLabel: string;
+}
+
+defineProps<Props>();
+</script>
+
+<style scoped>
+.cloud-logo {
+  align-items: center;
+  color: var(--color-cloud);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 9px;
+  letter-spacing: 0.2px;
+}
+.cloud-logo-mark {
+  align-items: center;
+  background: var(--color-cloud-soft);
+  border: var(--border-width) solid var(--color-cloud);
+  border-radius: 12px 12px 12px 4px;
+  display: inline-flex;
+  height: 38px;
+  justify-content: center;
+  width: 42px;
+}
+.cloud-logo-name {
+  font-family: var(--font-display);
+  font-size: 21px;
+}
+</style>

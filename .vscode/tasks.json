@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Vite開発サーバーを準備",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/start-vscode-dev.mjs"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Vite開発サーバーを停止",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/stop-vscode-dev.mjs"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

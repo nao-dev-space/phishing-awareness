@@ -1,0 +1,13 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended-vue"],
+  "rules": {
+    "selector-class-pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+    "declaration-property-value-disallowed-list": { "font-size": ["/rem$/"] },
+    "declaration-block-single-line-max-declarations": null,
+    "rule-empty-line-before": null,
+    "at-rule-empty-line-before": null,
+    "media-feature-range-notation": null,
+    "color-hex-length": null,
+    "no-descending-specificity": null
+  }
+}

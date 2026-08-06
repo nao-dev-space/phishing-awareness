@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "アプリをGoogle Chromeで起動",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:5173/",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "preLaunchTask": "Vite開発サーバーを準備",
+      "postDebugTask": "Vite開発サーバーを停止"
+    }
+  ]
+}

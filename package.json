@@ -1,0 +1,41 @@
+{
+  "name": "is-this-login-real",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host localhost --port 5173 --strictPort",
+    "build": "npm run type-check && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:styles": "stylelint \"src/**/*.{css,vue}\"",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "latest",
+    "vite": "latest",
+    "vue": "^3.5.0",
+    "vue-i18n": "^11.1.0",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@tsconfig/node24": "latest",
+    "@types/node": "latest",
+    "@vue/tsconfig": "latest",
+    "@vue/eslint-config-prettier": "latest",
+    "@vue/test-utils": "latest",
+    "eslint": "latest",
+    "eslint-plugin-vue": "latest",
+    "jsdom": "latest",
+    "prettier": "latest",
+    "stylelint": "latest",
+    "stylelint-config-recommended-vue": "latest",
+    "stylelint-config-standard": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest",
+    "vitest": "latest",
+    "vue-tsc": "latest"
+  }
+}
