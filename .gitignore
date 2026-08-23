@@ -5,3 +5,4 @@ coverage/
 .env.*
 !.env.example
 .vscode/.vite.pid
+docs/qiita/
