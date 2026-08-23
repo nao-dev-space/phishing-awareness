@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), { variant: "primary" });
   display: inline-flex;
   font-weight: 750;
   justify-content: center;
-  min-height: 48px;
+  min-height: var(--control-min-height);
   padding: 11px 22px;
   text-decoration: none;
   transition:
@@ -36,8 +36,8 @@ withDefaults(defineProps<Props>(), { variant: "primary" });
   transform: translateY(-2px);
 }
 .route-action:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 .route-action-primary {
   background: var(--color-primary);

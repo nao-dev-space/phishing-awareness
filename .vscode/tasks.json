@@ -5,7 +5,7 @@
       "label": "Vite開発サーバーを準備",
       "type": "process",
       "command": "node",
-      "args": ["${workspaceFolder}/scripts/start-vscode-dev.mjs"],
+      "args": ["${workspaceFolder}/scripts/start-vscode-dev.ts"],
       "problemMatcher": [],
       "presentation": {
         "reveal": "silent",
@@ -17,7 +17,7 @@
       "label": "Vite開発サーバーを停止",
       "type": "process",
       "command": "node",
-      "args": ["${workspaceFolder}/scripts/stop-vscode-dev.mjs"],
+      "args": ["${workspaceFolder}/scripts/stop-vscode-dev.ts"],
       "problemMatcher": [],
       "presentation": {
         "reveal": "never",

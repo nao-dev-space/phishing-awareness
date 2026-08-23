@@ -31,7 +31,7 @@ Cloud Letterは完全な架空サービスであり、実在する企業、団�
 
 Vue 3.5以降、TypeScript、Vite、Vue Router、Vue I18n、Vitest、Vue Test Utils、ESLint、Prettier、Stylelint、`vue-tsc`を使用します。状態は各画面のメモリ内だけで扱うためPiniaは使用しません。日本語専用ですが、画面文言をコードから分離するためVue I18nを使用しています。
 
-画面に表示する本文、ラベル、アクセシビリティ用ラベル、構造化された学習・クイズ文言は`src/i18n/locales/ja.json`で一元管理します。TypeScriptにはURL、ルート名、正解IDなど翻訳対象でない制御値だけを残します。
+画面に表示する本文、ラベル、アクセシビリティ用ラベル、構造化された学習・クイズ文言は`src/i18n/locales/ja.json`で一元管理します。TypeScriptからは完全な翻訳キーパスを指定して取得し、URL、ルート名、正解IDなど翻訳対象でない制御値だけを型付き設定として分離します。
 
 ## ディレクトリ構成
 
@@ -41,7 +41,7 @@ src/
   config/      ルート以外の表示設定と静的データ
   i18n/        Vue I18n設定とJSON形式の日本語表示文言
   router/      ルート定義
-  services/    Vue非依存のクイズ判定・集計
+  services/    Vue非依存の判定・検証、ブラウザー入出力、エラー変換
   types/       共有型
   views/       ルート画面
 tests/         自動テスト
@@ -72,7 +72,7 @@ npm run dev
 3. `F5`キーを押します。
 4. 構成を尋ねられた場合は「アプリをGoogle Chromeで起動」を選択します。
 
-`.vscode/launch.json`が専用の起動スクリプトを実行し、ViteのHTTP応答を確認してからGoogle Chromeで`http://localhost:5173/`を開きます。VS Codeの停止ボタンを押すと、このデバッグ操作で起動したViteも終了します。
+`.vscode/launch.json`が型付きの専用起動スクリプトを実行し、ViteのHTTP応答を確認してからGoogle Chromeで`http://localhost:5173/`を開きます。VS Codeの停止ボタンを押すと、このデバッグ操作で起動したViteも終了します。
 
 WindowsではVS Codeタスクが`npm.cmd`を直接使用するため、PowerShellのスクリプト実行ポリシーを変更する必要はありません。
 

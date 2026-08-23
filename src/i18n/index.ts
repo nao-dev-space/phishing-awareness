@@ -1,20 +1,27 @@
-import { createI18n, type VueMessageType } from "vue-i18n";
+import { createI18n, type Composer, type I18n } from "vue-i18n";
 import jaMessages from "@/i18n/locales/ja.json";
 
-export const i18n = createI18n({
+export type MessageParameters = Readonly<Record<string, string | number>>;
+
+const DEFAULT_LOCALE: string = "ja";
+
+export const i18n: I18n = createI18n({
   legacy: false,
-  locale: "ja",
-  fallbackLocale: "ja",
+  locale: DEFAULT_LOCALE,
+  fallbackLocale: DEFAULT_LOCALE,
   messages: { ja: jaMessages },
 });
 
-type MessageGroups = typeof jaMessages;
-
 /**
- * Vue I18nから型付きの文言グループを取得する。
- * @param key 日本語ロケールJSONの最上位キー。
- * @returns 指定したキーに対応する文言または構造化文言。
+ * 完全な翻訳キーパスから利用者向け文言を取得する。
+ * @param messageKey JSONに定義された、分割や連結をしていない完全なキーパス。
+ * @param parameters 文言内の名前付きプレースホルダーへ渡す値。不要な場合は省略する。
+ * @returns 現在のロケールで翻訳された文字列。
  */
-export function messageGroup<Key extends keyof MessageGroups>(key: Key): MessageGroups[Key] {
-  return i18n.global.tm(key) as MessageGroups[Key] & VueMessageType;
+export function translateMessage(messageKey: string, parameters?: MessageParameters): string {
+  const composer: Composer = i18n.global;
+  const translatedMessage: string = parameters
+    ? composer.t(messageKey, parameters)
+    : composer.t(messageKey);
+  return translatedMessage;
 }

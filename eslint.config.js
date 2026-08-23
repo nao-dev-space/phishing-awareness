@@ -27,16 +27,4 @@ export default tseslint.config(
       "vue/require-default-prop": "off",
     },
   },
-  {
-    files: ["scripts/**/*.mjs"],
-    languageOptions: {
-      globals: {
-        AbortSignal: "readonly",
-        URL: "readonly",
-        fetch: "readonly",
-        process: "readonly",
-        setTimeout: "readonly",
-      },
-    },
-  },
 );

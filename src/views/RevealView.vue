@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="reveal-view">
-    <div class="reveal-view-badge" aria-hidden="true">✓</div>
+    <div class="reveal-view-badge" aria-hidden="true">{{ checkmark }}</div>
     <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
     <NoticeBox :title="safetyTitle" :message="safetyMessage" :tone="successTone" />
     <div class="reveal-view-explanation">
@@ -30,28 +30,37 @@ import InfoCard from "@/components/molecules/InfoCard.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { messageGroup } from "@/i18n";
-import type { RouteName } from "@/types/app";
+import { REVEAL_POINTS } from "@/config/content";
+import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
+import type { PsychologyPoint, RouteName } from "@/types/app";
 
-interface PsychologyPoint {
-  readonly title: string;
-  readonly body: string;
-}
-const messages = messageGroup("reveal");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
-const safetyTitle: string = messages.safetyTitle;
-const safetyMessage: string = messages.safetyMessage;
-const explanationTitle: string = messages.explanationTitle;
-const realRisk: string = messages.realRisk;
-const psychologyPoints: readonly PsychologyPoint[] = messages.points;
-const reviewLabel: string = messages.review;
-const retryLabel: string = messages.retry;
-const homeLabel: string = messages.home;
-const reviewRoute: RouteName = "experience-review";
-const mailRoute: RouteName = "experience-mail";
-const homeRoute: RouteName = "home";
+const EYEBROW_MESSAGE_KEY: string = "reveal.eyebrow";
+const TITLE_MESSAGE_KEY: string = "reveal.title";
+const DESCRIPTION_MESSAGE_KEY: string = "reveal.description";
+const SAFETY_TITLE_MESSAGE_KEY: string = "reveal.safetyTitle";
+const SAFETY_MESSAGE_KEY: string = "reveal.safetyMessage";
+const EXPLANATION_TITLE_MESSAGE_KEY: string = "reveal.explanationTitle";
+const REAL_RISK_MESSAGE_KEY: string = "reveal.realRisk";
+const REVIEW_LABEL_MESSAGE_KEY: string = "reveal.review";
+const RETRY_LABEL_MESSAGE_KEY: string = "reveal.retry";
+const HOME_LABEL_MESSAGE_KEY: string = "reveal.home";
+const CHECKMARK_MESSAGE_KEY: string = "visuals.checkmark";
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
+const safetyTitle: string = translateMessage(SAFETY_TITLE_MESSAGE_KEY);
+const safetyMessage: string = translateMessage(SAFETY_MESSAGE_KEY);
+const explanationTitle: string = translateMessage(EXPLANATION_TITLE_MESSAGE_KEY);
+const realRisk: string = translateMessage(REAL_RISK_MESSAGE_KEY);
+const psychologyPoints: readonly PsychologyPoint[] = REVEAL_POINTS;
+const reviewLabel: string = translateMessage(REVIEW_LABEL_MESSAGE_KEY);
+const retryLabel: string = translateMessage(RETRY_LABEL_MESSAGE_KEY);
+const homeLabel: string = translateMessage(HOME_LABEL_MESSAGE_KEY);
+const checkmark: string = translateMessage(CHECKMARK_MESSAGE_KEY);
+const reviewRoute: RouteName = REVIEW_ROUTE_NAME;
+const mailRoute: RouteName = MAIL_ROUTE_NAME;
+const homeRoute: RouteName = HOME_ROUTE_NAME;
 const sectionLevel: HeadingLevel = 2;
 const leadSize: "lead" = "lead";
 const successTone: "success" = "success";
@@ -62,7 +71,7 @@ const quietVariant: "quiet" = "quiet";
 <style scoped>
 .reveal-view {
   display: grid;
-  gap: 30px;
+  gap: var(--space-page-section);
   margin: 0 auto;
   max-width: var(--content-standard);
 }

@@ -51,7 +51,7 @@ function handleClick(mouseEvent: MouseEvent): void {
   font: inherit;
   font-weight: 750;
   justify-content: center;
-  min-height: 48px;
+  min-height: var(--control-min-height);
   padding: 11px 22px;
   transition:
     transform var(--motion-fast),
@@ -65,8 +65,8 @@ function handleClick(mouseEvent: MouseEvent): void {
   transform: translateY(-2px);
 }
 .app-button:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 .app-button:disabled {
   cursor: not-allowed;

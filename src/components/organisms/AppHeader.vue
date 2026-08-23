@@ -42,27 +42,44 @@
 import { computed, ref, type ComputedRef, type Ref } from "vue";
 import AppButton from "@/components/atoms/AppButton.vue";
 import { APP_NAME, NAVIGATION_ITEMS } from "@/config/content";
-import { messageGroup } from "@/i18n";
+import { HOME_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
 import type { NavigationItem, RouteName } from "@/types/app";
 
+const DESKTOP_NAV_MESSAGE_KEY: string = "layout.desktopNav";
+const MOBILE_NAV_MESSAGE_KEY: string = "layout.mobileNav";
+const OPEN_MENU_MESSAGE_KEY: string = "layout.openMenu";
+const CLOSE_MENU_MESSAGE_KEY: string = "layout.closeMenu";
 const appName: string = APP_NAME;
 const navigationItems: readonly NavigationItem[] = NAVIGATION_ITEMS;
-const homeRouteName: RouteName = "home";
-const messages = messageGroup("layout");
-const desktopNavLabel: string = messages.desktopNav;
-const mobileNavLabel: string = messages.mobileNav;
+const homeRouteName: RouteName = HOME_ROUTE_NAME;
+const desktopNavLabel: string = translateMessage(DESKTOP_NAV_MESSAGE_KEY);
+const mobileNavLabel: string = translateMessage(MOBILE_NAV_MESSAGE_KEY);
+const openMenuLabel: string = translateMessage(OPEN_MENU_MESSAGE_KEY);
+const closeMenuLabel: string = translateMessage(CLOSE_MENU_MESSAGE_KEY);
 const mobileMenuId: string = "mobile-navigation";
 const menuButtonVariant: "quiet" = "quiet";
 const isMenuOpen: Ref<boolean> = ref(false);
-const menuButtonLabel: ComputedRef<string> = computed((): string =>
-  isMenuOpen.value ? messages.closeMenu : messages.openMenu,
-);
+/**
+ * 現在の開閉状態に対応するメニューボタンの操作名を返す。
+ * @returns メニューを開く、または閉じる操作を示す翻訳済み文言。
+ */
+const menuButtonLabel: ComputedRef<string> = computed((): string => {
+  const label: string = isMenuOpen.value ? closeMenuLabel : openMenuLabel;
+  return label;
+});
 
-/** メニューの開閉状態を反転する。@returns 戻り値はなく、ローカル表示状態だけを更新する。 */
+/**
+ * メニューの開閉状態を反転する。
+ * @returns 戻り値はなく、ローカル表示状態だけを更新する。
+ */
 function toggleMenu(): void {
   isMenuOpen.value = !isMenuOpen.value;
 }
-/** ページ遷移時にメニューを閉じる。@returns 戻り値はなく、ローカル表示状態だけを更新する。 */
+/**
+ * ページ遷移時にメニューを閉じる。
+ * @returns 戻り値はなく、ローカル表示状態だけを更新する。
+ */
 function closeMenu(): void {
   isMenuOpen.value = false;
 }
@@ -116,8 +133,8 @@ function closeMenu(): void {
 .site-header-nav-link:focus-visible,
 .site-header-mobile-link:focus-visible,
 .site-header-brand:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 .site-header-menu-button {
   display: none;
@@ -150,7 +167,7 @@ function closeMenu(): void {
     white-space: nowrap;
   }
   .site-header-menu-button :deep(.app-button) {
-    font-size: 14px;
+    font-size: var(--font-size-small);
     padding: 9px 14px;
     white-space: nowrap;
   }

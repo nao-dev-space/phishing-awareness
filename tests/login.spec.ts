@@ -1,6 +1,6 @@
-import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import { flushPromises, mount, type DOMWrapper, type VueWrapper } from "@vue/test-utils";
 import { createMemoryHistory, createRouter, type Router } from "vue-router";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, type Mock, type MockInstance } from "vitest";
 import LoginView from "@/views/LoginView.vue";
 import RevealView from "@/views/RevealView.vue";
 import { TRAINING_ACCOUNT } from "@/config/content";
@@ -15,6 +15,43 @@ function createTestRouter(): Router {
     ],
   });
   return router;
+}
+
+/**
+ * Vue Wrapperで見つけた要素が入力欄であることを実行時に検証する。
+ * @param wrapper 疑似ログイン画面をmountしたVue Wrapper。
+ * @param inputIndex 取得する入力欄のゼロ始まり位置。
+ * @returns 検証済みのHTMLInputElement。
+ * @throws 指定位置に入力欄がない場合はテスト構成不備を表すErrorを送出する。
+ */
+function getInputElement(wrapper: VueWrapper, inputIndex: number): HTMLInputElement {
+  const inputElement: Element | undefined = wrapper.findAll("input")[inputIndex]?.element;
+
+  // テスト対象のDOM構造を検証し、型アサーションで誤った要素を入力欄として扱うことを防ぐ。
+  if (!(inputElement instanceof HTMLInputElement)) {
+    throw new Error("Expected login input element was not found.");
+  }
+  return inputElement;
+}
+
+/**
+ * DOM Wrapper一覧から指定位置の要素を取得し、欠測時はテスト構成不備として停止する。
+ * @param wrappers Vue Test Utilsが返したDOM Wrapper一覧。
+ * @param wrapperIndex 取得するゼロ始まり位置。
+ * @returns 指定位置に存在するDOM Wrapper。
+ * @throws 指定位置に要素が存在しない場合はErrorを送出する。
+ */
+function getDomWrapper(
+  wrappers: readonly DOMWrapper<Element>[],
+  wrapperIndex: number,
+): DOMWrapper<Element> {
+  const wrapper: DOMWrapper<Element> | undefined = wrappers[wrapperIndex];
+
+  // テスト操作前に要素数を検証し、存在しないWrapperへの操作を防ぐ。
+  if (!wrapper) {
+    throw new Error("Expected DOM wrapper was not found.");
+  }
+  return wrapper;
 }
 
 describe("疑似ログインの安全性", (): void => {
@@ -32,8 +69,11 @@ describe("疑似ログインの安全性", (): void => {
       global: { plugins: [router] },
       attachTo: document.body,
     });
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const xhrSendSpy = vi.spyOn(XMLHttpRequest.prototype, "send");
+    const fetchSpy: MockInstance<typeof globalThis.fetch> = vi.spyOn(globalThis, "fetch");
+    const xhrSendSpy: MockInstance<typeof XMLHttpRequest.prototype.send> = vi.spyOn(
+      XMLHttpRequest.prototype,
+      "send",
+    );
     const storageSnapshot: string = JSON.stringify({
       local: { ...localStorage },
       session: { ...sessionStorage },
@@ -41,8 +81,8 @@ describe("疑似ログインの安全性", (): void => {
     const cookieSnapshot: string = document.cookie;
     const inputs: ReturnType<VueWrapper["findAll"]> = wrapper.findAll("input");
 
-    await inputs[0]!.setValue("private-user@example.com");
-    await inputs[1]!.setValue("private-password");
+    await getDomWrapper(inputs, 0).setValue("private-user@example.com");
+    await getDomWrapper(inputs, 1).setValue("private-password");
     await wrapper.find("form").trigger("submit");
     await flushPromises();
 
@@ -52,13 +92,14 @@ describe("疑似ログインの安全性", (): void => {
       storageSnapshot,
     );
     expect(document.cookie).toBe(cookieSnapshot);
-    expect((inputs[0]!.element as HTMLInputElement).value).toBe("");
-    expect((inputs[1]!.element as HTMLInputElement).value).toBe("");
+    expect(getInputElement(wrapper, 0).value).toBe("");
+    expect(getInputElement(wrapper, 1).value).toBe("");
     expect(router.currentRoute.value.name).toBe("experience-reveal");
   });
 
   it("コピー操作では固定された体験用情報だけを渡す", async (): Promise<void> => {
-    const writeText = vi.fn<(value: string) => Promise<void>>().mockResolvedValue();
+    type ClipboardWrite = (clipboardText: string) => Promise<void>;
+    const writeText: Mock<ClipboardWrite> = vi.fn<ClipboardWrite>().mockResolvedValue();
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     const router: Router = createTestRouter();
     const wrapper: VueWrapper = mount(LoginView, { global: { plugins: [router] } });
@@ -66,8 +107,8 @@ describe("疑似ログインの安全性", (): void => {
       .findAll("button")
       .filter((button): boolean => button.text().includes("コピー"));
 
-    await copyButtons[0]!.trigger("click");
-    await copyButtons[1]!.trigger("click");
+    await getDomWrapper(copyButtons, 0).trigger("click");
+    await getDomWrapper(copyButtons, 1).trigger("click");
 
     expect(writeText).toHaveBeenNthCalledWith(1, TRAINING_ACCOUNT.email);
     expect(writeText).toHaveBeenNthCalledWith(2, TRAINING_ACCOUNT.password);

@@ -42,36 +42,38 @@ import AppLayout from "@/components/templates/AppLayout.vue";
   --radius-pill: 999px;
   --content-wide: 1180px;
   --content-standard: 850px;
+  --space-page-section: 30px;
+  --font-size-small: 14px;
+  --control-min-height: 48px;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 3px;
   --shadow-card: 0 12px 36px rgb(20 61 58 / 8%);
   --shadow-button: 0 8px 20px rgb(8 127 114 / 18%);
   --shadow-visual: 0 24px 60px rgb(20 61 58 / 16%);
   --motion-fast: 160ms ease;
   --motion-medium: 260ms ease;
 }
-* {
+.app-body,
+.app-body * {
   box-sizing: border-box;
 }
-html {
+.app-document {
   background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-body);
   scroll-behavior: smooth;
 }
-body {
+.app-body {
   margin: 0;
   min-width: 320px;
 }
-button,
-input {
-  font-family: inherit;
-}
 @media (prefers-reduced-motion: reduce) {
-  html {
+  .app-document {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  .app-body *,
+  .app-body *::before,
+  .app-body *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;

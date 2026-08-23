@@ -31,7 +31,7 @@ withDefaults(defineProps<Props>(), {
   white-space: pre-line;
 }
 .app-text-small {
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 .app-text-body {
   font-size: 16px;

@@ -1,13 +1,13 @@
 import { createApp, type App as VueApp } from "vue";
 import App from "@/App.vue";
-import { i18n, messageGroup } from "@/i18n";
+import { i18n, translateMessage } from "@/i18n";
 import router from "@/router";
+import { updateDescriptionMetadata } from "@/services/pageMetadata";
 
+const APPLICATION_DESCRIPTION_MESSAGE_KEY: string = "app.description";
 const application: VueApp<Element> = createApp(App);
 application.use(i18n);
 application.use(router);
-const descriptionMeta: HTMLMetaElement | null = document.querySelector('meta[name="description"]');
-if (descriptionMeta) {
-  descriptionMeta.content = messageGroup("app").description;
-}
+const applicationDescription: string = translateMessage(APPLICATION_DESCRIPTION_MESSAGE_KEY);
+updateDescriptionMetadata(applicationDescription);
 application.mount("#app");

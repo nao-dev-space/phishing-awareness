@@ -12,11 +12,12 @@
 <script setup lang="ts">
 import AppFooter from "@/components/organisms/AppFooter.vue";
 import AppHeader from "@/components/organisms/AppHeader.vue";
-import { messageGroup } from "@/i18n";
+import { translateMessage } from "@/i18n";
 
+const SKIP_LINK_MESSAGE_KEY: string = "layout.skip";
 const mainId: string = "main-content";
 const mainTarget: string = `#${mainId}`;
-const skipLabel: string = messageGroup("layout").skip;
+const skipLabel: string = translateMessage(SKIP_LINK_MESSAGE_KEY);
 </script>
 
 <style scoped>

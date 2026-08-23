@@ -16,11 +16,8 @@ import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue
 import AppText from "@/components/atoms/AppText.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
+import type { PolicyItem } from "@/types/app";
 
-export interface PolicyItem {
-  readonly title: string;
-  readonly body: string;
-}
 interface Props {
   readonly eyebrow: string;
   readonly title: string;

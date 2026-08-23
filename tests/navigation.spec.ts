@@ -34,6 +34,7 @@ describe("主要ナビゲーション", (): void => {
     const externalLinks: ReturnType<VueWrapper["findAll"]> = wrapper.findAll("a[target='_blank']");
 
     expect(externalLinks.length).toBe(5);
+    // 外部リンクをすべて列挙し、新しいタブを安全に開く属性が欠けていないか確認する。
     for (const link of externalLinks) {
       expect(link.attributes("rel")).toBe("noopener noreferrer");
     }

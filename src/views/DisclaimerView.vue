@@ -9,13 +9,20 @@
   />
 </template>
 <script setup lang="ts">
-import PolicyPage, { type PolicyItem } from "@/components/organisms/PolicyPage.vue";
-import { messageGroup } from "@/i18n";
-const messages = messageGroup("disclaimer");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
-const items: readonly PolicyItem[] = messages.items;
-const noticeTitle: string = messages.noticeTitle;
-const noticeMessage: string = messages.noticeMessage;
+import PolicyPage from "@/components/organisms/PolicyPage.vue";
+import { DISCLAIMER_ITEMS } from "@/config/content";
+import { translateMessage } from "@/i18n";
+import type { PolicyItem } from "@/types/app";
+
+const EYEBROW_MESSAGE_KEY: string = "disclaimer.eyebrow";
+const TITLE_MESSAGE_KEY: string = "disclaimer.title";
+const DESCRIPTION_MESSAGE_KEY: string = "disclaimer.description";
+const NOTICE_TITLE_MESSAGE_KEY: string = "disclaimer.noticeTitle";
+const NOTICE_MESSAGE_KEY: string = "disclaimer.noticeMessage";
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
+const items: readonly PolicyItem[] = DISCLAIMER_ITEMS;
+const noticeTitle: string = translateMessage(NOTICE_TITLE_MESSAGE_KEY);
+const noticeMessage: string = translateMessage(NOTICE_MESSAGE_KEY);
 </script>

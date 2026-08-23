@@ -14,7 +14,7 @@
       <AppHeading :level="basicsHeadingLevel" :text="basicsTitle" />
       <ul class="learn-view-action-list">
         <li v-for="action in basicActions" :key="action" class="learn-view-action-item">
-          <div class="learn-view-check" aria-hidden="true">✓</div>
+          <div class="learn-view-check" aria-hidden="true">{{ checkmark }}</div>
           <AppText :text="action" />
         </li>
       </ul>
@@ -32,21 +32,30 @@ import AppText from "@/components/atoms/AppText.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { BASIC_ACTIONS, LEARNING_TOPICS } from "@/config/content";
-import { messageGroup } from "@/i18n";
+import { MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
 import type { LearningTopic, RouteName } from "@/types/app";
 
-const messages = messageGroup("learn");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
+const EYEBROW_MESSAGE_KEY: string = "learn.eyebrow";
+const TITLE_MESSAGE_KEY: string = "learn.title";
+const DESCRIPTION_MESSAGE_KEY: string = "learn.description";
+const ACTION_PREFIX_MESSAGE_KEY: string = "learn.actionPrefix";
+const BASICS_TITLE_MESSAGE_KEY: string = "learn.basicsTitle";
+const EXPERIENCE_LABEL_MESSAGE_KEY: string = "learn.experience";
+const QUIZ_LABEL_MESSAGE_KEY: string = "learn.quiz";
+const CHECKMARK_MESSAGE_KEY: string = "visuals.checkmark";
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
 const topics: readonly LearningTopic[] = LEARNING_TOPICS;
 const basicActions: readonly string[] = BASIC_ACTIONS;
-const actionPrefix: string = messages.actionPrefix;
-const basicsTitle: string = messages.basicsTitle;
-const experienceLabel: string = messages.experience;
-const quizLabel: string = messages.quiz;
-const mailRoute: RouteName = "experience-mail";
-const quizRoute: RouteName = "quiz";
+const actionPrefix: string = translateMessage(ACTION_PREFIX_MESSAGE_KEY);
+const basicsTitle: string = translateMessage(BASICS_TITLE_MESSAGE_KEY);
+const experienceLabel: string = translateMessage(EXPERIENCE_LABEL_MESSAGE_KEY);
+const quizLabel: string = translateMessage(QUIZ_LABEL_MESSAGE_KEY);
+const checkmark: string = translateMessage(CHECKMARK_MESSAGE_KEY);
+const mailRoute: RouteName = MAIL_ROUTE_NAME;
+const quizRoute: RouteName = QUIZ_ROUTE_NAME;
 const basicsHeadingLevel: HeadingLevel = 2;
 const accentTone: "accent" = "accent";
 const secondaryVariant: "secondary" = "secondary";
@@ -78,7 +87,7 @@ const secondaryVariant: "secondary" = "secondary";
   padding: 18px 22px;
 }
 .learn-view-summary:focus-visible {
-  outline: 3px solid var(--color-focus);
+  outline: var(--focus-ring-width) solid var(--color-focus);
   outline-offset: -3px;
 }
 .learn-view-topic-body {

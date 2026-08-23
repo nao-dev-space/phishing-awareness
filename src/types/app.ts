@@ -21,6 +21,12 @@ export interface RouteDefinition {
   readonly component: Component;
 }
 
+export interface RouteConfiguration {
+  readonly name: RouteName;
+  readonly path: string;
+  readonly titleMessageKey: string;
+}
+
 export interface NavigationItem {
   readonly label: string;
   readonly routeName: RouteName;
@@ -51,6 +57,21 @@ export interface LearningTopic {
   readonly title: string;
   readonly summary: string;
   readonly action: string;
+}
+
+export interface InformationCard {
+  readonly body: string;
+  readonly title: string;
+}
+
+export interface PsychologyPoint {
+  readonly body: string;
+  readonly title: string;
+}
+
+export interface PolicyItem {
+  readonly body: string;
+  readonly title: string;
 }
 
 export interface QuizOption {

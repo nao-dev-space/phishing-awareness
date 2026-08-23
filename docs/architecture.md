@@ -4,13 +4,14 @@
 
 表示文言、状態、純粋ロジック、型、静的な制御値を分離しています。UIはAtomic Designに沿って、atoms、molecules、organisms、templates、viewsへ分類します。画面間で保持すべき入力状態がないため、Piniaや永続ストレージは使用しません。
 
-日本語専用の現在構成でも、画面に表示する文言は`src/i18n/locales/ja.json`へ集約し、Vue I18nから取得します。本文、ボタン、フォームラベル、ARIAラベル、ルートタイトル、学習・クイズなどの構造化文言が対象です。URL、ルート名、問題ID、正解IDなど翻訳しない制御値はTypeScript側で型付けします。
+日本語専用の現在構成でも、画面に表示する文言は`src/i18n/locales/ja.json`へ集約し、Vue I18nから取得します。本文、ボタン、フォームラベル、ARIAラベル、ルートタイトル、学習・クイズなどの構造化文言が対象です。TypeScriptからは分割や結合をしていない完全な翻訳キーパスを指定します。URL、ルート名、問題ID、正解IDなど翻訳しない制御値は`config`で型付けします。
 
 ```mermaid
 flowchart LR
   User["利用者の操作"] --> View["Viewの一時状態"]
-  View --> Logic["Vue非依存の判定関数"]
-  Logic --> Display["画面表示"]
+  View --> Logic["Vue非依存の判定・ブラウザーサービス"]
+  Logic --> Error["安定したエラーコードと翻訳"]
+  Error --> Display["画面表示"]
   View -. "認証入力は渡さない" .-> Nowhere["通信・保存なし"]
 ```
 
@@ -36,7 +37,7 @@ flowchart TD
 - ソースに`fetch`、Axios、XMLHttpRequestを使うアプリコードはありません。
 - Cookie、localStorage、sessionStorage、IndexedDB、Service Workerへ入力値を書き込むコードはありません。
 - Consoleや外部ログ、アクセス解析、エラー監視へ入力値を渡しません。
-- Clipboard APIは`TRAINING_ACCOUNT`に定義した固定の体験用文字列だけに使用します。
+- Clipboard APIは`services/clipboard.ts`へ分離し、`TRAINING_ACCOUNT`に定義した固定の体験用文字列だけに使用します。ブラウザー例外は安定したエラーコードへ変換し、共通の翻訳処理を通して表示します。
 - クイズ回答は`QuizView`のローカルstateだけで保持し、再読込で消去されます。
 
 ## セキュリティ境界
@@ -51,4 +52,4 @@ Cloudflare Workers Static Assetsへ配布する`public/_headers`では、CSPに�
 
 ## アクセシビリティ
 
-セマンティックなヘッダー、ナビゲーション、メイン、フッター、見出し階層を使用します。スキップリンク、明確なフォーカス表示、色以外の状態説明、ライブ領域、キーボード操作、`prefers-reduced-motion`を用意し、WCAG 2.1 AAを意識しています。
+セマンティックなヘッダー、ナビゲーション、メイン、フッター、見出し階層を使用します。スキップリンク、明確なフォーカス表示、色以外の状態説明、ライブ領域、キーボード操作、`prefers-reduced-motion`を用意し、WCAG 2.1 AAを意識しています。クイズのラジオ選択肢はatomへ集約し、文字と余白を含むカード全体をラベルとして操作できます。

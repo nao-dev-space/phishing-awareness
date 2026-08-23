@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="not-found-view">
-    <div class="not-found-view-code">404</div>
+    <div class="not-found-view-code">{{ notFoundCode }}</div>
     <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
     <RouteAction :label="homeLabel" :route-name="homeRoute" />
   </div>
@@ -8,14 +8,21 @@
 <script setup lang="ts">
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { messageGroup } from "@/i18n";
+import { HOME_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
 import type { RouteName } from "@/types/app";
-const messages = messageGroup("notFound");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
-const homeLabel: string = messages.home;
-const homeRoute: RouteName = "home";
+
+const NOT_FOUND_CODE_MESSAGE_KEY: string = "visuals.notFoundCode";
+const EYEBROW_MESSAGE_KEY: string = "notFound.eyebrow";
+const TITLE_MESSAGE_KEY: string = "notFound.title";
+const DESCRIPTION_MESSAGE_KEY: string = "notFound.description";
+const HOME_LABEL_MESSAGE_KEY: string = "notFound.home";
+const notFoundCode: string = translateMessage(NOT_FOUND_CODE_MESSAGE_KEY);
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
+const homeLabel: string = translateMessage(HOME_LABEL_MESSAGE_KEY);
+const homeRoute: RouteName = HOME_ROUTE_NAME;
 </script>
 <style scoped>
 .not-found-view {

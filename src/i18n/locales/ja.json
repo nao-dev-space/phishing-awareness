@@ -4,8 +4,19 @@
     "serviceName": "Cloud Letter",
     "description": "安全な疑似体験を通して、フィッシング詐欺を見抜くポイントを学ぶWebアプリ",
     "credentialWarning": "普段使用しているメールアドレスやパスワードは絶対に入力しないでください。\n画面上の体験用アカウントだけを使用してください。",
-    "trainingEmail": "demo-user@example.test",
+    "trainingEmail": "demo-user{'@'}example.test",
     "trainingPassword": "Training-1234"
+  },
+  "errors": {
+    "CLIPBOARD_WRITE_FAILED": "コピーできませんでした。表示された体験用情報を使用してください。"
+  },
+  "visuals": {
+    "browserDots": "● ● ●",
+    "checkmark": "✓",
+    "envelope": "✉",
+    "information": "i",
+    "notFoundCode": "404",
+    "warning": "!"
   },
   "navigation": {
     "home": "ホーム",
@@ -209,7 +220,7 @@
     "simulationLabel": "受信トレイ・学習用",
     "mailBodyLabel": "架空のメール本文",
     "senderTerm": "差出人",
-    "sender": "Cloud Letter 通知 <notice@cloud-letter-alert.example>",
+    "sender": "Cloud Letter 通知 <notice{'@'}cloud-letter-alert.example>",
     "subjectTerm": "件名",
     "subject": "【重要】アカウントの利用を一時的に制限しました",
     "greeting": "お客様",
@@ -234,7 +245,6 @@
     "copyPassword": "体験用パスワードをコピー",
     "emailCopied": "体験用メールアドレスをコピーしました。",
     "passwordCopied": "体験用パスワードをコピーしました。",
-    "copyFailed": "コピーできませんでした。表示された体験用情報を使用してください。",
     "emailLabel": "メールアドレス相当の入力欄",
     "passwordLabel": "パスワード相当の入力欄",
     "login": "ログイン（送信されません）",
@@ -314,6 +324,7 @@
     "reviewResult": "間違えた項目を見直せば、次の判断に生かせます。",
     "optionGroup": "回答の選択肢",
     "answer": "回答する",
+    "score": "{score} / {total}",
     "resultTitle": "テスト結果",
     "reviewTitle": "間違えた問題を振り返る",
     "perfectTitle": "すべて確認できました",

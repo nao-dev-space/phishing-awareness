@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="cloud-logo" :aria-label="accessibleLabel" role="img">
-    <span class="cloud-logo-mark" aria-hidden="true">✉</span>
+    <span class="cloud-logo-mark" aria-hidden="true">{{ mark }}</span>
     <span class="cloud-logo-name">{{ serviceName }}</span>
   </div>
 </template>
@@ -9,6 +9,7 @@
 interface Props {
   readonly serviceName: string;
   readonly accessibleLabel: string;
+  readonly mark: string;
 }
 
 defineProps<Props>();

@@ -24,20 +24,26 @@
 <script setup lang="ts">
 import AppText from "@/components/atoms/AppText.vue";
 import { REAL_CREDENTIAL_WARNING } from "@/config/content";
-import { messageGroup } from "@/i18n";
+import { ABOUT_ROUTE_NAME, DISCLAIMER_ROUTE_NAME, PRIVACY_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
 import type { RouteName } from "@/types/app";
 
-const messages = messageGroup("layout");
-const purposeText: string = messages.footerPurpose;
-const independenceText: string = messages.footerIndependence;
+const PURPOSE_MESSAGE_KEY: string = "layout.footerPurpose";
+const INDEPENDENCE_MESSAGE_KEY: string = "layout.footerIndependence";
+const FOOTER_NAV_MESSAGE_KEY: string = "layout.footerNav";
+const ABOUT_LABEL_MESSAGE_KEY: string = "layout.about";
+const DISCLAIMER_LABEL_MESSAGE_KEY: string = "layout.disclaimer";
+const PRIVACY_LABEL_MESSAGE_KEY: string = "layout.privacy";
+const purposeText: string = translateMessage(PURPOSE_MESSAGE_KEY);
+const independenceText: string = translateMessage(INDEPENDENCE_MESSAGE_KEY);
 const warningText: string = REAL_CREDENTIAL_WARNING;
-const footerNavLabel: string = messages.footerNav;
-const aboutLabel: string = messages.about;
-const disclaimerLabel: string = messages.disclaimer;
-const privacyLabel: string = messages.privacy;
-const aboutRouteName: RouteName = "about";
-const disclaimerRouteName: RouteName = "disclaimer";
-const privacyRouteName: RouteName = "privacy";
+const footerNavLabel: string = translateMessage(FOOTER_NAV_MESSAGE_KEY);
+const aboutLabel: string = translateMessage(ABOUT_LABEL_MESSAGE_KEY);
+const disclaimerLabel: string = translateMessage(DISCLAIMER_LABEL_MESSAGE_KEY);
+const privacyLabel: string = translateMessage(PRIVACY_LABEL_MESSAGE_KEY);
+const aboutRouteName: RouteName = ABOUT_ROUTE_NAME;
+const disclaimerRouteName: RouteName = DISCLAIMER_ROUTE_NAME;
+const privacyRouteName: RouteName = PRIVACY_ROUTE_NAME;
 const smallTextSize: "small" = "small";
 const warningTone: "warning" = "warning";
 </script>
@@ -50,7 +56,7 @@ const warningTone: "warning" = "warning";
 }
 .site-footer-inner {
   display: grid;
-  gap: 30px;
+  gap: var(--space-page-section);
   grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
   margin: 0 auto;
   max-width: var(--content-wide);
@@ -74,8 +80,8 @@ const warningTone: "warning" = "warning";
   text-underline-offset: 4px;
 }
 .site-footer-link:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 @media (max-width: 700px) {
   .site-footer {

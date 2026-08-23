@@ -45,8 +45,13 @@ const emit: Emits = defineEmits<Emits>();
  * @returns 戻り値はなく、文字列だけをemitする。
  */
 function handleInput(event: Event): void {
-  const inputElement: HTMLInputElement = event.target as HTMLInputElement;
-  emit("update:modelValue", inputElement.value);
+  const eventTarget: EventTarget | null = event.target;
+
+  // 外部イベントのtarget型を確認し、想定外の要素から値を読み取ることを防ぐ。
+  if (!(eventTarget instanceof HTMLInputElement)) {
+    return;
+  }
+  emit("update:modelValue", eventTarget.value);
 }
 </script>
 
@@ -66,12 +71,12 @@ function handleInput(event: Event): void {
   border-radius: var(--radius-small);
   color: var(--color-ink);
   font: inherit;
-  min-height: 48px;
+  min-height: var(--control-min-height);
   padding: 10px 13px;
   width: 100%;
 }
 .form-field-input:focus {
   border-color: var(--color-primary);
-  outline: 3px solid var(--color-focus-soft);
+  outline: var(--focus-ring-width) solid var(--color-focus-soft);
 }
 </style>

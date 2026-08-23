@@ -9,11 +9,15 @@
     />
     <div class="login-view-simulation">
       <div class="login-view-browser-bar">
-        <div class="login-view-browser-dots" aria-hidden="true">● ● ●</div>
+        <div class="login-view-browser-dots" aria-hidden="true">{{ browserDots }}</div>
         <div class="login-view-address">{{ fakeAddress }}</div>
       </div>
       <div class="login-view-panel">
-        <CloudLetterLogo :service-name="serviceName" :accessible-label="logoLabel" />
+        <CloudLetterLogo
+          :service-name="serviceName"
+          :accessible-label="logoLabel"
+          :mark="logoMark"
+        />
         <AppHeading :level="panelHeadingLevel" :text="panelTitle" :size="cardHeadingSize" />
         <div :id="demoDescriptionId" class="login-view-demo-account">
           <AppText :text="demoTitle" :tone="accentTone" />
@@ -104,44 +108,73 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { REAL_CREDENTIAL_WARNING, SERVICE_NAME, TRAINING_ACCOUNT } from "@/config/content";
-import { messageGroup } from "@/i18n";
+import { REVEAL_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
+import { writeTrainingTextToClipboard, type ClipboardWriteResult } from "@/services/clipboard";
+import { translateError } from "@/services/errors";
 import type { RouteName, TrainingAccount } from "@/types/app";
 
+const EYEBROW_MESSAGE_KEY: string = "login.eyebrow";
+const TITLE_MESSAGE_KEY: string = "login.title";
+const DESCRIPTION_MESSAGE_KEY: string = "login.description";
+const WARNING_TITLE_MESSAGE_KEY: string = "login.warningTitle";
+const FAKE_ADDRESS_MESSAGE_KEY: string = "login.fakeAddress";
+const LOGO_LABEL_MESSAGE_KEY: string = "login.logoLabel";
+const LOGO_MARK_MESSAGE_KEY: string = "visuals.envelope";
+const BROWSER_DOTS_MESSAGE_KEY: string = "visuals.browserDots";
+const PANEL_TITLE_MESSAGE_KEY: string = "login.panelTitle";
+const DEMO_TITLE_MESSAGE_KEY: string = "login.demoTitle";
+const COPY_EMAIL_LABEL_MESSAGE_KEY: string = "login.copyEmail";
+const COPY_PASSWORD_LABEL_MESSAGE_KEY: string = "login.copyPassword";
+const EMAIL_COPIED_MESSAGE_KEY: string = "login.emailCopied";
+const PASSWORD_COPIED_MESSAGE_KEY: string = "login.passwordCopied";
+const EMAIL_LABEL_MESSAGE_KEY: string = "login.emailLabel";
+const PASSWORD_LABEL_MESSAGE_KEY: string = "login.passwordLabel";
+const LOGIN_LABEL_MESSAGE_KEY: string = "login.login";
+const ALTERNATIVES_TITLE_MESSAGE_KEY: string = "login.alternativesTitle";
+const ALTERNATIVES_DESCRIPTION_MESSAGE_KEY: string = "login.alternativesDescription";
+const ENTER_LABEL_MESSAGE_KEY: string = "login.enter";
+const CHECK_URL_LABEL_MESSAGE_KEY: string = "login.checkUrl";
+const OFFICIAL_SITE_LABEL_MESSAGE_KEY: string = "login.officialSite";
+const CHECK_URL_EXPLANATION_MESSAGE_KEY: string = "login.checkUrlExplanation";
+const OFFICIAL_SITE_EXPLANATION_MESSAGE_KEY: string = "login.officialSiteExplanation";
+const SAFE_CHOICE_TITLE_MESSAGE_KEY: string = "login.safeChoiceTitle";
+const REVEAL_LABEL_MESSAGE_KEY: string = "login.reveal";
 const router: Router = useRouter();
 const emailInput: Ref<string> = ref("");
 const passwordInput: Ref<string> = ref("");
 const copyStatus: Ref<string> = ref("");
 const safeActionMessage: Ref<string> = ref("");
 const trainingAccount: TrainingAccount = TRAINING_ACCOUNT;
-const messages = messageGroup("login");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
-const warningTitle: string = messages.warningTitle;
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
+const warningTitle: string = translateMessage(WARNING_TITLE_MESSAGE_KEY);
 const warningMessage: string = REAL_CREDENTIAL_WARNING;
-const fakeAddress: string = messages.fakeAddress;
+const fakeAddress: string = translateMessage(FAKE_ADDRESS_MESSAGE_KEY);
 const serviceName: string = SERVICE_NAME;
-const logoLabel: string = messages.logoLabel;
-const panelTitle: string = messages.panelTitle;
-const demoTitle: string = messages.demoTitle;
-const copyEmailLabel: string = messages.copyEmail;
-const copyPasswordLabel: string = messages.copyPassword;
-const emailCopiedMessage: string = messages.emailCopied;
-const passwordCopiedMessage: string = messages.passwordCopied;
-const copyFailedMessage: string = messages.copyFailed;
-const emailLabel: string = messages.emailLabel;
-const passwordLabel: string = messages.passwordLabel;
-const loginLabel: string = messages.login;
-const alternativesTitle: string = messages.alternativesTitle;
-const alternativesDescription: string = messages.alternativesDescription;
-const enterChoiceLabel: string = messages.enter;
-const checkUrlLabel: string = messages.checkUrl;
-const officialSiteLabel: string = messages.officialSite;
-const checkUrlExplanation: string = messages.checkUrlExplanation;
-const officialSiteExplanation: string = messages.officialSiteExplanation;
-const safeChoiceTitle: string = messages.safeChoiceTitle;
-const revealLabel: string = messages.reveal;
-const revealRoute: RouteName = "experience-reveal";
+const logoLabel: string = translateMessage(LOGO_LABEL_MESSAGE_KEY);
+const logoMark: string = translateMessage(LOGO_MARK_MESSAGE_KEY);
+const browserDots: string = translateMessage(BROWSER_DOTS_MESSAGE_KEY);
+const panelTitle: string = translateMessage(PANEL_TITLE_MESSAGE_KEY);
+const demoTitle: string = translateMessage(DEMO_TITLE_MESSAGE_KEY);
+const copyEmailLabel: string = translateMessage(COPY_EMAIL_LABEL_MESSAGE_KEY);
+const copyPasswordLabel: string = translateMessage(COPY_PASSWORD_LABEL_MESSAGE_KEY);
+const emailCopiedMessage: string = translateMessage(EMAIL_COPIED_MESSAGE_KEY);
+const passwordCopiedMessage: string = translateMessage(PASSWORD_COPIED_MESSAGE_KEY);
+const emailLabel: string = translateMessage(EMAIL_LABEL_MESSAGE_KEY);
+const passwordLabel: string = translateMessage(PASSWORD_LABEL_MESSAGE_KEY);
+const loginLabel: string = translateMessage(LOGIN_LABEL_MESSAGE_KEY);
+const alternativesTitle: string = translateMessage(ALTERNATIVES_TITLE_MESSAGE_KEY);
+const alternativesDescription: string = translateMessage(ALTERNATIVES_DESCRIPTION_MESSAGE_KEY);
+const enterChoiceLabel: string = translateMessage(ENTER_LABEL_MESSAGE_KEY);
+const checkUrlLabel: string = translateMessage(CHECK_URL_LABEL_MESSAGE_KEY);
+const officialSiteLabel: string = translateMessage(OFFICIAL_SITE_LABEL_MESSAGE_KEY);
+const checkUrlExplanation: string = translateMessage(CHECK_URL_EXPLANATION_MESSAGE_KEY);
+const officialSiteExplanation: string = translateMessage(OFFICIAL_SITE_EXPLANATION_MESSAGE_KEY);
+const safeChoiceTitle: string = translateMessage(SAFE_CHOICE_TITLE_MESSAGE_KEY);
+const revealLabel: string = translateMessage(REVEAL_LABEL_MESSAGE_KEY);
+const revealRoute: RouteName = REVEAL_ROUTE_NAME;
 const emailFieldId: string = "training-user-identifier";
 const passwordFieldId: string = "training-secret-phrase";
 const emailFieldName: string = "training-user-identifier";
@@ -186,12 +219,14 @@ function updatePasswordInput(value: string): void {
  * @returns 完了を表すPromise。失敗時も入力内容は参照しない。
  */
 async function copyTrainingValue(trainingValue: string, successMessage: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(trainingValue);
+  const writeResult: ClipboardWriteResult = await writeTrainingTextToClipboard(trainingValue);
+
+  // コピーに成功した場合だけ成功文言を表示し、ブラウザー例外を画面へ直接渡さない。
+  if (writeResult.isSuccessful) {
     copyStatus.value = successMessage;
-  } catch {
-    copyStatus.value = copyFailedMessage;
+    return;
   }
+  copyStatus.value = translateError(writeResult.errorCode);
 }
 
 /**

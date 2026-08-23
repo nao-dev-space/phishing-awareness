@@ -4,7 +4,11 @@
     <NoticeBox class="mail-view-safety-notice" :title="safetyTitle" :message="safetyMessage" />
     <div class="mail-view-mail" :aria-label="mailBodyLabel">
       <div class="mail-view-toolbar">
-        <CloudLetterLogo :service-name="serviceName" :accessible-label="logoLabel" />
+        <CloudLetterLogo
+          :service-name="serviceName"
+          :accessible-label="logoLabel"
+          :mark="logoMark"
+        />
         <AppText :text="simulationLabel" :size="smallSize" :tone="mutedTone" />
       </div>
       <dl class="mail-view-metadata">
@@ -61,36 +65,58 @@ import CloudLetterLogo from "@/components/atoms/CloudLetterLogo.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { MAIL_CHOICES, SERVICE_NAME } from "@/config/content";
-import { messageGroup } from "@/i18n";
+import { FOLLOW_LINK_CHOICE_ID, MAIL_CHOICES, SERVICE_NAME } from "@/config/content";
+import { LOGIN_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
+import { translateMessage } from "@/i18n";
 import type { MailChoice, RouteName } from "@/types/app";
 
+const EYEBROW_MESSAGE_KEY: string = "mail.eyebrow";
+const TITLE_MESSAGE_KEY: string = "mail.title";
+const DESCRIPTION_MESSAGE_KEY: string = "mail.description";
+const SAFETY_TITLE_MESSAGE_KEY: string = "mail.safetyTitle";
+const SAFETY_MESSAGE_KEY: string = "mail.safetyMessage";
+const LOGO_LABEL_MESSAGE_KEY: string = "mail.logoLabel";
+const LOGO_MARK_MESSAGE_KEY: string = "visuals.envelope";
+const SIMULATION_LABEL_MESSAGE_KEY: string = "mail.simulationLabel";
+const MAIL_BODY_LABEL_MESSAGE_KEY: string = "mail.mailBodyLabel";
+const SENDER_TERM_MESSAGE_KEY: string = "mail.senderTerm";
+const SENDER_MESSAGE_KEY: string = "mail.sender";
+const SUBJECT_TERM_MESSAGE_KEY: string = "mail.subjectTerm";
+const SUBJECT_MESSAGE_KEY: string = "mail.subject";
+const GREETING_MESSAGE_KEY: string = "mail.greeting";
+const PARAGRAPH_ONE_MESSAGE_KEY: string = "mail.paragraphOne";
+const PARAGRAPH_TWO_MESSAGE_KEY: string = "mail.paragraphTwo";
+const PARAGRAPH_THREE_MESSAGE_KEY: string = "mail.paragraphThree";
+const FAKE_LINK_MESSAGE_KEY: string = "mail.fakeLink";
+const CHOICE_TITLE_MESSAGE_KEY: string = "mail.choiceTitle";
+const GOOD_CHOICE_TITLE_MESSAGE_KEY: string = "mail.goodChoiceTitle";
+const REVIEW_LABEL_MESSAGE_KEY: string = "mail.review";
 const router: Router = useRouter();
 const selectedSafeChoice: Ref<MailChoice | null> = ref(null);
 const mailChoices: readonly MailChoice[] = MAIL_CHOICES;
-const messages = messageGroup("mail");
-const eyebrow: string = messages.eyebrow;
-const title: string = messages.title;
-const description: string = messages.description;
-const safetyTitle: string = messages.safetyTitle;
-const safetyMessage: string = messages.safetyMessage;
+const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
+const title: string = translateMessage(TITLE_MESSAGE_KEY);
+const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
+const safetyTitle: string = translateMessage(SAFETY_TITLE_MESSAGE_KEY);
+const safetyMessage: string = translateMessage(SAFETY_MESSAGE_KEY);
 const serviceName: string = SERVICE_NAME;
-const logoLabel: string = messages.logoLabel;
-const simulationLabel: string = messages.simulationLabel;
-const mailBodyLabel: string = messages.mailBodyLabel;
-const senderTerm: string = messages.senderTerm;
-const sender: string = messages.sender;
-const subjectTerm: string = messages.subjectTerm;
-const subject: string = messages.subject;
-const greeting: string = messages.greeting;
-const mailParagraphOne: string = messages.paragraphOne;
-const mailParagraphTwo: string = messages.paragraphTwo;
-const mailParagraphThree: string = messages.paragraphThree;
-const fakeLinkButtonLabel: string = messages.fakeLink;
-const choiceTitle: string = messages.choiceTitle;
-const goodChoiceTitle: string = messages.goodChoiceTitle;
-const reviewLabel: string = messages.review;
-const reviewRoute: RouteName = "experience-review";
+const logoLabel: string = translateMessage(LOGO_LABEL_MESSAGE_KEY);
+const logoMark: string = translateMessage(LOGO_MARK_MESSAGE_KEY);
+const simulationLabel: string = translateMessage(SIMULATION_LABEL_MESSAGE_KEY);
+const mailBodyLabel: string = translateMessage(MAIL_BODY_LABEL_MESSAGE_KEY);
+const senderTerm: string = translateMessage(SENDER_TERM_MESSAGE_KEY);
+const sender: string = translateMessage(SENDER_MESSAGE_KEY);
+const subjectTerm: string = translateMessage(SUBJECT_TERM_MESSAGE_KEY);
+const subject: string = translateMessage(SUBJECT_MESSAGE_KEY);
+const greeting: string = translateMessage(GREETING_MESSAGE_KEY);
+const mailParagraphOne: string = translateMessage(PARAGRAPH_ONE_MESSAGE_KEY);
+const mailParagraphTwo: string = translateMessage(PARAGRAPH_TWO_MESSAGE_KEY);
+const mailParagraphThree: string = translateMessage(PARAGRAPH_THREE_MESSAGE_KEY);
+const fakeLinkButtonLabel: string = translateMessage(FAKE_LINK_MESSAGE_KEY);
+const choiceTitle: string = translateMessage(CHOICE_TITLE_MESSAGE_KEY);
+const goodChoiceTitle: string = translateMessage(GOOD_CHOICE_TITLE_MESSAGE_KEY);
+const reviewLabel: string = translateMessage(REVIEW_LABEL_MESSAGE_KEY);
+const reviewRoute: RouteName = REVIEW_ROUTE_NAME;
 const choiceHeadingLevel: HeadingLevel = 2;
 const smallSize: "small" = "small";
 const mutedTone: "muted" = "muted";
@@ -103,8 +129,9 @@ const successTone: "success" = "success";
  * @returns 戻り値はなく、表示状態または現在ルートを更新する。
  */
 function selectChoice(choice: MailChoice): void {
+  // 危険な選択肢では外部サイトを開かず、学習用の疑似ログイン画面だけへ遷移する。
   if (!choice.isSafe) {
-    void router.push({ name: "experience-login" });
+    void router.push({ name: LOGIN_ROUTE_NAME });
     return;
   }
   selectedSafeChoice.value = choice;
@@ -116,8 +143,9 @@ function selectChoice(choice: MailChoice): void {
  */
 function followMailLink(): void {
   const followLinkChoice: MailChoice | undefined = mailChoices.find(
-    (choice: MailChoice): boolean => choice.id === "follow-link",
+    (choice: MailChoice): boolean => choice.id === FOLLOW_LINK_CHOICE_ID,
   );
+  // 設定に疑似リンク用の選択肢が存在する場合だけ、共通の選択処理へ渡す。
   if (followLinkChoice) {
     selectChoice(followLinkChoice);
   }
@@ -163,7 +191,7 @@ function followMailLink(): void {
 }
 .mail-view-term {
   color: var(--color-muted);
-  font-size: 14px;
+  font-size: var(--font-size-small);
   font-weight: 700;
 }
 .mail-view-detail {
@@ -179,7 +207,7 @@ function followMailLink(): void {
 .mail-view-fake-link {
   background: var(--color-cloud);
   border-radius: var(--radius-small);
-  color: white;
+  color: var(--color-on-primary);
   font-weight: 750;
   justify-self: start;
   text-align: center;
