@@ -3,7 +3,10 @@ import { createMemoryHistory, createRouter, type Router } from "vue-router";
 import { beforeEach, describe, expect, it, vi, type Mock, type MockInstance } from "vitest";
 import LoginView from "@/views/LoginView.vue";
 import RevealView from "@/views/RevealView.vue";
-import { TRAINING_ACCOUNT } from "@/config/content";
+import { createContent, type AppContent } from "@/config/content";
+import { i18n, translateMessage } from "@/i18n";
+
+const content: AppContent = createContent(translateMessage);
 
 /** テスト専用ルーターを生成する。@returns 疑似ログインと種明かしを持つメモリルーター。 */
 function createTestRouter(): Router {
@@ -66,7 +69,7 @@ describe("疑似ログインの安全性", (): void => {
     await router.push({ name: "experience-login" });
     await router.isReady();
     const wrapper: VueWrapper = mount(LoginView, {
-      global: { plugins: [router] },
+      global: { plugins: [router, i18n] },
       attachTo: document.body,
     });
     const fetchSpy: MockInstance<typeof globalThis.fetch> = vi.spyOn(globalThis, "fetch");
@@ -102,7 +105,7 @@ describe("疑似ログインの安全性", (): void => {
     const writeText: Mock<ClipboardWrite> = vi.fn<ClipboardWrite>().mockResolvedValue();
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     const router: Router = createTestRouter();
-    const wrapper: VueWrapper = mount(LoginView, { global: { plugins: [router] } });
+    const wrapper: VueWrapper = mount(LoginView, { global: { plugins: [router, i18n] } });
     const copyButtons: ReturnType<VueWrapper["findAll"]> = wrapper
       .findAll("button")
       .filter((button): boolean => button.text().includes("コピー"));
@@ -110,7 +113,7 @@ describe("疑似ログインの安全性", (): void => {
     await getDomWrapper(copyButtons, 0).trigger("click");
     await getDomWrapper(copyButtons, 1).trigger("click");
 
-    expect(writeText).toHaveBeenNthCalledWith(1, TRAINING_ACCOUNT.email);
-    expect(writeText).toHaveBeenNthCalledWith(2, TRAINING_ACCOUNT.password);
+    expect(writeText).toHaveBeenNthCalledWith(1, content.trainingAccount.email);
+    expect(writeText).toHaveBeenNthCalledWith(2, content.trainingAccount.password);
   });
 });

@@ -1,13 +1,13 @@
 ﻿<template>
   <div class="info-card">
-    <AppHeading :level="headingLevel" :text="title" :size="headingSize" />
+    <AppHeading :level="2" :text="title" size="card" />
     <AppText :text="body" />
-    <AppText v-if="action" :text="action" :tone="accentTone" :size="smallSize" />
+    <AppText v-if="action" :text="action" tone="accent" size="small" />
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 
 interface Props {
@@ -16,10 +16,6 @@ interface Props {
   readonly action?: string;
 }
 defineProps<Props>();
-const headingLevel: HeadingLevel = 2;
-const headingSize: "card" = "card";
-const accentTone: "accent" = "accent";
-const smallSize: "small" = "small";
 </script>
 
 <style scoped>
@@ -27,9 +23,9 @@ const smallSize: "small" = "small";
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card-subtle);
   display: grid;
-  gap: 10px;
+  gap: var(--space-3);
   padding: 24px;
 }
 </style>

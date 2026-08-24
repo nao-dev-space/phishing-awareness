@@ -1,25 +1,26 @@
+import { mount, type VueWrapper } from "@vue/test-utils";
+import { defineComponent, nextTick, type ComputedRef, type DefineComponent } from "vue";
+import { createI18n } from "vue-i18n";
 import { describe, expect, it } from "vitest";
-import {
-  APP_NAME,
-  BASIC_ACTIONS,
-  MAIL_CHOICES,
-  SUSPICIOUS_POINTS,
-  TRAINING_ACCOUNT,
-} from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import { createContent, type AppContent } from "@/config/content";
 import { translateMessage } from "@/i18n";
+import jaMessages from "@/i18n/locales/ja.json";
+
+const content: AppContent = createContent(translateMessage);
 
 describe("日本語ロケール", (): void => {
   it("主要な表示文言をVue I18nのJSONメッセージから取得する", (): void => {
-    expect(APP_NAME).toBe("そのログイン、本物ですか？");
+    expect(content.appName).toBe("そのログイン、本物ですか？");
     expect(translateMessage("mail.choiceTitle")).toBe("次の行動を選んでください");
-    expect(MAIL_CHOICES).toHaveLength(3);
+    expect(content.mailChoices).toHaveLength(3);
   });
 
   it("体験用アカウントと疑似メールの記号を正しく保持する", (): void => {
-    expect(TRAINING_ACCOUNT.email).toBe("demo-user@example.test");
+    expect(content.trainingAccount.email).toBe("demo-user@example.test");
     expect(translateMessage("mail.sender")).toContain("notice@cloud-letter-alert.example");
-    expect(SUSPICIOUS_POINTS).toHaveLength(5);
-    expect(BASIC_ACTIONS).toHaveLength(7);
+    expect(content.suspiciousPoints).toHaveLength(5);
+    expect(content.basicActions).toHaveLength(7);
   });
 
   it("完全なキーパスと名前付きパラメーターから表示文言を取得する", (): void => {
@@ -29,5 +30,31 @@ describe("日本語ロケール", (): void => {
     });
 
     expect(questionCount).toBe("問題 2 / 5");
+  });
+
+  it("ロケール変更時に構造化コンテンツを再翻訳する", async (): Promise<void> => {
+    const alternateMessages: typeof jaMessages = {
+      ...jaMessages,
+      app: { ...jaMessages.app, name: "Alternate application name" },
+    };
+    const localI18n = createI18n({
+      legacy: false,
+      locale: "ja",
+      messages: { alternate: alternateMessages, ja: jaMessages },
+    });
+    const ContentProbe: DefineComponent = defineComponent({
+      setup(): { content: ComputedRef<AppContent> } {
+        const localizedContent: ComputedRef<AppContent> = useContent();
+        return { content: localizedContent };
+      },
+      template: "<p>{{ content.appName }}</p>",
+    });
+    const wrapper: VueWrapper = mount(ContentProbe, { global: { plugins: [localI18n] } });
+
+    expect(wrapper.text()).toBe("そのログイン、本物ですか？");
+    localI18n.global.locale.value = "alternate";
+    await nextTick();
+
+    expect(wrapper.text()).toBe("Alternate application name");
   });
 });

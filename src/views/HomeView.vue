@@ -2,70 +2,74 @@
   <div class="home-view">
     <div class="home-view-hero">
       <div class="home-view-hero-copy">
-        <AppText :text="eyebrow" :tone="accentTone" />
-        <AppHeading :level="heroLevel" :text="appName" :size="heroSize" />
-        <AppText :text="purpose" :size="leadSize" />
+        <AppText :text="t(MESSAGE_KEYS.eyebrow)" tone="accent" />
+        <AppHeading :level="1" :text="content.appName" size="hero" />
+        <AppText :text="t(MESSAGE_KEYS.purpose)" size="lead" />
         <div class="home-view-actions">
-          <RouteAction :label="startLabel" :route-name="mailRoute" />
-          <RouteAction :label="learnLabel" :route-name="learnRoute" :variant="secondaryVariant" />
+          <RouteAction :label="t(MESSAGE_KEYS.startLabel)" :route-name="MAIL_ROUTE_NAME" />
+          <RouteAction
+            :label="t(MESSAGE_KEYS.learnLabel)"
+            :route-name="LEARN_ROUTE_NAME"
+            variant="secondary"
+          />
         </div>
         <NoticeBox
           class="home-view-warning"
-          :title="warningTitle"
-          :message="credentialWarning"
-          :tone="warningTone"
-          :is-alert="true"
+          :title="t(MESSAGE_KEYS.warningTitle)"
+          :message="content.realCredentialWarning"
+          tone="warning"
+          is-alert
         />
       </div>
     </div>
     <div class="home-view-lesson">
-      <AppText :text="psychologyText" :size="leadSize" />
+      <AppText :text="t(MESSAGE_KEYS.psychology)" size="lead" />
       <div class="home-view-cards">
-        <InfoCard v-for="card in cards" :key="card.title" :title="card.title" :body="card.body" />
+        <InfoCard
+          v-for="card in content.homeCards"
+          :key="card.title"
+          :title="card.title"
+          :body="card.body"
+        />
       </div>
     </div>
-    <AppText :text="independenceText" :tone="mutedTone" :size="smallSize" />
+    <AppText :text="t(MESSAGE_KEYS.independence)" tone="muted" size="small" />
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import { type ComputedRef } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import InfoCard from "@/components/molecules/InfoCard.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
-import { APP_NAME, HOME_CARDS, REAL_CREDENTIAL_WARNING } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { LEARN_ROUTE_NAME, MAIL_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
-import type { InformationCard, RouteName } from "@/types/app";
 
-const EYEBROW_MESSAGE_KEY: string = "home.eyebrow";
-const PURPOSE_MESSAGE_KEY: string = "home.purpose";
-const WARNING_TITLE_MESSAGE_KEY: string = "home.warningTitle";
-const PSYCHOLOGY_MESSAGE_KEY: string = "home.psychology";
-const START_LABEL_MESSAGE_KEY: string = "home.start";
-const LEARN_LABEL_MESSAGE_KEY: string = "home.learn";
-const INDEPENDENCE_MESSAGE_KEY: string = "home.independence";
-const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
-const appName: string = APP_NAME;
-const purpose: string = translateMessage(PURPOSE_MESSAGE_KEY);
-const warningTitle: string = translateMessage(WARNING_TITLE_MESSAGE_KEY);
-const credentialWarning: string = REAL_CREDENTIAL_WARNING;
-const psychologyText: string = translateMessage(PSYCHOLOGY_MESSAGE_KEY);
-const cards: readonly InformationCard[] = HOME_CARDS;
-const startLabel: string = translateMessage(START_LABEL_MESSAGE_KEY);
-const learnLabel: string = translateMessage(LEARN_LABEL_MESSAGE_KEY);
-const independenceText: string = translateMessage(INDEPENDENCE_MESSAGE_KEY);
-const mailRoute: RouteName = MAIL_ROUTE_NAME;
-const learnRoute: RouteName = LEARN_ROUTE_NAME;
-const heroLevel: HeadingLevel = 1;
-const heroSize: "hero" = "hero";
-const leadSize: "lead" = "lead";
-const smallSize: "small" = "small";
-const accentTone: "accent" = "accent";
-const mutedTone: "muted" = "muted";
-const warningTone: "warning" = "warning";
-const secondaryVariant: "secondary" = "secondary";
+interface HomeMessageKeys {
+  readonly eyebrow: string;
+  readonly independence: string;
+  readonly learnLabel: string;
+  readonly psychology: string;
+  readonly purpose: string;
+  readonly startLabel: string;
+  readonly warningTitle: string;
+}
+
+const MESSAGE_KEYS: HomeMessageKeys = {
+  eyebrow: "home.eyebrow",
+  independence: "home.independence",
+  learnLabel: "home.learn",
+  psychology: "home.psychology",
+  purpose: "home.purpose",
+  startLabel: "home.start",
+  warningTitle: "home.warningTitle",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
 </script>
 
 <style scoped>
@@ -80,7 +84,7 @@ const secondaryVariant: "secondary" = "secondary";
 .home-view-hero-copy,
 .home-view-lesson {
   display: grid;
-  gap: 18px;
+  gap: var(--space-5);
 }
 .home-view-actions {
   display: flex;
@@ -88,7 +92,8 @@ const secondaryVariant: "secondary" = "secondary";
   gap: 12px;
 }
 .home-view-warning {
-  width: calc(66.6667% - 5.3333px);
+  max-width: 760px;
+  width: 100%;
 }
 .home-view-cards {
   display: grid;
@@ -97,7 +102,7 @@ const secondaryVariant: "secondary" = "secondary";
 }
 @media (max-width: 820px) {
   .home-view {
-    gap: 54px;
+    gap: var(--space-14);
   }
   .home-view-hero {
     grid-template-columns: 1fr;

@@ -3,7 +3,7 @@
     <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
     <div class="policy-page-content">
       <div v-for="item in items" :key="item.title" class="policy-page-item">
-        <AppHeading :level="itemHeadingLevel" :text="item.title" :size="cardHeadingSize" />
+        <AppHeading :level="2" :text="item.title" size="card" />
         <AppText :text="item.body" />
       </div>
     </div>
@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
@@ -27,8 +27,6 @@ interface Props {
   readonly noticeMessage: string;
 }
 defineProps<Props>();
-const itemHeadingLevel: HeadingLevel = 2;
-const cardHeadingSize: "card" = "card";
 </script>
 
 <style scoped>
@@ -40,12 +38,12 @@ const cardHeadingSize: "card" = "card";
 }
 .policy-page-content {
   display: grid;
-  gap: 22px;
+  gap: var(--space-6);
 }
 .policy-page-item {
   border-bottom: var(--border-width) solid var(--color-border);
   display: grid;
   gap: 8px;
-  padding-bottom: 22px;
+  padding-bottom: var(--space-6);
 }
 </style>

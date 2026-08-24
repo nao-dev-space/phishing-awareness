@@ -1,7 +1,8 @@
 import { describe, expect, it, vi, type Mock } from "vitest";
 import { CLIPBOARD_WRITE_FAILED } from "@/config/errorCodes";
+import { translateMessage } from "@/i18n";
 import { writeTrainingTextToClipboard, type ClipboardWriteResult } from "@/services/clipboard";
-import { getErrorMessageKey, translateError } from "@/services/errors";
+import { getErrorMessageKey } from "@/services/errors";
 
 type ClipboardWrite = (clipboardText: string) => Promise<void>;
 
@@ -29,7 +30,8 @@ describe("クリップボードサービス", (): void => {
       errorCode: CLIPBOARD_WRITE_FAILED,
       isSuccessful: false,
     });
-    expect(getErrorMessageKey(CLIPBOARD_WRITE_FAILED)).toBe("errors.CLIPBOARD_WRITE_FAILED");
-    expect(translateError(CLIPBOARD_WRITE_FAILED)).toContain("表示された体験用情報");
+    const errorMessageKey: string = getErrorMessageKey(CLIPBOARD_WRITE_FAILED);
+    expect(errorMessageKey).toBe("errors.CLIPBOARD_WRITE_FAILED");
+    expect(translateMessage(errorMessageKey)).toContain("表示された体験用情報");
   });
 });

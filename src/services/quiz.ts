@@ -1,11 +1,6 @@
 import type { QuizAnswerState, QuizQuestion } from "@/types/app";
 
-/**
- * 選択した回答が問題の正解と一致するか判定する。
- * @param question 判定対象のクイズ問題。
- * @param selectedOptionId 利用者が選んだ選択肢ID。
- * @returns 回答内容と正誤を含む一時状態。
- */
+/** 選択した回答が問題の正解と一致するか判定する。 */
 export function evaluateQuizAnswer(
   question: QuizQuestion,
   selectedOptionId: string,
@@ -15,11 +10,7 @@ export function evaluateQuizAnswer(
   return answerState;
 }
 
-/**
- * 回答一覧から正解数を集計する。
- * @param answers 集計対象の回答一覧。
- * @returns 正解した問題数。
- */
+/** 回答一覧から正解数を集計する。 */
 export function calculateQuizScore(answers: readonly QuizAnswerState[]): number {
   const correctAnswerCount: number = answers.filter(
     (answer: QuizAnswerState): boolean => answer.isCorrect,
@@ -27,12 +18,7 @@ export function calculateQuizScore(answers: readonly QuizAnswerState[]): number 
   return correctAnswerCount;
 }
 
-/**
- * 回答一覧から誤答した問題だけを抽出する。
- * @param questions 全問題一覧。
- * @param answers 利用者の回答一覧。
- * @returns 誤答した問題一覧。
- */
+/** 回答一覧から誤答した問題だけを抽出する。 */
 export function findIncorrectQuestions(
   questions: readonly QuizQuestion[],
   answers: readonly QuizAnswerState[],

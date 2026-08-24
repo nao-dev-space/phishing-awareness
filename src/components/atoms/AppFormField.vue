@@ -39,11 +39,7 @@ withDefaults(defineProps<Props>(), {
 
 const emit: Emits = defineEmits<Emits>();
 
-/**
- * 入力欄の現在値を親へ通知する。
- * @param event ブラウザーが発行した入力イベント。
- * @returns 戻り値はなく、文字列だけをemitする。
- */
+/** 入力欄の現在値を親へ通知する。 */
 function handleInput(event: Event): void {
   const eventTarget: EventTarget | null = event.target;
 
@@ -62,7 +58,7 @@ function handleInput(event: Event): void {
 }
 .form-field-label {
   color: var(--color-ink);
-  font-size: 15px;
+  font-size: var(--font-size-label);
   font-weight: 750;
 }
 .form-field-input {
@@ -72,7 +68,7 @@ function handleInput(event: Event): void {
   color: var(--color-ink);
   font: inherit;
   min-height: var(--control-min-height);
-  padding: 10px 13px;
+  padding: var(--space-3);
   width: 100%;
 }
 .form-field-input:focus {

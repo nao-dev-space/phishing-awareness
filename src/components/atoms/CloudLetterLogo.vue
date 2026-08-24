@@ -21,7 +21,7 @@ defineProps<Props>();
   color: var(--color-cloud);
   display: inline-flex;
   font-weight: 800;
-  gap: 9px;
+  gap: var(--space-3);
   letter-spacing: 0.2px;
 }
 .cloud-logo-mark {
@@ -30,12 +30,12 @@ defineProps<Props>();
   border: var(--border-width) solid var(--color-cloud);
   border-radius: 12px 12px 12px 4px;
   display: inline-flex;
-  height: 38px;
+  height: 40px;
   justify-content: center;
-  width: 42px;
+  width: 44px;
 }
 .cloud-logo-name {
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: var(--font-size-logo);
 }
 </style>

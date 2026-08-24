@@ -3,15 +3,15 @@
     <div class="notice-box-icon" aria-hidden="true">{{ icon }}</div>
     <div class="notice-box-content">
       <AppText :text="title" :tone="titleTone" />
-      <AppText :text="message" :size="messageSize" />
+      <AppText :text="message" size="small" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, type ComputedRef } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
 import AppText, { type TextTone } from "@/components/atoms/AppText.vue";
-import { translateMessage } from "@/i18n";
 
 type NoticeTone = "info" | "warning" | "success";
 
@@ -23,46 +23,34 @@ interface Props {
 }
 
 const props: Props = withDefaults(defineProps<Props>(), { tone: "info", isAlert: false });
-const INFORMATION_ICON_MESSAGE_KEY: string = "visuals.information";
-const WARNING_ICON_MESSAGE_KEY: string = "visuals.warning";
-const SUCCESS_ICON_MESSAGE_KEY: string = "visuals.checkmark";
-const icons: Readonly<Record<NoticeTone, string>> = {
-  info: translateMessage(INFORMATION_ICON_MESSAGE_KEY),
-  warning: translateMessage(WARNING_ICON_MESSAGE_KEY),
-  success: translateMessage(SUCCESS_ICON_MESSAGE_KEY),
+const { t }: Composer = useI18n();
+const iconMessageKeys: Readonly<Record<NoticeTone, string>> = {
+  info: "visuals.information",
+  warning: "visuals.warning",
+  success: "visuals.checkmark",
 };
 const titleTones: Readonly<Record<NoticeTone, TextTone>> = {
   info: "accent",
   warning: "warning",
   success: "success",
 };
-/**
- * 通知の種類に対応する装飾アイコンを取得する。
- * @returns 現在のtoneに対応する表示用アイコン。
- */
+/** 通知の種類に対応する装飾アイコンを取得する。 */
 const icon: ComputedRef<string> = computed((): string => {
-  const noticeIcon: string = icons[props.tone];
+  const noticeIcon: string = t(iconMessageKeys[props.tone]);
   return noticeIcon;
 });
 
-/**
- * 通知の種類に対応する見出し色を取得する。
- * @returns AppTextへ渡す見出し色の識別値。
- */
+/** 通知の種類に対応する見出し色を取得する。 */
 const titleTone: ComputedRef<TextTone> = computed((): TextTone => {
   const noticeTitleTone: TextTone = titleTones[props.tone];
   return noticeTitleTone;
 });
 
-/**
- * 即時通知の必要性に応じてアクセシビリティロールを選択する。
- * @returns 緊急通知ではalert、それ以外ではstatus。
- */
+/** 即時通知の必要性に応じてアクセシビリティロールを選択する。 */
 const role: ComputedRef<"alert" | "status"> = computed((): "alert" | "status" => {
   const noticeRole: "alert" | "status" = props.isAlert ? "alert" : "status";
   return noticeRole;
 });
-const messageSize: "small" = "small";
 </script>
 
 <style scoped>
@@ -72,7 +60,7 @@ const messageSize: "small" = "small";
   border: var(--border-width) solid var(--color-info);
   border-radius: var(--radius-medium);
   display: flex;
-  gap: 13px;
+  gap: var(--space-3);
   padding: 16px;
 }
 .notice-box-warning {
@@ -104,6 +92,6 @@ const messageSize: "small" = "small";
 }
 .notice-box-content {
   display: grid;
-  gap: 3px;
+  gap: var(--space-1);
 }
 </style>

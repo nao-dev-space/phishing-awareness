@@ -12,12 +12,7 @@ export const i18n: I18n = createI18n({
   messages: { ja: jaMessages },
 });
 
-/**
- * 完全な翻訳キーパスから利用者向け文言を取得する。
- * @param messageKey JSONに定義された、分割や連結をしていない完全なキーパス。
- * @param parameters 文言内の名前付きプレースホルダーへ渡す値。不要な場合は省略する。
- * @returns 現在のロケールで翻訳された文字列。
- */
+/** 完全な翻訳キーパスから現在のロケールに対応する文言を取得する。 */
 export function translateMessage(messageKey: string, parameters?: MessageParameters): string {
   const composer: Composer = i18n.global;
   const translatedMessage: string = parameters

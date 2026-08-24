@@ -1,17 +1,20 @@
 ﻿<template>
   <div class="quiz-view">
-    <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
+    <PageIntro
+      :eyebrow="t(MESSAGE_KEYS.eyebrow)"
+      :title="t(MESSAGE_KEYS.title)"
+      :description="t(MESSAGE_KEYS.description)"
+    />
     <div v-if="!isComplete" class="quiz-view-question-card">
-      <div class="quiz-view-progress" :aria-label="progressLabel">
-        <div :class="['quiz-view-progress-bar', progressClass]"></div>
-      </div>
-      <AppText :text="questionCountLabel" :tone="accentTone" />
-      <AppHeading
-        :level="questionHeadingLevel"
-        :text="currentQuestion.prompt"
-        :size="cardHeadingSize"
-      />
-      <div class="quiz-view-options" role="radiogroup" :aria-label="optionGroupLabel">
+      <progress
+        class="quiz-view-progress"
+        :value="currentQuestionIndex + 1"
+        :max="questions.length"
+        :aria-label="progressLabel"
+      ></progress>
+      <AppText :text="questionCountLabel" tone="accent" />
+      <AppHeading :level="2" :text="currentQuestion.prompt" size="card" />
+      <div class="quiz-view-options" role="radiogroup" :aria-label="t(MESSAGE_KEYS.optionGroup)">
         <AppRadioOption
           v-for="option in currentQuestion.options"
           :key="option.id"
@@ -25,7 +28,7 @@
       </div>
       <AppButton
         v-if="!hasAnswered"
-        :label="answerLabel"
+        :label="t(MESSAGE_KEYS.answerLabel)"
         :disabled="!selectedOptionId"
         @click="submitAnswer"
       />
@@ -40,23 +43,32 @@
     </div>
     <div v-else class="quiz-view-result">
       <div class="quiz-view-score">{{ scoreLabel }}</div>
-      <AppHeading :level="resultHeadingLevel" :text="resultTitle" />
-      <AppText :text="resultMessage" :size="leadSize" />
+      <AppHeading :level="2" :text="t(MESSAGE_KEYS.resultTitle)" />
+      <AppText :text="resultMessage" size="lead" />
       <div v-if="incorrectQuestions.length" class="quiz-view-review">
-        <AppHeading :level="reviewHeadingLevel" :text="reviewTitle" :size="cardHeadingSize" />
+        <AppHeading :level="3" :text="t(MESSAGE_KEYS.reviewTitle)" size="card" />
         <div
           v-for="question in incorrectQuestions"
           :key="question.id"
           class="quiz-view-review-item"
         >
-          <AppText :text="question.prompt" :tone="accentTone" />
+          <AppText :text="question.prompt" tone="accent" />
           <AppText :text="question.explanation" />
         </div>
       </div>
-      <NoticeBox v-else :title="perfectTitle" :message="perfectMessage" :tone="successTone" />
+      <NoticeBox
+        v-else
+        :title="t(MESSAGE_KEYS.perfectTitle)"
+        :message="t(MESSAGE_KEYS.perfectMessage)"
+        tone="success"
+      />
       <div class="quiz-view-result-actions">
-        <AppButton :label="retryLabel" @click="resetQuiz" />
-        <RouteAction :label="learnLabel" :route-name="learnRoute" :variant="secondaryVariant" />
+        <AppButton :label="t(MESSAGE_KEYS.retryLabel)" @click="resetQuiz" />
+        <RouteAction
+          :label="t(MESSAGE_KEYS.learnLabel)"
+          :route-name="LEARN_ROUTE_NAME"
+          variant="secondary"
+        />
       </div>
     </div>
   </div>
@@ -64,204 +76,164 @@
 
 <script setup lang="ts">
 import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
 import AppButton from "@/components/atoms/AppButton.vue";
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppRadioOption from "@/components/atoms/AppRadioOption.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { QUIZ_QUESTIONS } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { LEARN_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
 import { calculateQuizScore, evaluateQuizAnswer, findIncorrectQuestions } from "@/services/quiz";
-import type { QuizAnswerState, QuizQuestion, RouteName } from "@/types/app";
+import type { QuizAnswerState, QuizQuestion } from "@/types/app";
 
-const QUESTION_COUNT_MESSAGE_KEY: string = "quiz.questionCount";
-const PROGRESS_MESSAGE_KEY: string = "quiz.progress";
-const CORRECT_MESSAGE_KEY: string = "quiz.correct";
-const INCORRECT_MESSAGE_KEY: string = "quiz.incorrect";
-const SHOW_RESULT_MESSAGE_KEY: string = "quiz.showResult";
-const NEXT_MESSAGE_KEY: string = "quiz.next";
-const PERFECT_RESULT_MESSAGE_KEY: string = "quiz.perfectResult";
-const REVIEW_RESULT_MESSAGE_KEY: string = "quiz.reviewResult";
-const SCORE_MESSAGE_KEY: string = "quiz.score";
-const EYEBROW_MESSAGE_KEY: string = "quiz.eyebrow";
-const TITLE_MESSAGE_KEY: string = "quiz.title";
-const DESCRIPTION_MESSAGE_KEY: string = "quiz.description";
-const OPTION_GROUP_MESSAGE_KEY: string = "quiz.optionGroup";
-const ANSWER_LABEL_MESSAGE_KEY: string = "quiz.answer";
-const RESULT_TITLE_MESSAGE_KEY: string = "quiz.resultTitle";
-const REVIEW_TITLE_MESSAGE_KEY: string = "quiz.reviewTitle";
-const PERFECT_TITLE_MESSAGE_KEY: string = "quiz.perfectTitle";
-const PERFECT_MESSAGE_KEY: string = "quiz.perfectMessage";
-const RETRY_LABEL_MESSAGE_KEY: string = "quiz.retry";
-const LEARN_LABEL_MESSAGE_KEY: string = "quiz.learn";
-const questions: readonly QuizQuestion[] = QUIZ_QUESTIONS;
-const firstQuestion: QuizQuestion | undefined = questions[0];
-
-// 設定不備で問題が空の場合は画面処理を続けず、未定義値の参照を防ぐ。
-if (!firstQuestion) {
-  throw new Error("QUIZ_QUESTIONS must contain at least one question.");
+interface QuizMessageKeys {
+  readonly answerLabel: string;
+  readonly correct: string;
+  readonly description: string;
+  readonly eyebrow: string;
+  readonly incorrect: string;
+  readonly learnLabel: string;
+  readonly next: string;
+  readonly optionGroup: string;
+  readonly perfectMessage: string;
+  readonly perfectResult: string;
+  readonly perfectTitle: string;
+  readonly progress: string;
+  readonly questionCount: string;
+  readonly resultTitle: string;
+  readonly retryLabel: string;
+  readonly reviewResult: string;
+  readonly reviewTitle: string;
+  readonly score: string;
+  readonly showResult: string;
+  readonly title: string;
 }
+
+const MESSAGE_KEYS: QuizMessageKeys = {
+  answerLabel: "quiz.answer",
+  correct: "quiz.correct",
+  description: "quiz.description",
+  eyebrow: "quiz.eyebrow",
+  incorrect: "quiz.incorrect",
+  learnLabel: "quiz.learn",
+  next: "quiz.next",
+  optionGroup: "quiz.optionGroup",
+  perfectMessage: "quiz.perfectMessage",
+  perfectResult: "quiz.perfectResult",
+  perfectTitle: "quiz.perfectTitle",
+  progress: "quiz.progress",
+  questionCount: "quiz.questionCount",
+  resultTitle: "quiz.resultTitle",
+  retryLabel: "quiz.retry",
+  reviewResult: "quiz.reviewResult",
+  reviewTitle: "quiz.reviewTitle",
+  score: "quiz.score",
+  showResult: "quiz.showResult",
+  title: "quiz.title",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
+const questions: ComputedRef<readonly QuizQuestion[]> = computed(
+  (): readonly QuizQuestion[] => content.value.quizQuestions,
+);
 const currentQuestionIndex: Ref<number> = ref(0);
 const selectedOptionId: Ref<string> = ref("");
 const answers: Ref<QuizAnswerState[]> = ref([]);
-const hasAnswered: Ref<boolean> = ref(false);
 const currentAnswer: Ref<QuizAnswerState | null> = ref(null);
-/**
- * 現在位置の問題を返し、完了後は表示崩れを防ぐため先頭問題を保持する。
- * @returns 現在の問題、または設定済みの先頭問題。
- */
+const hasAnswered: ComputedRef<boolean> = computed((): boolean => currentAnswer.value !== null);
+/** 現在位置の問題を返し、完了後は表示崩れを防ぐため先頭問題を保持する。 */
 const currentQuestion: ComputedRef<QuizQuestion> = computed((): QuizQuestion => {
-  const selectedQuestion: QuizQuestion = questions[currentQuestionIndex.value] ?? firstQuestion;
+  const firstQuestion: QuizQuestion | undefined = questions.value[0];
+  if (!firstQuestion) {
+    throw new Error("QUIZ_QUESTIONS must contain at least one question.");
+  }
+  const selectedQuestion: QuizQuestion =
+    questions.value[currentQuestionIndex.value] ?? firstQuestion;
   return selectedQuestion;
 });
-/**
- * 問題位置が総問題数へ到達したか判定する。
- * @returns 全問題への回答が終わった場合はtrue。
- */
+/** 問題位置が総問題数へ到達したか判定する。 */
 const isComplete: ComputedRef<boolean> = computed((): boolean => {
-  const hasCompletedAllQuestions: boolean = currentQuestionIndex.value >= questions.length;
+  const hasCompletedAllQuestions: boolean = currentQuestionIndex.value >= questions.value.length;
   return hasCompletedAllQuestions;
 });
-/**
- * 現在までの回答から正解数を集計する。
- * @returns 回答済み問題の正解数。
- */
+/** 現在までの回答から正解数を集計する。 */
 const score: ComputedRef<number> = computed((): number => {
   const correctAnswerCount: number = calculateQuizScore(answers.value);
   return correctAnswerCount;
 });
-/**
- * 回答一覧から振り返り対象となる誤答問題を抽出する。
- * @returns 誤答した問題の一覧。
- */
+/** 回答一覧から振り返り対象となる誤答問題を抽出する。 */
 const incorrectQuestions: ComputedRef<readonly QuizQuestion[]> = computed(
   (): readonly QuizQuestion[] => {
     const questionsToReview: readonly QuizQuestion[] = findIncorrectQuestions(
-      questions,
+      questions.value,
       answers.value,
     );
     return questionsToReview;
   },
 );
-/**
- * 現在位置と総問題数を利用者向け進捗文言へ変換する。
- * @returns 現在の問題番号を含む翻訳済み文言。
- */
+/** 現在位置と総問題数を利用者向け進捗文言へ変換する。 */
 const questionCountLabel: ComputedRef<string> = computed((): string => {
-  const label: string = translateMessage(QUESTION_COUNT_MESSAGE_KEY, {
+  const label: string = t(MESSAGE_KEYS.questionCount, {
     current: currentQuestionIndex.value + 1,
-    total: questions.length,
+    total: questions.value.length,
   });
   return label;
 });
-/**
- * 進捗バーの意味を読み上げる文言を生成する。
- * @returns 現在位置と総問題数を含むARIAラベル。
- */
+/** 進捗バーの意味を読み上げる文言を生成する。 */
 const progressLabel: ComputedRef<string> = computed((): string => {
-  const label: string = translateMessage(PROGRESS_MESSAGE_KEY, {
+  const label: string = t(MESSAGE_KEYS.progress, {
     current: currentQuestionIndex.value + 1,
-    total: questions.length,
+    total: questions.value.length,
   });
   return label;
 });
-/**
- * CSPに反するインラインstyleを使わず進捗幅を選ぶためのクラスを生成する。
- * @returns 現在の問題位置に対応するCSSクラス名。
- */
-const progressClass: ComputedRef<string> = computed((): string => {
-  const className: string = `quiz-view-progress-bar-${currentQuestionIndex.value + 1}`;
-  return className;
-});
-/**
- * 現在の回答結果に対応するフィードバック見出しを取得する。
- * @returns 正解または不正解を示す翻訳済み文言。
- */
+/** 現在の回答結果に対応するフィードバック見出しを取得する。 */
 const feedbackTitle: ComputedRef<string> = computed((): string => {
   const messageKey: string = currentAnswer.value?.isCorrect
-    ? CORRECT_MESSAGE_KEY
-    : INCORRECT_MESSAGE_KEY;
-  const label: string = translateMessage(messageKey);
+    ? MESSAGE_KEYS.correct
+    : MESSAGE_KEYS.incorrect;
+  const label: string = t(messageKey);
   return label;
 });
-/**
- * 現在の回答結果に対応する通知色を選択する。
- * @returns 正解時はsuccess、不正解時はwarning。
- */
+/** 現在の回答結果に対応する通知色を選択する。 */
 const feedbackTone: ComputedRef<"success" | "warning"> = computed((): "success" | "warning" => {
   const tone: "success" | "warning" = currentAnswer.value?.isCorrect ? "success" : "warning";
   return tone;
 });
-/**
- * 残り問題の有無に応じて次操作のラベルを取得する。
- * @returns 次問題または結果表示を示す翻訳済み文言。
- */
+/** 残り問題の有無に応じて次操作のラベルを取得する。 */
 const nextLabel: ComputedRef<string> = computed((): string => {
-  const isLastQuestion: boolean = currentQuestionIndex.value === questions.length - 1;
-  const messageKey: string = isLastQuestion ? SHOW_RESULT_MESSAGE_KEY : NEXT_MESSAGE_KEY;
-  const label: string = translateMessage(messageKey);
+  const isLastQuestion: boolean = currentQuestionIndex.value === questions.value.length - 1;
+  const messageKey: string = isLastQuestion ? MESSAGE_KEYS.showResult : MESSAGE_KEYS.next;
+  const label: string = t(messageKey);
   return label;
 });
-/**
- * 最終得点に応じて結果画面の案内文を取得する。
- * @returns 全問正解または振り返りを案内する翻訳済み文言。
- */
+/** 最終得点に応じて結果画面の案内文を取得する。 */
 const resultMessage: ComputedRef<string> = computed((): string => {
-  const hasPerfectScore: boolean = score.value === questions.length;
+  const hasPerfectScore: boolean = score.value === questions.value.length;
   const messageKey: string = hasPerfectScore
-    ? PERFECT_RESULT_MESSAGE_KEY
-    : REVIEW_RESULT_MESSAGE_KEY;
-  const message: string = translateMessage(messageKey);
+    ? MESSAGE_KEYS.perfectResult
+    : MESSAGE_KEYS.reviewResult;
+  const message: string = t(messageKey);
   return message;
 });
-/**
- * 得点と総問題数を一つの翻訳済み表示文言へ整形する。
- * @returns 得点と総問題数を含む文言。
- */
+/** 得点と総問題数を一つの翻訳済み表示文言へ整形する。 */
 const scoreLabel: ComputedRef<string> = computed((): string => {
-  const label: string = translateMessage(SCORE_MESSAGE_KEY, {
+  const label: string = t(MESSAGE_KEYS.score, {
     score: score.value,
-    total: questions.length,
+    total: questions.value.length,
   });
   return label;
 });
-const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
-const title: string = translateMessage(TITLE_MESSAGE_KEY);
-const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
-const optionGroupLabel: string = translateMessage(OPTION_GROUP_MESSAGE_KEY);
-const answerLabel: string = translateMessage(ANSWER_LABEL_MESSAGE_KEY);
-const resultTitle: string = translateMessage(RESULT_TITLE_MESSAGE_KEY);
-const reviewTitle: string = translateMessage(REVIEW_TITLE_MESSAGE_KEY);
-const perfectTitle: string = translateMessage(PERFECT_TITLE_MESSAGE_KEY);
-const perfectMessage: string = translateMessage(PERFECT_MESSAGE_KEY);
-const retryLabel: string = translateMessage(RETRY_LABEL_MESSAGE_KEY);
-const learnLabel: string = translateMessage(LEARN_LABEL_MESSAGE_KEY);
-const learnRoute: RouteName = LEARN_ROUTE_NAME;
-const questionHeadingLevel: HeadingLevel = 2;
-const resultHeadingLevel: HeadingLevel = 2;
-const reviewHeadingLevel: HeadingLevel = 3;
-const cardHeadingSize: "card" = "card";
-const leadSize: "lead" = "lead";
-const accentTone: "accent" = "accent";
-const successTone: "success" = "success";
-const secondaryVariant: "secondary" = "secondary";
-
-/**
- * ラジオatomから通知された選択肢IDを画面内状態へ反映する。
- * @param optionId 利用者が選択したクイズ選択肢ID。
- * @returns 戻り値はなく、現在問題の選択状態だけを更新する。
- */
+/** ラジオ選択肢から通知されたIDを画面内状態へ反映する。 */
 function updateSelectedOption(optionId: string): void {
   selectedOptionId.value = optionId;
 }
 
-/**
- * 回答を純粋関数で判定し、画面内の一時配列へ追加する。
- * @returns 戻り値はなく、永続化しない状態だけを更新する。
- */
+/** 回答を判定し、画面内の一時配列へ追加する。 */
 function submitAnswer(): void {
   // 未選択状態での回答確定を防ぎ、問題に存在するIDだけを判定サービスへ渡す。
   if (!selectedOptionId.value) {
@@ -273,28 +245,19 @@ function submitAnswer(): void {
   );
   answers.value.push(answerState);
   currentAnswer.value = answerState;
-  hasAnswered.value = true;
 }
-/**
- * 次の問題へ進み、問題ごとの選択状態を初期化する。
- * @returns 戻り値はなく、画面内状態だけを更新する。
- */
+/** 次の問題へ進み、問題ごとの選択状態を初期化する。 */
 function goToNextQuestion(): void {
   currentQuestionIndex.value += 1;
   selectedOptionId.value = "";
   currentAnswer.value = null;
-  hasAnswered.value = false;
 }
-/**
- * クイズを最初から再開できるよう全一時状態を破棄する。
- * @returns 戻り値はなく、画面内状態だけを初期化する。
- */
+/** クイズを最初から再開できるよう全一時状態を破棄する。 */
 function resetQuiz(): void {
   currentQuestionIndex.value = 0;
   selectedOptionId.value = "";
   answers.value = [];
   currentAnswer.value = null;
-  hasAnswered.value = false;
 }
 </script>
 
@@ -310,46 +273,41 @@ function resetQuiz(): void {
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card-prominent);
   display: grid;
-  gap: 22px;
-  padding: 30px;
+  gap: var(--space-6);
+  padding: var(--space-8);
 }
 .quiz-view-progress {
+  appearance: none;
   background: var(--color-surface-soft);
+  border: 0;
   border-radius: var(--radius-pill);
   height: 8px;
   overflow: hidden;
+  width: 100%;
 }
-.quiz-view-progress-bar {
+.quiz-view-progress::-webkit-progress-bar {
+  background: var(--color-surface-soft);
+}
+.quiz-view-progress::-webkit-progress-value {
   background: var(--color-primary);
   border-radius: var(--radius-pill);
-  height: 100%;
   transition: width var(--motion-medium);
 }
-.quiz-view-progress-bar-1 {
-  width: 20%;
-}
-.quiz-view-progress-bar-2 {
-  width: 40%;
-}
-.quiz-view-progress-bar-3 {
-  width: 60%;
-}
-.quiz-view-progress-bar-4 {
-  width: 80%;
-}
-.quiz-view-progress-bar-5 {
-  width: 100%;
+.quiz-view-progress::-moz-progress-bar {
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+  transition: width var(--motion-medium);
 }
 .quiz-view-options {
   display: grid;
-  gap: 10px;
+  gap: var(--space-3);
 }
 .quiz-view-feedback,
 .quiz-view-review {
   display: grid;
-  gap: 14px;
+  gap: var(--space-4);
 }
 .quiz-view-score {
   color: var(--color-primary-dark);
@@ -360,8 +318,8 @@ function resetQuiz(): void {
 .quiz-view-review-item {
   border-left: 4px solid var(--color-warning);
   display: grid;
-  gap: 5px;
-  padding: 8px 14px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
 }
 .quiz-view-result-actions {
   display: flex;
@@ -369,14 +327,15 @@ function resetQuiz(): void {
   gap: 12px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .quiz-view-progress-bar {
+  .quiz-view-progress::-webkit-progress-value,
+  .quiz-view-progress::-moz-progress-bar {
     transition: none;
   }
 }
 @media (max-width: 560px) {
   .quiz-view-question-card,
   .quiz-view-result {
-    padding: 22px 18px;
+    padding: var(--space-6) var(--space-4);
   }
 }
 </style>

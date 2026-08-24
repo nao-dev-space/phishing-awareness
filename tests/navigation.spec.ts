@@ -3,6 +3,7 @@ import { createMemoryHistory, createRouter, type Router } from "vue-router";
 import { describe, expect, it } from "vitest";
 import App from "@/App.vue";
 import { ROUTE_DEFINITIONS } from "@/router";
+import { i18n } from "@/i18n";
 import type { RouteDefinition } from "@/types/app";
 
 /** 全ルート定義をメモリ履歴へ変換する。@returns 画面遷移テスト用ルーター。 */
@@ -19,7 +20,7 @@ describe("主要ナビゲーション", (): void => {
     const router: Router = createTestRouter();
     await router.push("/");
     await router.isReady();
-    const wrapper: VueWrapper = mount(App, { global: { plugins: [router] } });
+    const wrapper: VueWrapper = mount(App, { global: { plugins: [router, i18n] } });
 
     expect(wrapper.text()).toContain("そのログイン、本物ですか？");
     expect(wrapper.text()).toContain("普段使用しているメールアドレスやパスワード");
@@ -30,7 +31,7 @@ describe("主要ナビゲーション", (): void => {
     const router: Router = createTestRouter();
     await router.push("/resources");
     await router.isReady();
-    const wrapper: VueWrapper = mount(App, { global: { plugins: [router] } });
+    const wrapper: VueWrapper = mount(App, { global: { plugins: [router, i18n] } });
     const externalLinks: ReturnType<VueWrapper["findAll"]> = wrapper.findAll("a[target='_blank']");
 
     expect(externalLinks.length).toBe(5);
@@ -44,7 +45,7 @@ describe("主要ナビゲーション", (): void => {
     const router: Router = createTestRouter();
     await router.push("/experience/mail");
     await router.isReady();
-    const wrapper: VueWrapper = mount(App, { global: { plugins: [router] } });
+    const wrapper: VueWrapper = mount(App, { global: { plugins: [router, i18n] } });
 
     await wrapper.get(".mail-view-fake-link").trigger("click");
     await flushPromises();
@@ -56,7 +57,7 @@ describe("主要ナビゲーション", (): void => {
     const router: Router = createTestRouter();
     await router.push("/missing-page");
     await router.isReady();
-    const wrapper: VueWrapper = mount(App, { global: { plugins: [router] } });
+    const wrapper: VueWrapper = mount(App, { global: { plugins: [router, i18n] } });
 
     expect(wrapper.text()).toContain("404");
     expect(wrapper.text()).toContain("ページが見つかりません");

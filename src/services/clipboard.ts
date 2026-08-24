@@ -4,11 +4,7 @@ export type ClipboardWriteResult =
   | { readonly errorCode: null; readonly isSuccessful: true }
   | { readonly errorCode: AppErrorCode; readonly isSuccessful: false };
 
-/**
- * 画面で明示された体験用文字列をブラウザーのクリップボードへコピーする。
- * @param trainingText コピー対象となる、アプリ内に定義済みの体験用文字列。
- * @returns 成否と、失敗時の安定したエラーコードを含む結果。
- */
+/** 画面で明示された体験用文字列をブラウザーのクリップボードへコピーする。 */
 export async function writeTrainingTextToClipboard(
   trainingText: string,
 ): Promise<ClipboardWriteResult> {

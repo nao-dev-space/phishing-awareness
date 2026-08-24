@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, type ComputedRef } from "vue";
 export type HeadingLevel = 1 | 2 | 3 | 4;
 export type HeadingSize = "hero" | "page" | "section" | "card";
 
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const props: Props = withDefaults(defineProps<Props>(), { size: "section" });
-const tag: string = `h${props.level}`;
+const tag: ComputedRef<string> = computed((): string => `h${props.level}`);
 </script>
 
 <style scoped>
@@ -22,6 +23,8 @@ const tag: string = `h${props.level}`;
   font-family: var(--font-display);
   line-height: 1.25;
   margin: 0;
+  overflow-wrap: anywhere;
+  word-break: auto-phrase;
   text-wrap: balance;
   white-space: pre-line;
 }
@@ -38,6 +41,6 @@ const tag: string = `h${props.level}`;
   font-size: clamp(24px, 4vw, 34px);
 }
 .app-heading-card {
-  font-size: 20px;
+  font-size: var(--font-size-card-title);
 }
 </style>

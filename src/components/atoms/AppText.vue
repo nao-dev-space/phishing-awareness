@@ -34,7 +34,7 @@ withDefaults(defineProps<Props>(), {
   font-size: var(--font-size-small);
 }
 .app-text-body {
-  font-size: 16px;
+  font-size: var(--font-size-body);
 }
 .app-text-lead {
   font-size: clamp(18px, 2.5vw, 22px);

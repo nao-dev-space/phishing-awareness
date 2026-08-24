@@ -27,6 +27,6 @@ describe("公開時の多層防御", (): void => {
     const quizViewSource: string = readFileSync(quizViewFilePath, "utf8");
 
     expect(quizViewSource).not.toContain(":style=");
-    expect(quizViewSource).toContain("quiz-view-progress-bar-5");
+    expect(quizViewSource).toContain("<progress");
   });
 });

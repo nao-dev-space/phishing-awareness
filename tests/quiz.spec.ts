@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { QUIZ_QUESTIONS } from "@/config/content";
+import { createContent, type AppContent } from "@/config/content";
+import { translateMessage } from "@/i18n";
 import { calculateQuizScore, evaluateQuizAnswer, findIncorrectQuestions } from "@/services/quiz";
 import type { QuizAnswerState, QuizQuestion } from "@/types/app";
+
+const content: AppContent = createContent(translateMessage);
+const quizQuestions: readonly QuizQuestion[] = content.quizQuestions;
 
 /**
  * 設定済みクイズから指定位置の問題を取得する。
@@ -10,7 +14,7 @@ import type { QuizAnswerState, QuizQuestion } from "@/types/app";
  * @throws 問題が存在しない場合はテストデータ不備を表すErrorを送出する。
  */
 function getQuizQuestion(questionIndex: number): QuizQuestion {
-  const question: QuizQuestion | undefined = QUIZ_QUESTIONS[questionIndex];
+  const question: QuizQuestion | undefined = quizQuestions[questionIndex];
 
   // テスト前提となる問題数を検証し、非nullアサーションによる誤った成功を防ぐ。
   if (!question) {
@@ -38,7 +42,7 @@ describe("クイズ判定", (): void => {
     ];
 
     expect(calculateQuizScore(answers)).toBe(1);
-    expect(findIncorrectQuestions(QUIZ_QUESTIONS, answers)).toEqual([secondQuestion]);
+    expect(findIncorrectQuestions(quizQuestions, answers)).toEqual([secondQuestion]);
   });
 
   it("問題に存在しない選択肢IDを正解として扱わない", (): void => {

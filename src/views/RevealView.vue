@@ -1,14 +1,22 @@
 ﻿<template>
   <div class="reveal-view">
-    <div class="reveal-view-badge" aria-hidden="true">{{ checkmark }}</div>
-    <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
-    <NoticeBox :title="safetyTitle" :message="safetyMessage" :tone="successTone" />
+    <div class="reveal-view-badge" aria-hidden="true">{{ t(MESSAGE_KEYS.checkmark) }}</div>
+    <PageIntro
+      :eyebrow="t(MESSAGE_KEYS.eyebrow)"
+      :title="t(MESSAGE_KEYS.title)"
+      :description="t(MESSAGE_KEYS.description)"
+    />
+    <NoticeBox
+      :title="t(MESSAGE_KEYS.safetyTitle)"
+      :message="t(MESSAGE_KEYS.safetyMessage)"
+      tone="success"
+    />
     <div class="reveal-view-explanation">
-      <AppHeading :level="sectionLevel" :text="explanationTitle" />
-      <AppText :text="realRisk" :size="leadSize" />
+      <AppHeading :level="2" :text="t(MESSAGE_KEYS.explanationTitle)" />
+      <AppText :text="t(MESSAGE_KEYS.realRisk)" size="lead" />
       <div class="reveal-view-cards">
         <InfoCard
-          v-for="point in psychologyPoints"
+          v-for="point in content.revealPoints"
           :key="point.title"
           :title="point.title"
           :body="point.body"
@@ -16,56 +24,63 @@
       </div>
     </div>
     <div class="reveal-view-actions">
-      <RouteAction :label="reviewLabel" :route-name="reviewRoute" />
-      <RouteAction :label="retryLabel" :route-name="mailRoute" :variant="secondaryVariant" />
-      <RouteAction :label="homeLabel" :route-name="homeRoute" :variant="quietVariant" />
+      <RouteAction :label="t(MESSAGE_KEYS.reviewLabel)" :route-name="REVIEW_ROUTE_NAME" />
+      <RouteAction
+        :label="t(MESSAGE_KEYS.retryLabel)"
+        :route-name="MAIL_ROUTE_NAME"
+        variant="secondary"
+      />
+      <RouteAction
+        :label="t(MESSAGE_KEYS.homeLabel)"
+        :route-name="HOME_ROUTE_NAME"
+        variant="quiet"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import { type ComputedRef } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import InfoCard from "@/components/molecules/InfoCard.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { REVEAL_POINTS } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
-import type { PsychologyPoint, RouteName } from "@/types/app";
 
-const EYEBROW_MESSAGE_KEY: string = "reveal.eyebrow";
-const TITLE_MESSAGE_KEY: string = "reveal.title";
-const DESCRIPTION_MESSAGE_KEY: string = "reveal.description";
-const SAFETY_TITLE_MESSAGE_KEY: string = "reveal.safetyTitle";
-const SAFETY_MESSAGE_KEY: string = "reveal.safetyMessage";
-const EXPLANATION_TITLE_MESSAGE_KEY: string = "reveal.explanationTitle";
-const REAL_RISK_MESSAGE_KEY: string = "reveal.realRisk";
-const REVIEW_LABEL_MESSAGE_KEY: string = "reveal.review";
-const RETRY_LABEL_MESSAGE_KEY: string = "reveal.retry";
-const HOME_LABEL_MESSAGE_KEY: string = "reveal.home";
-const CHECKMARK_MESSAGE_KEY: string = "visuals.checkmark";
-const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
-const title: string = translateMessage(TITLE_MESSAGE_KEY);
-const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
-const safetyTitle: string = translateMessage(SAFETY_TITLE_MESSAGE_KEY);
-const safetyMessage: string = translateMessage(SAFETY_MESSAGE_KEY);
-const explanationTitle: string = translateMessage(EXPLANATION_TITLE_MESSAGE_KEY);
-const realRisk: string = translateMessage(REAL_RISK_MESSAGE_KEY);
-const psychologyPoints: readonly PsychologyPoint[] = REVEAL_POINTS;
-const reviewLabel: string = translateMessage(REVIEW_LABEL_MESSAGE_KEY);
-const retryLabel: string = translateMessage(RETRY_LABEL_MESSAGE_KEY);
-const homeLabel: string = translateMessage(HOME_LABEL_MESSAGE_KEY);
-const checkmark: string = translateMessage(CHECKMARK_MESSAGE_KEY);
-const reviewRoute: RouteName = REVIEW_ROUTE_NAME;
-const mailRoute: RouteName = MAIL_ROUTE_NAME;
-const homeRoute: RouteName = HOME_ROUTE_NAME;
-const sectionLevel: HeadingLevel = 2;
-const leadSize: "lead" = "lead";
-const successTone: "success" = "success";
-const secondaryVariant: "secondary" = "secondary";
-const quietVariant: "quiet" = "quiet";
+interface RevealMessageKeys {
+  readonly checkmark: string;
+  readonly description: string;
+  readonly eyebrow: string;
+  readonly explanationTitle: string;
+  readonly homeLabel: string;
+  readonly realRisk: string;
+  readonly retryLabel: string;
+  readonly reviewLabel: string;
+  readonly safetyMessage: string;
+  readonly safetyTitle: string;
+  readonly title: string;
+}
+
+const MESSAGE_KEYS: RevealMessageKeys = {
+  checkmark: "visuals.checkmark",
+  description: "reveal.description",
+  eyebrow: "reveal.eyebrow",
+  explanationTitle: "reveal.explanationTitle",
+  homeLabel: "reveal.home",
+  realRisk: "reveal.realRisk",
+  retryLabel: "reveal.retry",
+  reviewLabel: "reveal.review",
+  safetyMessage: "reveal.safetyMessage",
+  safetyTitle: "reveal.safetyTitle",
+  title: "reveal.title",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
 </script>
 
 <style scoped>
@@ -82,7 +97,7 @@ const quietVariant: "quiet" = "quiet";
   border-radius: 50%;
   color: var(--color-success-ink);
   display: flex;
-  font-size: 36px;
+  font-size: var(--font-size-symbol-large);
   font-weight: 900;
   height: 72px;
   justify-content: center;
@@ -90,11 +105,11 @@ const quietVariant: "quiet" = "quiet";
 }
 .reveal-view-explanation {
   display: grid;
-  gap: 18px;
+  gap: var(--space-5);
 }
 .reveal-view-cards {
   display: grid;
-  gap: 14px;
+  gap: var(--space-4);
   grid-template-columns: repeat(2, 1fr);
 }
 .reveal-view-actions {

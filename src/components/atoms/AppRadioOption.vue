@@ -2,7 +2,7 @@
   <label class="app-radio-option">
     <input
       class="app-radio-option-input"
-      :type="radioType"
+      type="radio"
       :name="name"
       :value="value"
       :checked="isChecked"
@@ -30,22 +30,14 @@ interface Emits {
 
 const props: Props = withDefaults(defineProps<Props>(), { disabled: false });
 const emit: Emits = defineEmits<Emits>();
-const radioType: "radio" = "radio";
 
-/**
- * 親から受け取った選択値とこの選択肢の値が一致するか判定する。
- * @returns このラジオ選択肢が選択済みの場合はtrue。
- */
+/** 親から受け取った選択値とこの選択肢の値が一致するか判定する。 */
 const isChecked: ComputedRef<boolean> = computed((): boolean => {
   const hasMatchingValue: boolean = props.modelValue === props.value;
   return hasMatchingValue;
 });
 
-/**
- * ラジオ入力の変更を検証し、選択された値だけを親へ通知する。
- * @param event ブラウザーが発行した変更イベント。
- * @returns 戻り値はなく、正しいinput要素が選択された場合だけ値をemitする。
- */
+/** ラジオ入力の変更を検証し、選択された値だけを親へ通知する。 */
 function handleChange(event: Event): void {
   const eventTarget: EventTarget | null = event.target;
 
@@ -67,7 +59,7 @@ function handleChange(event: Event): void {
   display: grid;
   gap: 12px;
   grid-template-columns: auto 1fr;
-  padding: 15px;
+  padding: var(--space-4);
 }
 
 .app-radio-option:has(.app-radio-option-input:checked) {
@@ -87,7 +79,7 @@ function handleChange(event: Event): void {
 
 .app-radio-option-label {
   color: var(--color-ink-soft);
-  font-size: 16px;
+  font-size: var(--font-size-body);
   line-height: 1.75;
 }
 </style>

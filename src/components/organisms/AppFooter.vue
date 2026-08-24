@@ -2,19 +2,19 @@
   <footer class="site-footer">
     <div class="site-footer-inner">
       <div class="site-footer-copy">
-        <AppText :text="purposeText" />
-        <AppText :text="independenceText" :size="smallTextSize" />
-        <AppText :text="warningText" :size="smallTextSize" :tone="warningTone" />
+        <AppText :text="t(MESSAGE_KEYS.purpose)" />
+        <AppText :text="t(MESSAGE_KEYS.independence)" size="small" />
+        <AppText :text="content.realCredentialWarning" size="small" tone="warning" />
       </div>
-      <nav class="site-footer-links" :aria-label="footerNavLabel">
-        <RouterLink class="site-footer-link" :to="{ name: aboutRouteName }">{{
-          aboutLabel
+      <nav class="site-footer-links" :aria-label="t(MESSAGE_KEYS.footerNav)">
+        <RouterLink class="site-footer-link" :to="{ name: ABOUT_ROUTE_NAME }">{{
+          t(MESSAGE_KEYS.aboutLabel)
         }}</RouterLink>
-        <RouterLink class="site-footer-link" :to="{ name: disclaimerRouteName }">{{
-          disclaimerLabel
+        <RouterLink class="site-footer-link" :to="{ name: DISCLAIMER_ROUTE_NAME }">{{
+          t(MESSAGE_KEYS.disclaimerLabel)
         }}</RouterLink>
-        <RouterLink class="site-footer-link" :to="{ name: privacyRouteName }">{{
-          privacyLabel
+        <RouterLink class="site-footer-link" :to="{ name: PRIVACY_ROUTE_NAME }">{{
+          t(MESSAGE_KEYS.privacyLabel)
         }}</RouterLink>
       </nav>
     </div>
@@ -22,30 +22,32 @@
 </template>
 
 <script setup lang="ts">
+import { type ComputedRef } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
 import AppText from "@/components/atoms/AppText.vue";
-import { REAL_CREDENTIAL_WARNING } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { ABOUT_ROUTE_NAME, DISCLAIMER_ROUTE_NAME, PRIVACY_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
-import type { RouteName } from "@/types/app";
 
-const PURPOSE_MESSAGE_KEY: string = "layout.footerPurpose";
-const INDEPENDENCE_MESSAGE_KEY: string = "layout.footerIndependence";
-const FOOTER_NAV_MESSAGE_KEY: string = "layout.footerNav";
-const ABOUT_LABEL_MESSAGE_KEY: string = "layout.about";
-const DISCLAIMER_LABEL_MESSAGE_KEY: string = "layout.disclaimer";
-const PRIVACY_LABEL_MESSAGE_KEY: string = "layout.privacy";
-const purposeText: string = translateMessage(PURPOSE_MESSAGE_KEY);
-const independenceText: string = translateMessage(INDEPENDENCE_MESSAGE_KEY);
-const warningText: string = REAL_CREDENTIAL_WARNING;
-const footerNavLabel: string = translateMessage(FOOTER_NAV_MESSAGE_KEY);
-const aboutLabel: string = translateMessage(ABOUT_LABEL_MESSAGE_KEY);
-const disclaimerLabel: string = translateMessage(DISCLAIMER_LABEL_MESSAGE_KEY);
-const privacyLabel: string = translateMessage(PRIVACY_LABEL_MESSAGE_KEY);
-const aboutRouteName: RouteName = ABOUT_ROUTE_NAME;
-const disclaimerRouteName: RouteName = DISCLAIMER_ROUTE_NAME;
-const privacyRouteName: RouteName = PRIVACY_ROUTE_NAME;
-const smallTextSize: "small" = "small";
-const warningTone: "warning" = "warning";
+interface FooterMessageKeys {
+  readonly aboutLabel: string;
+  readonly disclaimerLabel: string;
+  readonly footerNav: string;
+  readonly independence: string;
+  readonly privacyLabel: string;
+  readonly purpose: string;
+}
+
+const MESSAGE_KEYS: FooterMessageKeys = {
+  aboutLabel: "layout.about",
+  disclaimerLabel: "layout.disclaimer",
+  footerNav: "layout.footerNav",
+  independence: "layout.footerIndependence",
+  privacyLabel: "layout.privacy",
+  purpose: "layout.footerPurpose",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
 </script>
 
 <style scoped>
@@ -64,7 +66,7 @@ const warningTone: "warning" = "warning";
 }
 .site-footer-copy {
   display: grid;
-  gap: 10px;
+  gap: var(--space-3);
 }
 .site-footer-copy :deep(.app-text) {
   color: var(--color-on-dark);
@@ -76,7 +78,7 @@ const warningTone: "warning" = "warning";
 }
 .site-footer-link {
   color: var(--color-on-dark);
-  padding: 5px;
+  padding: var(--space-1);
   text-underline-offset: 4px;
 }
 .site-footer-link:focus-visible {
@@ -89,7 +91,7 @@ const warningTone: "warning" = "warning";
   }
   .site-footer-inner {
     grid-template-columns: 1fr;
-    padding: 32px 18px;
+    padding: var(--space-8) var(--space-4);
   }
 }
 </style>

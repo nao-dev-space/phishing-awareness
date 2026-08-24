@@ -1,4 +1,3 @@
-import { translateMessage } from "@/i18n";
 import type {
   ExternalResource,
   InformationCard,
@@ -20,6 +19,29 @@ import {
   QUIZ_ROUTE_NAME,
   RESOURCES_ROUTE_NAME,
 } from "@/config/routes";
+
+export interface ContentTranslator {
+  (messageKey: string, parameters?: Readonly<Record<string, string | number>>): string;
+}
+
+export interface AppContent {
+  readonly aboutItems: readonly PolicyItem[];
+  readonly appName: string;
+  readonly basicActions: readonly string[];
+  readonly disclaimerItems: readonly PolicyItem[];
+  readonly externalResources: readonly ExternalResource[];
+  readonly homeCards: readonly InformationCard[];
+  readonly learningTopics: readonly LearningTopic[];
+  readonly mailChoices: readonly MailChoice[];
+  readonly navigationItems: readonly NavigationItem[];
+  readonly privacyItems: readonly PolicyItem[];
+  readonly quizQuestions: readonly QuizQuestion[];
+  readonly realCredentialWarning: string;
+  readonly revealPoints: readonly PsychologyPoint[];
+  readonly serviceName: string;
+  readonly suspiciousPoints: readonly SuspiciousPoint[];
+  readonly trainingAccount: TrainingAccount;
+}
 
 interface InformationCardMessageKeys {
   readonly body: string;
@@ -312,20 +334,17 @@ const PRIVACY_ITEM_MESSAGE_KEYS: readonly PolicyItemMessageKeys[] = [
   { title: "privacy.items.3.title", body: "privacy.items.3.body" },
 ];
 
-/**
- * 完全な翻訳キーの組から再利用可能な情報カードを生成する。
- * @param messageKeys カードごとのタイトルと本文に対応する完全な翻訳キー。
- * @returns 翻訳済みのカード一覧。
- */
+/** 完全な翻訳キーの組から再利用可能な情報カードを生成する。 */
 function createInformationCards(
   messageKeys: readonly InformationCardMessageKeys[],
+  translate: ContentTranslator,
 ): readonly InformationCard[] {
   // 定義順を画面の表示順として維持しながら、各フィールドを完全なキーで翻訳する。
   const cards: readonly InformationCard[] = messageKeys.map(
     (keys: InformationCardMessageKeys): InformationCard => {
       const card: InformationCard = {
-        title: translateMessage(keys.title),
-        body: translateMessage(keys.body),
+        title: translate(keys.title),
+        body: translate(keys.body),
       };
       return card;
     },
@@ -333,18 +352,17 @@ function createInformationCards(
   return cards;
 }
 
-/**
- * 完全な翻訳キーの組から方針ページの項目を生成する。
- * @param messageKeys 項目ごとのタイトルと本文に対応する完全な翻訳キー。
- * @returns 翻訳済みの方針項目一覧。
- */
-function createPolicyItems(messageKeys: readonly PolicyItemMessageKeys[]): readonly PolicyItem[] {
+/** 完全な翻訳キーの組から方針ページの項目を生成する。 */
+function createPolicyItems(
+  messageKeys: readonly PolicyItemMessageKeys[],
+  translate: ContentTranslator,
+): readonly PolicyItem[] {
   // JSON内の並びを維持し、方針ページ間で同じ変換処理を重複させない。
   const items: readonly PolicyItem[] = messageKeys.map(
     (keys: PolicyItemMessageKeys): PolicyItem => {
       const item: PolicyItem = {
-        title: translateMessage(keys.title),
-        body: translateMessage(keys.body),
+        title: translate(keys.title),
+        body: translate(keys.body),
       };
       return item;
     },
@@ -352,120 +370,94 @@ function createPolicyItems(messageKeys: readonly PolicyItemMessageKeys[]): reado
   return items;
 }
 
-/**
- * クイズ定義を、画面と判定サービスが使用する翻訳済み問題へ変換する。
- * @param definition 問題ID、正解ID、各表示文言の完全な翻訳キー。
- * @returns 翻訳済みの選択肢と解説を含む問題。
- */
-function createQuizQuestion(definition: QuizDefinition): QuizQuestion {
+/** クイズ定義を、画面と判定サービスが使用する翻訳済み問題へ変換する。 */
+function createQuizQuestion(
+  definition: QuizDefinition,
+  translate: ContentTranslator,
+): QuizQuestion {
   // 選択肢IDと表示文言の対応を保ち、正誤判定に翻訳文字列を使わないよう変換する。
   const options: readonly QuizOption[] = definition.optionDefinitions.map(
     (optionDefinition: QuizOptionDefinition): QuizOption => {
       const option: QuizOption = {
         id: optionDefinition.id,
-        label: translateMessage(optionDefinition.labelMessageKey),
+        label: translate(optionDefinition.labelMessageKey),
       };
       return option;
     },
   );
   const question: QuizQuestion = {
     id: definition.id,
-    prompt: translateMessage(definition.promptMessageKey),
+    prompt: translate(definition.promptMessageKey),
     options,
     correctOptionId: definition.correctOptionId,
-    explanation: translateMessage(definition.explanationMessageKey),
+    explanation: translate(definition.explanationMessageKey),
   };
   return question;
 }
 
-export const APP_NAME: string = translateMessage(APP_NAME_MESSAGE_KEY);
-export const SERVICE_NAME: string = translateMessage(SERVICE_NAME_MESSAGE_KEY);
-export const REAL_CREDENTIAL_WARNING: string = translateMessage(CREDENTIAL_WARNING_MESSAGE_KEY);
-export const TRAINING_ACCOUNT: TrainingAccount = {
-  email: translateMessage(TRAINING_EMAIL_MESSAGE_KEY),
-  password: translateMessage(TRAINING_PASSWORD_MESSAGE_KEY),
-};
-
-export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
-  { label: translateMessage(HOME_NAVIGATION_MESSAGE_KEY), routeName: HOME_ROUTE_NAME },
-  { label: translateMessage(EXPERIENCE_NAVIGATION_MESSAGE_KEY), routeName: MAIL_ROUTE_NAME },
-  { label: translateMessage(LEARN_NAVIGATION_MESSAGE_KEY), routeName: LEARN_ROUTE_NAME },
-  { label: translateMessage(QUIZ_NAVIGATION_MESSAGE_KEY), routeName: QUIZ_ROUTE_NAME },
-  { label: translateMessage(RESOURCES_NAVIGATION_MESSAGE_KEY), routeName: RESOURCES_ROUTE_NAME },
-];
-
-// 利用者が選ぶ行動の制御IDと翻訳済み表示文言を一対一で対応させる。
-export const MAIL_CHOICES: readonly MailChoice[] = MAIL_CHOICE_DEFINITIONS.map(
-  (definition: MailChoiceDefinition): MailChoice => {
-    const choice: MailChoice = {
+/** 完全な翻訳キーパスを、現在のロケールに対応する表示データへ変換する。 */
+export function createContent(translate: ContentTranslator): AppContent {
+  const mailChoices: readonly MailChoice[] = MAIL_CHOICE_DEFINITIONS.map(
+    (definition: MailChoiceDefinition): MailChoice => ({
       id: definition.id,
-      label: translateMessage(definition.labelMessageKey),
+      label: translate(definition.labelMessageKey),
       isSafe: definition.isSafe,
-      explanation: translateMessage(definition.explanationMessageKey),
-    };
-    return choice;
-  },
-);
-
-// 振り返り画面の番号を表示順から生成し、JSON側へ制御値を混在させない。
-export const SUSPICIOUS_POINTS: readonly SuspiciousPoint[] = SUSPICIOUS_POINT_MESSAGE_KEYS.map(
-  (keys: SuspiciousPointMessageKeys, index: number): SuspiciousPoint => {
-    const point: SuspiciousPoint = {
+      explanation: translate(definition.explanationMessageKey),
+    }),
+  );
+  const suspiciousPoints: readonly SuspiciousPoint[] = SUSPICIOUS_POINT_MESSAGE_KEYS.map(
+    (keys: SuspiciousPointMessageKeys, index: number): SuspiciousPoint => ({
       id: index + 1,
-      location: translateMessage(keys.location),
-      risk: translateMessage(keys.risk),
-      safeAction: translateMessage(keys.safeAction),
-    };
-    return point;
-  },
-);
-
-// 学習項目を定義順に翻訳し、画面側へ構造化文言の取得処理を持たせない。
-export const LEARNING_TOPICS: readonly LearningTopic[] = LEARNING_TOPIC_MESSAGE_KEYS.map(
-  (keys: LearningTopicMessageKeys): LearningTopic => {
-    const topic: LearningTopic = {
-      title: translateMessage(keys.title),
-      summary: translateMessage(keys.summary),
-      action: translateMessage(keys.action),
-    };
-    return topic;
-  },
-);
-
-// 基本行動を完全な翻訳キーごとに取得し、配列全体を階層オブジェクトとして参照しない。
-export const BASIC_ACTIONS: readonly string[] = BASIC_ACTION_MESSAGE_KEYS.map(
-  (messageKey: string): string => {
-    const action: string = translateMessage(messageKey);
-    return action;
-  },
-);
-
-// 問題IDと正解IDを維持したまま、表示文言だけをロケールJSONから取得する。
-export const QUIZ_QUESTIONS: readonly QuizQuestion[] = QUIZ_DEFINITIONS.map(
-  (definition: QuizDefinition): QuizQuestion => {
-    const question: QuizQuestion = createQuizQuestion(definition);
-    return question;
-  },
-);
-
-// 公的機関のURLを翻訳対象から分離し、表示名と説明だけを翻訳する。
-export const EXTERNAL_RESOURCES: readonly ExternalResource[] = RESOURCE_DEFINITIONS.map(
-  (definition: ResourceDefinition): ExternalResource => {
-    const resource: ExternalResource = {
-      name: translateMessage(definition.nameMessageKey),
-      description: translateMessage(definition.descriptionMessageKey),
+      location: translate(keys.location),
+      risk: translate(keys.risk),
+      safeAction: translate(keys.safeAction),
+    }),
+  );
+  const learningTopics: readonly LearningTopic[] = LEARNING_TOPIC_MESSAGE_KEYS.map(
+    (keys: LearningTopicMessageKeys): LearningTopic => ({
+      title: translate(keys.title),
+      summary: translate(keys.summary),
+      action: translate(keys.action),
+    }),
+  );
+  const quizQuestions: readonly QuizQuestion[] = QUIZ_DEFINITIONS.map(
+    (definition: QuizDefinition): QuizQuestion => createQuizQuestion(definition, translate),
+  );
+  const externalResources: readonly ExternalResource[] = RESOURCE_DEFINITIONS.map(
+    (definition: ResourceDefinition): ExternalResource => ({
+      name: translate(definition.nameMessageKey),
+      description: translate(definition.descriptionMessageKey),
       url: definition.url,
-    };
-    return resource;
-  },
-);
+    }),
+  );
 
-export const HOME_CARDS: readonly InformationCard[] =
-  createInformationCards(HOME_CARD_MESSAGE_KEYS);
-export const REVEAL_POINTS: readonly PsychologyPoint[] =
-  createInformationCards(REVEAL_POINT_MESSAGE_KEYS);
-export const ABOUT_ITEMS: readonly PolicyItem[] = createPolicyItems(ABOUT_ITEM_MESSAGE_KEYS);
-export const DISCLAIMER_ITEMS: readonly PolicyItem[] = createPolicyItems(
-  DISCLAIMER_ITEM_MESSAGE_KEYS,
-);
-export const PRIVACY_ITEMS: readonly PolicyItem[] = createPolicyItems(PRIVACY_ITEM_MESSAGE_KEYS);
+  return {
+    aboutItems: createPolicyItems(ABOUT_ITEM_MESSAGE_KEYS, translate),
+    appName: translate(APP_NAME_MESSAGE_KEY),
+    basicActions: BASIC_ACTION_MESSAGE_KEYS.map((messageKey: string): string =>
+      translate(messageKey),
+    ),
+    disclaimerItems: createPolicyItems(DISCLAIMER_ITEM_MESSAGE_KEYS, translate),
+    externalResources,
+    homeCards: createInformationCards(HOME_CARD_MESSAGE_KEYS, translate),
+    learningTopics,
+    mailChoices,
+    navigationItems: [
+      { label: translate(HOME_NAVIGATION_MESSAGE_KEY), routeName: HOME_ROUTE_NAME },
+      { label: translate(EXPERIENCE_NAVIGATION_MESSAGE_KEY), routeName: MAIL_ROUTE_NAME },
+      { label: translate(LEARN_NAVIGATION_MESSAGE_KEY), routeName: LEARN_ROUTE_NAME },
+      { label: translate(QUIZ_NAVIGATION_MESSAGE_KEY), routeName: QUIZ_ROUTE_NAME },
+      { label: translate(RESOURCES_NAVIGATION_MESSAGE_KEY), routeName: RESOURCES_ROUTE_NAME },
+    ],
+    privacyItems: createPolicyItems(PRIVACY_ITEM_MESSAGE_KEYS, translate),
+    quizQuestions,
+    realCredentialWarning: translate(CREDENTIAL_WARNING_MESSAGE_KEY),
+    revealPoints: createInformationCards(REVEAL_POINT_MESSAGE_KEYS, translate),
+    serviceName: translate(SERVICE_NAME_MESSAGE_KEY),
+    suspiciousPoints,
+    trainingAccount: {
+      email: translate(TRAINING_EMAIL_MESSAGE_KEY),
+      password: translate(TRAINING_PASSWORD_MESSAGE_KEY),
+    },
+  };
+}

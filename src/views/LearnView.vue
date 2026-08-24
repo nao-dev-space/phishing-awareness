@@ -1,64 +1,78 @@
 ﻿<template>
   <div class="learn-view">
-    <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
+    <PageIntro
+      :eyebrow="t(MESSAGE_KEYS.eyebrow)"
+      :title="t(MESSAGE_KEYS.title)"
+      :description="t(MESSAGE_KEYS.description)"
+    />
     <div class="learn-view-topics">
-      <details v-for="topic in topics" :key="topic.title" class="learn-view-topic">
+      <details v-for="topic in content.learningTopics" :key="topic.title" class="learn-view-topic">
         <summary class="learn-view-summary">{{ topic.title }}</summary>
         <div class="learn-view-topic-body">
           <AppText :text="topic.summary" />
-          <AppText :text="`${actionPrefix}${topic.action}`" :tone="accentTone" />
+          <dl class="learn-view-action-detail">
+            <dt class="learn-view-action-label">{{ t(MESSAGE_KEYS.actionLabel) }}</dt>
+            <dd class="learn-view-action-description">
+              <AppText :text="topic.action" />
+            </dd>
+          </dl>
         </div>
       </details>
     </div>
     <div class="learn-view-basics">
-      <AppHeading :level="basicsHeadingLevel" :text="basicsTitle" />
+      <AppHeading :level="2" :text="t(MESSAGE_KEYS.basicsTitle)" />
       <ul class="learn-view-action-list">
-        <li v-for="action in basicActions" :key="action" class="learn-view-action-item">
-          <div class="learn-view-check" aria-hidden="true">{{ checkmark }}</div>
+        <li v-for="action in content.basicActions" :key="action" class="learn-view-action-item">
+          <div class="learn-view-check" aria-hidden="true">{{ t(MESSAGE_KEYS.checkmark) }}</div>
           <AppText :text="action" />
         </li>
       </ul>
     </div>
     <div class="learn-view-actions">
-      <RouteAction :label="experienceLabel" :route-name="mailRoute" />
-      <RouteAction :label="quizLabel" :route-name="quizRoute" :variant="secondaryVariant" />
+      <RouteAction :label="t(MESSAGE_KEYS.experienceLabel)" :route-name="MAIL_ROUTE_NAME" />
+      <RouteAction
+        :label="t(MESSAGE_KEYS.quizLabel)"
+        :route-name="QUIZ_ROUTE_NAME"
+        variant="secondary"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeading, { type HeadingLevel } from "@/components/atoms/AppHeading.vue";
+import { type ComputedRef } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
+import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
-import { BASIC_ACTIONS, LEARNING_TOPICS } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
-import type { LearningTopic, RouteName } from "@/types/app";
 
-const EYEBROW_MESSAGE_KEY: string = "learn.eyebrow";
-const TITLE_MESSAGE_KEY: string = "learn.title";
-const DESCRIPTION_MESSAGE_KEY: string = "learn.description";
-const ACTION_PREFIX_MESSAGE_KEY: string = "learn.actionPrefix";
-const BASICS_TITLE_MESSAGE_KEY: string = "learn.basicsTitle";
-const EXPERIENCE_LABEL_MESSAGE_KEY: string = "learn.experience";
-const QUIZ_LABEL_MESSAGE_KEY: string = "learn.quiz";
-const CHECKMARK_MESSAGE_KEY: string = "visuals.checkmark";
-const eyebrow: string = translateMessage(EYEBROW_MESSAGE_KEY);
-const title: string = translateMessage(TITLE_MESSAGE_KEY);
-const description: string = translateMessage(DESCRIPTION_MESSAGE_KEY);
-const topics: readonly LearningTopic[] = LEARNING_TOPICS;
-const basicActions: readonly string[] = BASIC_ACTIONS;
-const actionPrefix: string = translateMessage(ACTION_PREFIX_MESSAGE_KEY);
-const basicsTitle: string = translateMessage(BASICS_TITLE_MESSAGE_KEY);
-const experienceLabel: string = translateMessage(EXPERIENCE_LABEL_MESSAGE_KEY);
-const quizLabel: string = translateMessage(QUIZ_LABEL_MESSAGE_KEY);
-const checkmark: string = translateMessage(CHECKMARK_MESSAGE_KEY);
-const mailRoute: RouteName = MAIL_ROUTE_NAME;
-const quizRoute: RouteName = QUIZ_ROUTE_NAME;
-const basicsHeadingLevel: HeadingLevel = 2;
-const accentTone: "accent" = "accent";
-const secondaryVariant: "secondary" = "secondary";
+interface LearnMessageKeys {
+  readonly actionLabel: string;
+  readonly basicsTitle: string;
+  readonly checkmark: string;
+  readonly description: string;
+  readonly eyebrow: string;
+  readonly experienceLabel: string;
+  readonly quizLabel: string;
+  readonly title: string;
+}
+
+const MESSAGE_KEYS: LearnMessageKeys = {
+  actionLabel: "learn.actionLabel",
+  basicsTitle: "learn.basicsTitle",
+  checkmark: "visuals.checkmark",
+  description: "learn.description",
+  eyebrow: "learn.eyebrow",
+  experienceLabel: "learn.experience",
+  quizLabel: "learn.quiz",
+  title: "learn.title",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
 </script>
 
 <style scoped>
@@ -82,9 +96,9 @@ const secondaryVariant: "secondary" = "secondary";
   color: var(--color-ink);
   cursor: pointer;
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: var(--font-size-summary);
   font-weight: 800;
-  padding: 18px 22px;
+  padding: var(--space-5) var(--space-6);
 }
 .learn-view-summary:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus);
@@ -93,8 +107,26 @@ const secondaryVariant: "secondary" = "secondary";
 .learn-view-topic-body {
   border-top: var(--border-width) solid var(--color-border);
   display: grid;
-  gap: 10px;
-  padding: 18px 22px 22px;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6) var(--space-6);
+}
+.learn-view-action-detail {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+}
+.learn-view-action-label {
+  color: var(--color-primary-dark);
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.learn-view-action-description {
+  margin: 0;
+}
+.learn-view-action-description :deep(.app-text) {
+  color: var(--color-ink);
+  font-weight: 400;
 }
 .learn-view-basics {
   background: var(--color-primary-soft);
@@ -105,7 +137,7 @@ const secondaryVariant: "secondary" = "secondary";
 }
 .learn-view-action-list {
   display: grid;
-  gap: 11px;
+  gap: var(--space-3);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -113,7 +145,7 @@ const secondaryVariant: "secondary" = "secondary";
 .learn-view-action-item {
   align-items: flex-start;
   display: grid;
-  gap: 10px;
+  gap: var(--space-3);
   grid-template-columns: auto 1fr;
 }
 .learn-view-check {
@@ -123,10 +155,10 @@ const secondaryVariant: "secondary" = "secondary";
   color: var(--color-primary-dark);
   display: flex;
   font-weight: 900;
-  height: 26px;
+  height: var(--space-7);
   justify-content: center;
   margin-top: 2px;
-  width: 26px;
+  width: var(--space-7);
 }
 .learn-view-actions {
   display: flex;

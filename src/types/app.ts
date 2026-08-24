@@ -17,7 +17,7 @@ export type RouteName =
 export interface RouteDefinition {
   readonly name: RouteName;
   readonly path: string;
-  readonly title: string;
+  readonly titleMessageKey: string;
   readonly component: Component;
 }
 
@@ -59,20 +59,14 @@ export interface LearningTopic {
   readonly action: string;
 }
 
-export interface InformationCard {
+export interface TitledContent {
   readonly body: string;
   readonly title: string;
 }
 
-export interface PsychologyPoint {
-  readonly body: string;
-  readonly title: string;
-}
-
-export interface PolicyItem {
-  readonly body: string;
-  readonly title: string;
-}
+export type InformationCard = TitledContent;
+export type PsychologyPoint = TitledContent;
+export type PolicyItem = TitledContent;
 
 export interface QuizOption {
   readonly id: string;

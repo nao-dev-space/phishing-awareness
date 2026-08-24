@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="app-layout">
-    <a class="app-layout-skip-link" :href="mainTarget">{{ skipLabel }}</a>
+    <a class="app-layout-skip-link" :href="mainTarget">{{ t(SKIP_LINK_MESSAGE_KEY) }}</a>
     <AppHeader />
     <main :id="mainId" class="app-layout-main" tabindex="-1">
       <slot />
@@ -12,12 +12,12 @@
 <script setup lang="ts">
 import AppFooter from "@/components/organisms/AppFooter.vue";
 import AppHeader from "@/components/organisms/AppHeader.vue";
-import { translateMessage } from "@/i18n";
+import { useI18n, type Composer } from "vue-i18n";
 
 const SKIP_LINK_MESSAGE_KEY: string = "layout.skip";
 const mainId: string = "main-content";
 const mainTarget: string = `#${mainId}`;
-const skipLabel: string = translateMessage(SKIP_LINK_MESSAGE_KEY);
+const { t }: Composer = useI18n();
 </script>
 
 <style scoped>
@@ -33,7 +33,7 @@ const skipLabel: string = translateMessage(SKIP_LINK_MESSAGE_KEY);
   background: var(--color-ink);
   color: var(--color-on-dark);
   left: 12px;
-  padding: 10px 14px;
+  padding: var(--space-3) var(--space-4);
   position: fixed;
   top: -80px;
   z-index: 100;
@@ -43,7 +43,7 @@ const skipLabel: string = translateMessage(SKIP_LINK_MESSAGE_KEY);
 }
 @media (max-width: 700px) {
   .app-layout-main {
-    padding: 32px 18px 0;
+    padding: var(--space-8) var(--space-4) 0;
   }
 }
 </style>

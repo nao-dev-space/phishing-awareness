@@ -1,10 +1,12 @@
 ﻿<template>
   <header class="site-header">
     <div class="site-header-inner">
-      <RouterLink class="site-header-brand" :to="{ name: homeRouteName }">{{ appName }}</RouterLink>
-      <nav class="site-header-desktop-nav" :aria-label="desktopNavLabel">
+      <RouterLink class="site-header-brand" :to="{ name: HOME_ROUTE_NAME }">{{
+        content.appName
+      }}</RouterLink>
+      <nav class="site-header-desktop-nav" :aria-label="t(MESSAGE_KEYS.desktopNav)">
         <RouterLink
-          v-for="item in navigationItems"
+          v-for="item in content.navigationItems"
           :key="item.routeName"
           class="site-header-nav-link"
           :to="{ name: item.routeName }"
@@ -14,7 +16,7 @@
       <AppButton
         class="site-header-menu-button"
         :label="menuButtonLabel"
-        :variant="menuButtonVariant"
+        variant="quiet"
         :aria-expanded="isMenuOpen"
         :aria-controls="mobileMenuId"
         @click="toggleMenu"
@@ -24,10 +26,10 @@
       v-if="isMenuOpen"
       :id="mobileMenuId"
       class="site-header-mobile-nav"
-      :aria-label="mobileNavLabel"
+      :aria-label="t(MESSAGE_KEYS.mobileNav)"
     >
       <RouterLink
-        v-for="item in navigationItems"
+        v-for="item in content.navigationItems"
         :key="item.routeName"
         class="site-header-mobile-link"
         :to="{ name: item.routeName }"
@@ -40,46 +42,41 @@
 
 <script setup lang="ts">
 import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { useI18n, type Composer } from "vue-i18n";
 import AppButton from "@/components/atoms/AppButton.vue";
-import { APP_NAME, NAVIGATION_ITEMS } from "@/config/content";
+import { useContent } from "@/composables/useContent";
+import type { AppContent } from "@/config/content";
 import { HOME_ROUTE_NAME } from "@/config/routes";
-import { translateMessage } from "@/i18n";
-import type { NavigationItem, RouteName } from "@/types/app";
 
-const DESKTOP_NAV_MESSAGE_KEY: string = "layout.desktopNav";
-const MOBILE_NAV_MESSAGE_KEY: string = "layout.mobileNav";
-const OPEN_MENU_MESSAGE_KEY: string = "layout.openMenu";
-const CLOSE_MENU_MESSAGE_KEY: string = "layout.closeMenu";
-const appName: string = APP_NAME;
-const navigationItems: readonly NavigationItem[] = NAVIGATION_ITEMS;
-const homeRouteName: RouteName = HOME_ROUTE_NAME;
-const desktopNavLabel: string = translateMessage(DESKTOP_NAV_MESSAGE_KEY);
-const mobileNavLabel: string = translateMessage(MOBILE_NAV_MESSAGE_KEY);
-const openMenuLabel: string = translateMessage(OPEN_MENU_MESSAGE_KEY);
-const closeMenuLabel: string = translateMessage(CLOSE_MENU_MESSAGE_KEY);
+interface HeaderMessageKeys {
+  readonly closeMenu: string;
+  readonly desktopNav: string;
+  readonly mobileNav: string;
+  readonly openMenu: string;
+}
+
+const MESSAGE_KEYS: HeaderMessageKeys = {
+  closeMenu: "layout.closeMenu",
+  desktopNav: "layout.desktopNav",
+  mobileNav: "layout.mobileNav",
+  openMenu: "layout.openMenu",
+};
+const { t }: Composer = useI18n();
+const content: ComputedRef<AppContent> = useContent();
 const mobileMenuId: string = "mobile-navigation";
-const menuButtonVariant: "quiet" = "quiet";
 const isMenuOpen: Ref<boolean> = ref(false);
-/**
- * 現在の開閉状態に対応するメニューボタンの操作名を返す。
- * @returns メニューを開く、または閉じる操作を示す翻訳済み文言。
- */
+/** 現在の開閉状態に対応するメニューボタンの操作名を返す。 */
 const menuButtonLabel: ComputedRef<string> = computed((): string => {
-  const label: string = isMenuOpen.value ? closeMenuLabel : openMenuLabel;
+  const messageKey: string = isMenuOpen.value ? MESSAGE_KEYS.closeMenu : MESSAGE_KEYS.openMenu;
+  const label: string = t(messageKey);
   return label;
 });
 
-/**
- * メニューの開閉状態を反転する。
- * @returns 戻り値はなく、ローカル表示状態だけを更新する。
- */
+/** メニューの開閉状態を反転する。 */
 function toggleMenu(): void {
   isMenuOpen.value = !isMenuOpen.value;
 }
-/**
- * ページ遷移時にメニューを閉じる。
- * @returns 戻り値はなく、ローカル表示状態だけを更新する。
- */
+/** ページ遷移時にメニューを閉じる。 */
 function closeMenu(): void {
   isMenuOpen.value = false;
 }
@@ -102,12 +99,12 @@ function closeMenu(): void {
   margin: 0 auto;
   max-width: var(--content-wide);
   min-height: 72px;
-  padding: 10px 24px;
+  padding: var(--space-3) var(--space-6);
 }
 .site-header-brand {
   color: var(--color-ink);
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: var(--font-size-brand);
   font-weight: 850;
   text-decoration: none;
 }
@@ -120,7 +117,7 @@ function closeMenu(): void {
   border-radius: var(--radius-small);
   color: var(--color-ink-soft);
   font-weight: 650;
-  padding: 9px 12px;
+  padding: var(--space-2) var(--space-3);
   text-decoration: none;
 }
 .site-header-nav-link:hover,
@@ -143,7 +140,7 @@ function closeMenu(): void {
   border-top: var(--border-width) solid var(--color-border);
   display: grid;
   gap: 4px;
-  padding: 12px 24px 18px;
+  padding: var(--space-3) var(--space-6) var(--space-4);
 }
 @media (min-width: 761px) {
   .site-header-mobile-nav {
@@ -156,19 +153,18 @@ function closeMenu(): void {
   }
   .site-header-menu-button {
     display: inline-flex;
+    flex: 0 0 auto;
+    font-size: var(--font-size-small);
+    padding: var(--space-2) var(--space-3);
+    white-space: nowrap;
   }
   .site-header-inner {
     gap: 8px;
     min-height: 64px;
-    padding: 8px 18px;
+    padding: var(--space-2) var(--space-4);
   }
   .site-header-brand {
-    font-size: 15px;
-    white-space: nowrap;
-  }
-  .site-header-menu-button :deep(.app-button) {
-    font-size: var(--font-size-small);
-    padding: 9px 14px;
+    font-size: var(--font-size-label);
     white-space: nowrap;
   }
 }
