@@ -90,7 +90,6 @@ import AppLayout from "@/components/templates/AppLayout.vue";
 }
 .app-body {
   margin: 0;
-  min-width: 320px;
 }
 @media (prefers-reduced-motion: reduce) {
   .app-document {

@@ -168,4 +168,10 @@ function closeMenu(): void {
     white-space: nowrap;
   }
 }
+@media (max-width: 340px) {
+  .site-header-inner {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
+  }
+}
 </style>

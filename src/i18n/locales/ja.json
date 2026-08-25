@@ -7,9 +7,6 @@
     "trainingEmail": "demo-user{'@'}example.test",
     "trainingPassword": "Training-1234"
   },
-  "errors": {
-    "CLIPBOARD_WRITE_FAILED": "コピーできませんでした。表示された体験用情報を使用してください。"
-  },
   "visuals": {
     "browserDots": "● ● ●",
     "checkmark": "✓",
@@ -240,13 +237,10 @@
     "fakeAddress": "https://cloud-letter-check.example/login",
     "logoLabel": "架空サービス Cloud Letterのロゴ",
     "panelTitle": "アカウントを確認",
-    "demoTitle": "この体験専用のアカウント",
-    "copyEmail": "体験用メールをコピー",
-    "copyPassword": "体験用パスワードをコピー",
-    "emailCopied": "体験用メールアドレスをコピーしました。",
-    "passwordCopied": "体験用パスワードをコピーしました。",
     "emailLabel": "メールアドレス相当の入力欄",
     "passwordLabel": "パスワード相当の入力欄",
+    "autofill": "体験用情報を入力",
+    "autofilled": "体験用のメールアドレスとパスワードを入力しました。",
     "login": "ログイン（送信されません）",
     "alternativesTitle": "この画面でどう行動しますか？",
     "alternativesDescription": "文字を入力せず、安全な行動を選んで体験を続けられます。",

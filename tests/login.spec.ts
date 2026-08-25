@@ -1,6 +1,6 @@
 import { flushPromises, mount, type DOMWrapper, type VueWrapper } from "@vue/test-utils";
 import { createMemoryHistory, createRouter, type Router } from "vue-router";
-import { beforeEach, describe, expect, it, vi, type Mock, type MockInstance } from "vitest";
+import { beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import LoginView from "@/views/LoginView.vue";
 import RevealView from "@/views/RevealView.vue";
 import { createContent, type AppContent } from "@/config/content";
@@ -100,20 +100,18 @@ describe("疑似ログインの安全性", (): void => {
     expect(router.currentRoute.value.name).toBe("experience-reveal");
   });
 
-  it("コピー操作では固定された体験用情報だけを渡す", async (): Promise<void> => {
-    type ClipboardWrite = (clipboardText: string) => Promise<void>;
-    const writeText: Mock<ClipboardWrite> = vi.fn<ClipboardWrite>().mockResolvedValue();
-    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+  it("一括入力操作では固定された体験用情報だけをフォームへ設定する", async (): Promise<void> => {
     const router: Router = createTestRouter();
     const wrapper: VueWrapper = mount(LoginView, { global: { plugins: [router, i18n] } });
-    const copyButtons: ReturnType<VueWrapper["findAll"]> = wrapper
+    const autofillButtons: ReturnType<VueWrapper["findAll"]> = wrapper
       .findAll("button")
-      .filter((button): boolean => button.text().includes("コピー"));
+      .filter((button): boolean => button.text().includes("体験用情報を入力"));
+    const autofillButton: DOMWrapper<Element> = getDomWrapper(autofillButtons, 0);
 
-    await getDomWrapper(copyButtons, 0).trigger("click");
-    await getDomWrapper(copyButtons, 1).trigger("click");
+    await autofillButton.trigger("click");
 
-    expect(writeText).toHaveBeenNthCalledWith(1, content.trainingAccount.email);
-    expect(writeText).toHaveBeenNthCalledWith(2, content.trainingAccount.password);
+    expect(getInputElement(wrapper, 0).value).toBe(content.trainingAccount.email);
+    expect(getInputElement(wrapper, 1).value).toBe(content.trainingAccount.password);
+    expect(wrapper.text()).toContain("体験用のメールアドレスとパスワードを入力しました。");
   });
 });

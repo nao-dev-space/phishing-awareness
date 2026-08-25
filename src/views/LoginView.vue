@@ -25,42 +25,18 @@
           :mark="t(MESSAGE_KEYS.logoMark)"
         />
         <AppHeading :level="2" :text="t(MESSAGE_KEYS.panelTitle)" size="card" />
-        <div :id="demoDescriptionId" class="login-view-demo-account">
-          <AppText :text="t(MESSAGE_KEYS.demoTitle)" tone="accent" />
-          <div class="login-view-credential-row">
-            <code class="login-view-credential">{{ content.trainingAccount.email }}</code>
-            <AppButton
-              :label="t(MESSAGE_KEYS.copyEmailLabel)"
-              variant="quiet"
-              @click="copyTrainingValue(content.trainingAccount.email, MESSAGE_KEYS.emailCopied)"
-            />
-          </div>
-          <div class="login-view-credential-row">
-            <code class="login-view-credential">{{ content.trainingAccount.password }}</code>
-            <AppButton
-              :label="t(MESSAGE_KEYS.copyPasswordLabel)"
-              variant="quiet"
-              @click="
-                copyTrainingValue(content.trainingAccount.password, MESSAGE_KEYS.passwordCopied)
-              "
-            />
-          </div>
-          <AppText
-            class="login-view-copy-status"
-            :text="copyStatus"
-            size="small"
-            role="status"
-            aria-live="polite"
-          />
-        </div>
-        <form class="login-view-form" autocomplete="off" novalidate @submit.prevent="handleSubmit">
+        <form
+          :class="['login-view-form', { 'login-view-form-autofilled': hasAutofilled }]"
+          autocomplete="off"
+          novalidate
+          @submit.prevent="handleSubmit"
+        >
           <AppFormField
             :id="emailFieldId"
             v-model="emailInput"
             name="training-user-identifier"
             :label="t(MESSAGE_KEYS.emailLabel)"
             inputmode="email"
-            :described-by="demoDescriptionId"
           />
           <AppFormField
             id="training-secret-phrase"
@@ -69,8 +45,15 @@
             :label="t(MESSAGE_KEYS.passwordLabel)"
             type="password"
             autocomplete="new-password"
-            :described-by="demoDescriptionId"
           />
+          <div class="login-view-autofill">
+            <AppButton
+              :label="t(MESSAGE_KEYS.autofillLabel)"
+              variant="secondary"
+              @click="fillTrainingAccount"
+            />
+            <AppText :text="autofillStatus" size="small" role="status" aria-live="polite" />
+          </div>
           <AppButton :label="t(MESSAGE_KEYS.loginLabel)" type="submit" />
         </form>
       </div>
@@ -125,20 +108,16 @@ import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import type { AppContent } from "@/config/content";
 import { REVEAL_ROUTE_NAME } from "@/config/routes";
-import { writeTrainingTextToClipboard, type ClipboardWriteResult } from "@/services/clipboard";
-import { getErrorMessageKey } from "@/services/errors";
 
 interface LoginMessageKeys {
   readonly alternativesDescription: string;
   readonly alternativesTitle: string;
+  readonly autofilled: string;
+  readonly autofillLabel: string;
   readonly browserDots: string;
   readonly checkUrlExplanation: string;
   readonly checkUrlLabel: string;
-  readonly copyEmailLabel: string;
-  readonly copyPasswordLabel: string;
-  readonly demoTitle: string;
   readonly description: string;
-  readonly emailCopied: string;
   readonly emailLabel: string;
   readonly enterChoiceLabel: string;
   readonly eyebrow: string;
@@ -149,7 +128,6 @@ interface LoginMessageKeys {
   readonly officialSiteExplanation: string;
   readonly officialSiteLabel: string;
   readonly panelTitle: string;
-  readonly passwordCopied: string;
   readonly passwordLabel: string;
   readonly revealLabel: string;
   readonly safeChoiceTitle: string;
@@ -160,14 +138,12 @@ interface LoginMessageKeys {
 const MESSAGE_KEYS: LoginMessageKeys = {
   alternativesDescription: "login.alternativesDescription",
   alternativesTitle: "login.alternativesTitle",
+  autofilled: "login.autofilled",
+  autofillLabel: "login.autofill",
   browserDots: "visuals.browserDots",
   checkUrlExplanation: "login.checkUrlExplanation",
   checkUrlLabel: "login.checkUrl",
-  copyEmailLabel: "login.copyEmail",
-  copyPasswordLabel: "login.copyPassword",
-  demoTitle: "login.demoTitle",
   description: "login.description",
-  emailCopied: "login.emailCopied",
   emailLabel: "login.emailLabel",
   enterChoiceLabel: "login.enter",
   eyebrow: "login.eyebrow",
@@ -178,7 +154,6 @@ const MESSAGE_KEYS: LoginMessageKeys = {
   officialSiteExplanation: "login.officialSiteExplanation",
   officialSiteLabel: "login.officialSite",
   panelTitle: "login.panelTitle",
-  passwordCopied: "login.passwordCopied",
   passwordLabel: "login.passwordLabel",
   revealLabel: "login.reveal",
   safeChoiceTitle: "login.safeChoiceTitle",
@@ -190,21 +165,19 @@ const { t }: Composer = useI18n();
 const content: ComputedRef<AppContent> = useContent();
 const emailInput: Ref<string> = ref("");
 const passwordInput: Ref<string> = ref("");
-const copyStatus: Ref<string> = ref("");
+const autofillStatus: Ref<string> = ref("");
+const hasAutofilled: Ref<boolean> = ref(false);
 const safeActionMessage: Ref<string> = ref("");
 const emailFieldId: string = "training-user-identifier";
-const demoDescriptionId: string = "training-account-description";
 
-/** 固定された体験用文字列だけをクリップボードへコピーする。 */
-async function copyTrainingValue(trainingValue: string, successMessageKey: string): Promise<void> {
-  const writeResult: ClipboardWriteResult = await writeTrainingTextToClipboard(trainingValue);
-
-  // コピーに成功した場合だけ成功文言を表示し、ブラウザー例外を画面へ直接渡さない。
-  if (writeResult.isSuccessful) {
-    copyStatus.value = t(successMessageKey);
-    return;
-  }
-  copyStatus.value = t(getErrorMessageKey(writeResult.errorCode));
+/** 固定された体験用アカウントだけを疑似ログインフォームへ入力する。 */
+async function fillTrainingAccount(): Promise<void> {
+  hasAutofilled.value = false;
+  emailInput.value = content.value.trainingAccount.email;
+  passwordInput.value = content.value.trainingAccount.password;
+  autofillStatus.value = t(MESSAGE_KEYS.autofilled);
+  await nextTick();
+  hasAutofilled.value = true;
 }
 
 /** 疑似送信をその場で終了し、入力を消去して種明かしへ進む。 */
@@ -272,26 +245,12 @@ function chooseSafeAction(explanationMessageKey: string): void {
   max-width: 560px;
   padding: 40px;
 }
-.login-view-demo-account {
-  background: var(--color-surface);
-  border: var(--border-width) dashed var(--color-cloud);
-  border-radius: var(--radius-medium);
+.login-view-autofill {
   display: grid;
-  gap: var(--space-3);
-  padding: 16px;
+  gap: var(--space-2);
 }
-.login-view-credential-row {
-  align-items: center;
-  display: grid;
-  gap: var(--space-3);
-  grid-template-columns: 1fr auto;
-}
-.login-view-credential {
-  background: var(--color-surface-soft);
-  border-radius: var(--radius-small);
-  color: var(--color-ink);
-  overflow-wrap: anywhere;
-  padding: var(--space-3);
+.login-view-form-autofilled :deep(.form-field-input) {
+  animation: login-view-autofill-highlight var(--motion-medium);
 }
 .login-view-form,
 .login-view-alternatives {
@@ -319,8 +278,15 @@ function chooseSafeAction(explanationMessageKey: string): void {
   .login-view-panel {
     padding: var(--space-6) var(--space-4);
   }
-  .login-view-credential-row {
-    grid-template-columns: 1fr;
+}
+@keyframes login-view-autofill-highlight {
+  from {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+  }
+  to {
+    background: var(--color-surface);
+    border-color: var(--color-border-strong);
   }
 }
 </style>
