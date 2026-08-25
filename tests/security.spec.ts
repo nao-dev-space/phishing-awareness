@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const headersFilePath: string = resolve("public/_headers");
 const redirectsFilePath: string = resolve("public/_redirects");
+const loginViewFilePath: string = resolve("src/views/LoginView.vue");
 const quizViewFilePath: string = resolve("src/views/QuizView.vue");
 
 describe("公開時の多層防御", (): void => {
@@ -28,5 +29,16 @@ describe("公開時の多層防御", (): void => {
 
     expect(quizViewSource).not.toContain(":style=");
     expect(quizViewSource).toContain("<progress");
+  });
+
+  it("疑似ログイン画面にパスワードマネージャーが扱う認証入力要素を置かない", (): void => {
+    const loginViewSource: string = readFileSync(loginViewFilePath, "utf8");
+
+    expect(loginViewSource).not.toContain("<form");
+    expect(loginViewSource).not.toContain("<input");
+    expect(loginViewSource).not.toContain("<textarea");
+    expect(loginViewSource).not.toContain('type="password"');
+    expect(loginViewSource).not.toContain("AppFormField");
+    expect(loginViewSource).toContain("login-view-credential-preview");
   });
 });

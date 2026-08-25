@@ -3,6 +3,7 @@ import type { RouteConfiguration, RouteName } from "@/types/app";
 export const HOME_ROUTE_NAME: RouteName = "home";
 export const MAIL_ROUTE_NAME: RouteName = "experience-mail";
 export const LOGIN_ROUTE_NAME: RouteName = "experience-login";
+export const CHECKPOINT_ROUTE_NAME: RouteName = "experience-checkpoint";
 export const REVEAL_ROUTE_NAME: RouteName = "experience-reveal";
 export const REVIEW_ROUTE_NAME: RouteName = "experience-review";
 export const LEARN_ROUTE_NAME: RouteName = "learn";
@@ -24,6 +25,11 @@ export const ROUTE_CONFIGURATIONS: readonly RouteConfiguration[] = [
     name: LOGIN_ROUTE_NAME,
     path: "/experience/login",
     titleMessageKey: "routeTitles.login",
+  },
+  {
+    name: CHECKPOINT_ROUTE_NAME,
+    path: "/experience/checkpoint",
+    titleMessageKey: "routeTitles.checkpoint",
   },
   {
     name: REVEAL_ROUTE_NAME,

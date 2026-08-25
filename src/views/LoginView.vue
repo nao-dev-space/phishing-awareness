@@ -24,48 +24,117 @@
           :accessible-label="t(MESSAGE_KEYS.logoLabel)"
           :mark="t(MESSAGE_KEYS.logoMark)"
         />
-        <AppHeading :level="2" :text="t(MESSAGE_KEYS.panelTitle)" size="card" />
-        <form
-          :class="['login-view-form', { 'login-view-form-autofilled': hasAutofilled }]"
-          autocomplete="off"
-          novalidate
-          @submit.prevent="handleSubmit"
-        >
-          <AppFormField
-            :id="emailFieldId"
-            v-model="emailInput"
-            name="training-user-identifier"
-            :label="t(MESSAGE_KEYS.emailLabel)"
-            inputmode="email"
-          />
-          <AppFormField
-            id="training-secret-phrase"
-            v-model="passwordInput"
-            name="training-secret-phrase"
-            :label="t(MESSAGE_KEYS.passwordLabel)"
-            type="password"
-            autocomplete="new-password"
-          />
-          <div class="login-view-autofill">
+        <template v-if="simulationState === 'idle'">
+          <AppHeading :level="2" :text="t(MESSAGE_KEYS.panelTitle)" size="card" />
+          <dl class="login-view-credential-preview" :aria-label="t(MESSAGE_KEYS.previewLabel)">
+            <div class="login-view-credential-row">
+              <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.emailLabel) }}</dt>
+              <dd
+                :class="[
+                  'login-view-credential-value',
+                  { 'login-view-credential-value-empty': !hasSimulatedCredentials },
+                ]"
+              >
+                {{
+                  hasSimulatedCredentials
+                    ? content.trainingCredentialPreview.email
+                    : t(MESSAGE_KEYS.emptyValue)
+                }}
+              </dd>
+            </div>
+            <div class="login-view-credential-row">
+              <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.passwordLabel) }}</dt>
+              <dd
+                :class="[
+                  'login-view-credential-value',
+                  'login-view-password-mask',
+                  { 'login-view-credential-value-empty': !hasSimulatedCredentials },
+                ]"
+                :aria-label="
+                  hasSimulatedCredentials
+                    ? t(MESSAGE_KEYS.passwordMaskLabel)
+                    : t(MESSAGE_KEYS.emptyValue)
+                "
+              >
+                <span aria-hidden="true">
+                  {{
+                    hasSimulatedCredentials
+                      ? content.trainingCredentialPreview.passwordMask
+                      : t(MESSAGE_KEYS.emptyValue)
+                  }}
+                </span>
+              </dd>
+            </div>
+          </dl>
+          <AppText :text="t(MESSAGE_KEYS.previewDescription)" size="small" tone="muted" />
+          <div
+            ref="credentialActionContainer"
+            :class="[
+              'login-view-credential-action',
+              { 'login-view-credential-action-required': shouldPromptCredentials },
+            ]"
+          >
             <AppButton
-              :label="t(MESSAGE_KEYS.autofillLabel)"
+              :label="t(MESSAGE_KEYS.fillCredentialsLabel)"
               variant="secondary"
-              @click="fillTrainingAccount"
+              :aria-describedby="shouldPromptCredentials ? CREDENTIAL_PROMPT_ID : undefined"
+              @click="fillSimulatedCredentials"
             />
-            <AppText :text="autofillStatus" size="small" role="status" aria-live="polite" />
           </div>
-          <AppButton :label="t(MESSAGE_KEYS.loginLabel)" type="submit" />
-        </form>
+          <p
+            v-if="shouldPromptCredentials"
+            :id="CREDENTIAL_PROMPT_ID"
+            class="login-view-credential-prompt"
+            role="alert"
+          >
+            {{ t(MESSAGE_KEYS.credentialPrompt) }}
+          </p>
+          <p class="login-view-simulation-status" aria-live="polite">
+            {{ hasSimulatedCredentials ? t(MESSAGE_KEYS.credentialsFilled) : "" }}
+          </p>
+          <AppButton :label="t(MESSAGE_KEYS.continueLabel)" @click="continueSimulation" />
+        </template>
+        <div v-else class="login-view-progress" role="status" aria-live="polite">
+          <span
+            v-if="simulationState === 'checking'"
+            class="login-view-spinner"
+            aria-hidden="true"
+          ></span>
+          <span v-else class="login-view-progress-check" aria-hidden="true">{{
+            t(MESSAGE_KEYS.checkmark)
+          }}</span>
+          <AppHeading
+            :level="2"
+            :text="
+              t(
+                simulationState === 'checking'
+                  ? MESSAGE_KEYS.checkingTitle
+                  : MESSAGE_KEYS.confirmedTitle,
+              )
+            "
+            size="card"
+          />
+          <AppText
+            :text="
+              t(
+                simulationState === 'checking'
+                  ? MESSAGE_KEYS.checkingDescription
+                  : MESSAGE_KEYS.confirmedDescription,
+              )
+            "
+            tone="muted"
+          />
+        </div>
       </div>
     </div>
-    <div class="login-view-alternatives">
+    <div v-if="simulationState === 'idle'" class="login-view-alternatives">
       <AppHeading :level="2" :text="t(MESSAGE_KEYS.alternativesTitle)" />
       <AppText :text="t(MESSAGE_KEYS.alternativesDescription)" />
       <div class="login-view-alternative-actions">
         <AppButton
           :label="t(MESSAGE_KEYS.enterChoiceLabel)"
           variant="secondary"
-          @click="focusFirstField"
+          @click="continueSimulation"
         />
         <AppButton
           :label="t(MESSAGE_KEYS.checkUrlLabel)"
@@ -94,11 +163,10 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, type ComputedRef, type Ref } from "vue";
+import { nextTick, onBeforeUnmount, ref, type ComputedRef, type Ref } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import { useRouter, type Router } from "vue-router";
 import AppButton from "@/components/atoms/AppButton.vue";
-import AppFormField from "@/components/atoms/AppFormField.vue";
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import CloudLetterLogo from "@/components/atoms/CloudLetterLogo.vue";
@@ -107,28 +175,40 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import type { AppContent } from "@/config/content";
-import { REVEAL_ROUTE_NAME } from "@/config/routes";
+import { CHECKPOINT_ROUTE_NAME, REVEAL_ROUTE_NAME } from "@/config/routes";
+
+type SimulationState = "idle" | "checking" | "confirmed";
 
 interface LoginMessageKeys {
   readonly alternativesDescription: string;
   readonly alternativesTitle: string;
-  readonly autofilled: string;
-  readonly autofillLabel: string;
   readonly browserDots: string;
+  readonly checkingDescription: string;
+  readonly checkingTitle: string;
   readonly checkUrlExplanation: string;
   readonly checkUrlLabel: string;
+  readonly checkmark: string;
+  readonly confirmedDescription: string;
+  readonly confirmedTitle: string;
+  readonly continueLabel: string;
+  readonly credentialPrompt: string;
+  readonly credentialsFilled: string;
   readonly description: string;
   readonly emailLabel: string;
+  readonly emptyValue: string;
   readonly enterChoiceLabel: string;
   readonly eyebrow: string;
   readonly fakeAddress: string;
-  readonly loginLabel: string;
+  readonly fillCredentialsLabel: string;
   readonly logoLabel: string;
   readonly logoMark: string;
   readonly officialSiteExplanation: string;
   readonly officialSiteLabel: string;
   readonly panelTitle: string;
+  readonly passwordMaskLabel: string;
   readonly passwordLabel: string;
+  readonly previewDescription: string;
+  readonly previewLabel: string;
   readonly revealLabel: string;
   readonly safeChoiceTitle: string;
   readonly title: string;
@@ -138,23 +218,33 @@ interface LoginMessageKeys {
 const MESSAGE_KEYS: LoginMessageKeys = {
   alternativesDescription: "login.alternativesDescription",
   alternativesTitle: "login.alternativesTitle",
-  autofilled: "login.autofilled",
-  autofillLabel: "login.autofill",
   browserDots: "visuals.browserDots",
+  checkingDescription: "login.checkingDescription",
+  checkingTitle: "login.checkingTitle",
   checkUrlExplanation: "login.checkUrlExplanation",
   checkUrlLabel: "login.checkUrl",
+  checkmark: "visuals.checkmark",
+  confirmedDescription: "login.confirmedDescription",
+  confirmedTitle: "login.confirmedTitle",
+  continueLabel: "login.continue",
+  credentialPrompt: "login.credentialPrompt",
+  credentialsFilled: "login.credentialsFilled",
   description: "login.description",
   emailLabel: "login.emailLabel",
+  emptyValue: "login.emptyValue",
   enterChoiceLabel: "login.enter",
   eyebrow: "login.eyebrow",
   fakeAddress: "login.fakeAddress",
-  loginLabel: "login.login",
+  fillCredentialsLabel: "login.fillCredentials",
   logoLabel: "login.logoLabel",
   logoMark: "visuals.envelope",
   officialSiteExplanation: "login.officialSiteExplanation",
   officialSiteLabel: "login.officialSite",
   panelTitle: "login.panelTitle",
+  passwordMaskLabel: "login.passwordMaskLabel",
   passwordLabel: "login.passwordLabel",
+  previewDescription: "login.previewDescription",
+  previewLabel: "login.previewLabel",
   revealLabel: "login.reveal",
   safeChoiceTitle: "login.safeChoiceTitle",
   title: "login.title",
@@ -163,41 +253,61 @@ const MESSAGE_KEYS: LoginMessageKeys = {
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
 const content: ComputedRef<AppContent> = useContent();
-const emailInput: Ref<string> = ref("");
-const passwordInput: Ref<string> = ref("");
-const autofillStatus: Ref<string> = ref("");
-const hasAutofilled: Ref<boolean> = ref(false);
 const safeActionMessage: Ref<string> = ref("");
-const emailFieldId: string = "training-user-identifier";
+const hasSimulatedCredentials: Ref<boolean> = ref(false);
+const shouldPromptCredentials: Ref<boolean> = ref(false);
+const simulationState: Ref<SimulationState> = ref("idle");
+const credentialActionContainer: Ref<HTMLElement | null> = ref(null);
+const CREDENTIAL_PROMPT_ID: string = "login-credential-prompt";
+const SIMULATION_STAGE_DURATION_MS: number = 2000;
+let checkingTimer: ReturnType<typeof setTimeout> | undefined;
+let confirmedTimer: ReturnType<typeof setTimeout> | undefined;
 
-/** 固定された体験用アカウントだけを疑似ログインフォームへ入力する。 */
-async function fillTrainingAccount(): Promise<void> {
-  hasAutofilled.value = false;
-  emailInput.value = content.value.trainingAccount.email;
-  passwordInput.value = content.value.trainingAccount.password;
-  autofillStatus.value = t(MESSAGE_KEYS.autofilled);
-  await nextTick();
-  hasAutofilled.value = true;
+/** 固定された架空の認証情報を画面上だけに表示する。 */
+function fillSimulatedCredentials(): void {
+  hasSimulatedCredentials.value = true;
+  shouldPromptCredentials.value = false;
 }
 
-/** 疑似送信をその場で終了し、入力を消去して種明かしへ進む。 */
-function handleSubmit(): void {
-  emailInput.value = "";
-  passwordInput.value = "";
-  void router.push({ name: REVEAL_ROUTE_NAME });
-}
+/** 疑似認証の処理中表示を開始し、中間画面まで順に進める。 */
+async function continueSimulation(): Promise<void> {
+  if (simulationState.value !== "idle") {
+    return;
+  }
+  if (!hasSimulatedCredentials.value) {
+    shouldPromptCredentials.value = true;
+    await nextTick();
+    credentialActionContainer.value?.querySelector<HTMLButtonElement>("button")?.focus();
+    return;
+  }
 
-/** 入力を選んだ利用者へ最初の入力欄を示す。 */
-async function focusFirstField(): Promise<void> {
-  await nextTick();
-  const field: HTMLElement | null = document.getElementById(emailFieldId);
-  field?.focus();
+  simulationState.value = "checking";
+  checkingTimer = setTimeout((): void => {
+    simulationState.value = "confirmed";
+    confirmedTimer = setTimeout((): void => {
+      hasSimulatedCredentials.value = false;
+      void router.push({ name: CHECKPOINT_ROUTE_NAME });
+    }, SIMULATION_STAGE_DURATION_MS);
+  }, SIMULATION_STAGE_DURATION_MS);
 }
 
 /** 安全な代替行動を選んだ理由を表示する。 */
 function chooseSafeAction(explanationMessageKey: string): void {
   safeActionMessage.value = t(explanationMessageKey);
 }
+
+/** 画面離脱時に疑似情報の表示状態と待機中の遷移を破棄する。 */
+function clearSimulation(): void {
+  if (checkingTimer !== undefined) {
+    clearTimeout(checkingTimer);
+  }
+  if (confirmedTimer !== undefined) {
+    clearTimeout(confirmedTimer);
+  }
+  hasSimulatedCredentials.value = false;
+}
+
+onBeforeUnmount(clearSimulation);
 </script>
 
 <style scoped>
@@ -245,14 +355,99 @@ function chooseSafeAction(explanationMessageKey: string): void {
   max-width: 560px;
   padding: 40px;
 }
-.login-view-autofill {
+.login-view-credential-preview {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+.login-view-credential-row {
   display: grid;
   gap: var(--space-2);
 }
-.login-view-form-autofilled :deep(.form-field-input) {
-  animation: login-view-autofill-highlight var(--motion-medium);
+.login-view-credential-label {
+  color: var(--color-ink);
+  font-size: var(--font-size-label);
+  font-weight: 750;
 }
-.login-view-form,
+.login-view-credential-value {
+  align-items: center;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-small);
+  color: var(--color-ink);
+  display: flex;
+  min-height: var(--control-min-height);
+  margin: 0;
+  overflow-wrap: anywhere;
+  padding: var(--space-3);
+}
+.login-view-password-mask {
+  letter-spacing: var(--space-1);
+}
+.login-view-credential-value-empty {
+  color: var(--color-muted);
+  font-style: italic;
+  letter-spacing: normal;
+}
+.login-view-credential-action {
+  border: var(--focus-ring-width) solid transparent;
+  border-radius: var(--radius-medium);
+  display: grid;
+  margin: calc(var(--focus-ring-width) * -1);
+  transition:
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+}
+.login-view-credential-action-required {
+  background: var(--color-focus-soft);
+  border-color: var(--color-focus);
+  padding: var(--space-2);
+}
+.login-view-credential-prompt {
+  color: var(--color-warning-ink);
+  font-size: var(--font-size-small);
+  font-weight: 750;
+  margin: 0;
+}
+.login-view-simulation-status {
+  color: var(--color-success-ink);
+  font-size: var(--font-size-small);
+  min-height: var(--space-5);
+  margin: 0;
+}
+.login-view-progress {
+  display: grid;
+  gap: var(--space-5);
+  min-height: 320px;
+  place-items: center;
+  text-align: center;
+}
+.login-view-spinner {
+  animation: login-view-spin 800ms linear infinite;
+  border: var(--space-1) solid var(--color-cloud-soft);
+  border-radius: 50%;
+  border-top-color: var(--color-cloud);
+  height: var(--space-12);
+  width: var(--space-12);
+}
+.login-view-progress-check {
+  align-items: center;
+  background: var(--color-success-soft);
+  border: var(--border-width) solid var(--color-success);
+  border-radius: 50%;
+  color: var(--color-success-ink);
+  display: flex;
+  font-size: var(--font-size-symbol-large);
+  font-weight: 900;
+  height: var(--space-18);
+  justify-content: center;
+  width: var(--space-18);
+}
+@keyframes login-view-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .login-view-alternatives {
   display: grid;
   gap: var(--space-5);
@@ -277,16 +472,6 @@ function chooseSafeAction(explanationMessageKey: string): void {
   }
   .login-view-panel {
     padding: var(--space-6) var(--space-4);
-  }
-}
-@keyframes login-view-autofill-highlight {
-  from {
-    background: var(--color-primary-soft);
-    border-color: var(--color-primary);
-  }
-  to {
-    background: var(--color-surface);
-    border-color: var(--color-border-strong);
   }
 }
 </style>

@@ -8,6 +8,7 @@ import {
   type RouterScrollBehavior,
 } from "vue-router";
 import AboutView from "@/views/AboutView.vue";
+import CheckpointView from "@/views/CheckpointView.vue";
 import DisclaimerView from "@/views/DisclaimerView.vue";
 import HomeView from "@/views/HomeView.vue";
 import LearnView from "@/views/LearnView.vue";
@@ -21,6 +22,7 @@ import RevealView from "@/views/RevealView.vue";
 import ReviewView from "@/views/ReviewView.vue";
 import {
   ABOUT_ROUTE_NAME,
+  CHECKPOINT_ROUTE_NAME,
   DISCLAIMER_ROUTE_NAME,
   HOME_ROUTE_NAME,
   LEARN_ROUTE_NAME,
@@ -42,6 +44,7 @@ const ROUTE_COMPONENTS: Readonly<Record<RouteName, Component>> = {
   [HOME_ROUTE_NAME]: HomeView,
   [MAIL_ROUTE_NAME]: MailView,
   [LOGIN_ROUTE_NAME]: LoginView,
+  [CHECKPOINT_ROUTE_NAME]: CheckpointView,
   [REVEAL_ROUTE_NAME]: RevealView,
   [REVIEW_ROUTE_NAME]: ReviewView,
   [LEARN_ROUTE_NAME]: LearnView,

@@ -4,6 +4,7 @@ export type RouteName =
   | "home"
   | "experience-mail"
   | "experience-login"
+  | "experience-checkpoint"
   | "experience-reveal"
   | "experience-review"
   | "learn"
@@ -32,9 +33,9 @@ export interface NavigationItem {
   readonly routeName: RouteName;
 }
 
-export interface TrainingAccount {
+export interface TrainingCredentialPreview {
   readonly email: string;
-  readonly password: string;
+  readonly passwordMask: string;
 }
 
 export type MailChoiceId = "follow-link" | "inspect" | "official";

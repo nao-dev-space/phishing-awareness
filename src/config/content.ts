@@ -10,7 +10,7 @@ import type {
   QuizOption,
   QuizQuestion,
   SuspiciousPoint,
-  TrainingAccount,
+  TrainingCredentialPreview,
 } from "@/types/app";
 import {
   HOME_ROUTE_NAME,
@@ -40,7 +40,7 @@ export interface AppContent {
   readonly revealPoints: readonly PsychologyPoint[];
   readonly serviceName: string;
   readonly suspiciousPoints: readonly SuspiciousPoint[];
-  readonly trainingAccount: TrainingAccount;
+  readonly trainingCredentialPreview: TrainingCredentialPreview;
 }
 
 interface InformationCardMessageKeys {
@@ -95,7 +95,7 @@ const APP_NAME_MESSAGE_KEY: string = "app.name";
 const SERVICE_NAME_MESSAGE_KEY: string = "app.serviceName";
 const CREDENTIAL_WARNING_MESSAGE_KEY: string = "app.credentialWarning";
 const TRAINING_EMAIL_MESSAGE_KEY: string = "app.trainingEmail";
-const TRAINING_PASSWORD_MESSAGE_KEY: string = "app.trainingPassword";
+const TRAINING_PASSWORD_MASK_MESSAGE_KEY: string = "app.trainingPasswordMask";
 const HOME_NAVIGATION_MESSAGE_KEY: string = "navigation.home";
 const EXPERIENCE_NAVIGATION_MESSAGE_KEY: string = "navigation.experience";
 const LEARN_NAVIGATION_MESSAGE_KEY: string = "navigation.learn";
@@ -455,9 +455,9 @@ export function createContent(translate: ContentTranslator): AppContent {
     revealPoints: createInformationCards(REVEAL_POINT_MESSAGE_KEYS, translate),
     serviceName: translate(SERVICE_NAME_MESSAGE_KEY),
     suspiciousPoints,
-    trainingAccount: {
+    trainingCredentialPreview: {
       email: translate(TRAINING_EMAIL_MESSAGE_KEY),
-      password: translate(TRAINING_PASSWORD_MESSAGE_KEY),
+      passwordMask: translate(TRAINING_PASSWORD_MASK_MESSAGE_KEY),
     },
   };
 }

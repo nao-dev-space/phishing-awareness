@@ -23,7 +23,7 @@ describe("主要ナビゲーション", (): void => {
     const wrapper: VueWrapper = mount(App, { global: { plugins: [router, i18n] } });
 
     expect(wrapper.text()).toContain("そのログイン、本物ですか？");
-    expect(wrapper.text()).toContain("普段使用しているメールアドレスやパスワード");
+    expect(wrapper.text()).toContain("本物のメールアドレスやパスワードは入力しないでください");
     expect(wrapper.findAll("nav a").length).toBeGreaterThan(4);
   });
 

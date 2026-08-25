@@ -16,8 +16,9 @@ describe("日本語ロケール", (): void => {
     expect(content.mailChoices).toHaveLength(3);
   });
 
-  it("体験用アカウントと疑似メールの記号を正しく保持する", (): void => {
-    expect(content.trainingAccount.email).toBe("demo-user@example.test");
+  it("表示専用の架空認証情報と疑似メールの記号を正しく保持する", (): void => {
+    expect(content.trainingCredentialPreview.email).toBe("demo-user@example.test");
+    expect(content.trainingCredentialPreview.passwordMask).toBe("••••••••••••");
     expect(translateMessage("mail.sender")).toContain("notice@cloud-letter-alert.example");
     expect(content.suspiciousPoints).toHaveLength(5);
     expect(content.basicActions).toHaveLength(7);

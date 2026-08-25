@@ -1,6 +1,5 @@
 ﻿<template>
   <div class="reveal-view">
-    <div class="reveal-view-badge" aria-hidden="true">{{ t(MESSAGE_KEYS.checkmark) }}</div>
     <PageIntro
       :eyebrow="t(MESSAGE_KEYS.eyebrow)"
       :title="t(MESSAGE_KEYS.title)"
@@ -53,7 +52,6 @@ import type { AppContent } from "@/config/content";
 import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
 
 interface RevealMessageKeys {
-  readonly checkmark: string;
   readonly description: string;
   readonly eyebrow: string;
   readonly explanationTitle: string;
@@ -67,7 +65,6 @@ interface RevealMessageKeys {
 }
 
 const MESSAGE_KEYS: RevealMessageKeys = {
-  checkmark: "visuals.checkmark",
   description: "reveal.description",
   eyebrow: "reveal.eyebrow",
   explanationTitle: "reveal.explanationTitle",
@@ -89,19 +86,6 @@ const content: ComputedRef<AppContent> = useContent();
   gap: var(--space-page-section);
   margin: 0 auto;
   max-width: var(--content-standard);
-}
-.reveal-view-badge {
-  align-items: center;
-  background: var(--color-success-soft);
-  border: var(--border-width) solid var(--color-success);
-  border-radius: 50%;
-  color: var(--color-success-ink);
-  display: flex;
-  font-size: var(--font-size-symbol-large);
-  font-weight: 900;
-  height: 72px;
-  justify-content: center;
-  width: 72px;
 }
 .reveal-view-explanation {
   display: grid;
