@@ -163,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, type ComputedRef, type Ref } from "vue";
+import { nextTick, onBeforeUnmount, ref, type Ref } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import { useRouter, type Router } from "vue-router";
 import AppButton from "@/components/atoms/AppButton.vue";
@@ -174,11 +174,11 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { CHECKPOINT_ROUTE_NAME, REVEAL_ROUTE_NAME } from "@/config/routes";
 
 type SimulationState = "idle" | "checking" | "confirmed";
 
+/** 疑似ログイン画面に表示する各文言の翻訳キーを表す。 */
 interface LoginMessageKeys {
   readonly alternativesDescription: string;
   readonly alternativesTitle: string;
@@ -252,7 +252,7 @@ const MESSAGE_KEYS: LoginMessageKeys = {
 };
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 const safeActionMessage: Ref<string> = ref("");
 const hasSimulatedCredentials: Ref<boolean> = ref(false);
 const shouldPromptCredentials: Ref<boolean> = ref(false);

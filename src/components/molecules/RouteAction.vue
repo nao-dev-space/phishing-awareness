@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import type { RouteName } from "@/types/app";
 
+/** アプリ内の画面遷移リンクを指定するプロパティを表す。 */
 interface Props {
   readonly label: string;
   readonly routeName: RouteName;

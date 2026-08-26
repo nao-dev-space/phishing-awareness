@@ -27,6 +27,7 @@ import AppText from "@/components/atoms/AppText.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { REVEAL_ROUTE_NAME } from "@/config/routes";
 
+/** 立ち止まり画面に表示する各文言の翻訳キーを表す。 */
 interface CheckpointMessageKeys {
   readonly description: string;
   readonly eyebrow: string;

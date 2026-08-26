@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppButton from "@/components/atoms/AppButton.vue";
 import AppHeading from "@/components/atoms/AppHeading.vue";
@@ -85,11 +85,11 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { LEARN_ROUTE_NAME } from "@/config/routes";
 import { calculateQuizScore, evaluateQuizAnswer, findIncorrectQuestions } from "@/services/quiz";
 import type { QuizAnswerState, QuizQuestion } from "@/types/app";
 
+/** クイズ画面に表示する各文言の翻訳キーを表す。 */
 interface QuizMessageKeys {
   readonly answerLabel: string;
   readonly correct: string;
@@ -136,17 +136,15 @@ const MESSAGE_KEYS: QuizMessageKeys = {
   title: "quiz.title",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
-const questions: ComputedRef<readonly QuizQuestion[]> = computed(
-  (): readonly QuizQuestion[] => content.value.quizQuestions,
-);
+const content = useContent();
+const questions = computed((): readonly QuizQuestion[] => content.value.quizQuestions);
 const currentQuestionIndex: Ref<number> = ref(0);
 const selectedOptionId: Ref<string> = ref("");
 const answers: Ref<QuizAnswerState[]> = ref([]);
 const currentAnswer: Ref<QuizAnswerState | null> = ref(null);
-const hasAnswered: ComputedRef<boolean> = computed((): boolean => currentAnswer.value !== null);
+const hasAnswered = computed((): boolean => currentAnswer.value !== null);
 /** 現在位置の問題を返し、完了後は表示崩れを防ぐため先頭問題を保持する。 */
-const currentQuestion: ComputedRef<QuizQuestion> = computed((): QuizQuestion => {
+const currentQuestion = computed((): QuizQuestion => {
   const firstQuestion: QuizQuestion | undefined = questions.value[0];
   if (!firstQuestion) {
     throw new Error("QUIZ_QUESTIONS must contain at least one question.");
@@ -156,27 +154,25 @@ const currentQuestion: ComputedRef<QuizQuestion> = computed((): QuizQuestion => 
   return selectedQuestion;
 });
 /** 問題位置が総問題数へ到達したか判定する。 */
-const isComplete: ComputedRef<boolean> = computed((): boolean => {
+const isComplete = computed((): boolean => {
   const hasCompletedAllQuestions: boolean = currentQuestionIndex.value >= questions.value.length;
   return hasCompletedAllQuestions;
 });
 /** 現在までの回答から正解数を集計する。 */
-const score: ComputedRef<number> = computed((): number => {
+const score = computed((): number => {
   const correctAnswerCount: number = calculateQuizScore(answers.value);
   return correctAnswerCount;
 });
 /** 回答一覧から振り返り対象となる誤答問題を抽出する。 */
-const incorrectQuestions: ComputedRef<readonly QuizQuestion[]> = computed(
-  (): readonly QuizQuestion[] => {
-    const questionsToReview: readonly QuizQuestion[] = findIncorrectQuestions(
-      questions.value,
-      answers.value,
-    );
-    return questionsToReview;
-  },
-);
+const incorrectQuestions = computed((): readonly QuizQuestion[] => {
+  const questionsToReview: readonly QuizQuestion[] = findIncorrectQuestions(
+    questions.value,
+    answers.value,
+  );
+  return questionsToReview;
+});
 /** 現在位置と総問題数を利用者向け進捗文言へ変換する。 */
-const questionCountLabel: ComputedRef<string> = computed((): string => {
+const questionCountLabel = computed((): string => {
   const label: string = t(MESSAGE_KEYS.questionCount, {
     current: currentQuestionIndex.value + 1,
     total: questions.value.length,
@@ -184,7 +180,7 @@ const questionCountLabel: ComputedRef<string> = computed((): string => {
   return label;
 });
 /** 進捗バーの意味を読み上げる文言を生成する。 */
-const progressLabel: ComputedRef<string> = computed((): string => {
+const progressLabel = computed((): string => {
   const label: string = t(MESSAGE_KEYS.progress, {
     current: currentQuestionIndex.value + 1,
     total: questions.value.length,
@@ -192,7 +188,7 @@ const progressLabel: ComputedRef<string> = computed((): string => {
   return label;
 });
 /** 現在の回答結果に対応するフィードバック見出しを取得する。 */
-const feedbackTitle: ComputedRef<string> = computed((): string => {
+const feedbackTitle = computed((): string => {
   const messageKey: string = currentAnswer.value?.isCorrect
     ? MESSAGE_KEYS.correct
     : MESSAGE_KEYS.incorrect;
@@ -200,19 +196,19 @@ const feedbackTitle: ComputedRef<string> = computed((): string => {
   return label;
 });
 /** 現在の回答結果に対応する通知色を選択する。 */
-const feedbackTone: ComputedRef<"success" | "warning"> = computed((): "success" | "warning" => {
+const feedbackTone = computed((): "success" | "warning" => {
   const tone: "success" | "warning" = currentAnswer.value?.isCorrect ? "success" : "warning";
   return tone;
 });
 /** 残り問題の有無に応じて次操作のラベルを取得する。 */
-const nextLabel: ComputedRef<string> = computed((): string => {
+const nextLabel = computed((): string => {
   const isLastQuestion: boolean = currentQuestionIndex.value === questions.value.length - 1;
   const messageKey: string = isLastQuestion ? MESSAGE_KEYS.showResult : MESSAGE_KEYS.next;
   const label: string = t(messageKey);
   return label;
 });
 /** 最終得点に応じて結果画面の案内文を取得する。 */
-const resultMessage: ComputedRef<string> = computed((): string => {
+const resultMessage = computed((): string => {
   const hasPerfectScore: boolean = score.value === questions.value.length;
   const messageKey: string = hasPerfectScore
     ? MESSAGE_KEYS.perfectResult
@@ -221,7 +217,7 @@ const resultMessage: ComputedRef<string> = computed((): string => {
   return message;
 });
 /** 得点と総問題数を一つの翻訳済み表示文言へ整形する。 */
-const scoreLabel: ComputedRef<string> = computed((): string => {
+const scoreLabel = computed((): string => {
   const label: string = t(MESSAGE_KEYS.score, {
     score: score.value,
     total: questions.value.length,

@@ -10,6 +10,7 @@
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 
+/** 情報カードの見出しと本文を指定するプロパティを表す。 */
 interface Props {
   readonly title: string;
   readonly body: string;

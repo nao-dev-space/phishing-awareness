@@ -20,10 +20,12 @@ import {
   RESOURCES_ROUTE_NAME,
 } from "@/config/routes";
 
+/** 完全な翻訳キーから表示文言を取得する関数の契約を表す。 */
 export interface ContentTranslator {
   (messageKey: string, parameters?: Readonly<Record<string, string | number>>): string;
 }
 
+/** 各画面で共有する翻訳済みの構造化コンテンツを表す。 */
 export interface AppContent {
   readonly aboutItems: readonly PolicyItem[];
   readonly appName: string;
@@ -43,17 +45,20 @@ export interface AppContent {
   readonly trainingCredentialPreview: TrainingCredentialPreview;
 }
 
+/** 情報カードの見出しと本文に対応する翻訳キーを表す。 */
 interface InformationCardMessageKeys {
   readonly body: string;
   readonly title: string;
 }
 
+/** 学習トピックの各表示項目に対応する翻訳キーを表す。 */
 interface LearningTopicMessageKeys {
   readonly action: string;
   readonly summary: string;
   readonly title: string;
 }
 
+/** 疑似メールの選択肢を生成するための制御値と翻訳キーを表す。 */
 interface MailChoiceDefinition {
   readonly explanationMessageKey: string;
   readonly id: MailChoiceId;
@@ -61,11 +66,13 @@ interface MailChoiceDefinition {
   readonly labelMessageKey: string;
 }
 
+/** 方針ページの項目に対応する見出しと本文の翻訳キーを表す。 */
 interface PolicyItemMessageKeys {
   readonly body: string;
   readonly title: string;
 }
 
+/** 翻訳前のクイズ問題と正解判定に必要な設定を表す。 */
 interface QuizDefinition {
   readonly correctOptionId: string;
   readonly explanationMessageKey: string;
@@ -74,17 +81,20 @@ interface QuizDefinition {
   readonly promptMessageKey: string;
 }
 
+/** 翻訳前のクイズ選択肢に必要なIDと翻訳キーを表す。 */
 interface QuizOptionDefinition {
   readonly id: string;
   readonly labelMessageKey: string;
 }
 
+/** 外部情報源を生成するためのURLと翻訳キーを表す。 */
 interface ResourceDefinition {
   readonly descriptionMessageKey: string;
   readonly nameMessageKey: string;
   readonly url: string;
 }
 
+/** 不審点の各表示項目に対応する翻訳キーを表す。 */
 interface SuspiciousPointMessageKeys {
   readonly location: string;
   readonly risk: string;

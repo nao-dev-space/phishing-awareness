@@ -14,8 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef } from "vue";
+import { computed } from "vue";
 
+/** ラジオ選択肢の値と表示状態を指定するプロパティを表す。 */
 interface Props {
   readonly disabled?: boolean;
   readonly label: string;
@@ -24,6 +25,7 @@ interface Props {
   readonly value: string;
 }
 
+/** ラジオ選択肢が親へ通知する選択変更イベントを表す。 */
 interface Emits {
   (event: "update:modelValue", selectedValue: string): void;
 }
@@ -32,7 +34,7 @@ const props: Props = withDefaults(defineProps<Props>(), { disabled: false });
 const emit: Emits = defineEmits<Emits>();
 
 /** 親から受け取った選択値とこの選択肢の値が一致するか判定する。 */
-const isChecked: ComputedRef<boolean> = computed((): boolean => {
+const isChecked = computed((): boolean => {
   const hasMatchingValue: boolean = props.modelValue === props.value;
   return hasMatchingValue;
 });

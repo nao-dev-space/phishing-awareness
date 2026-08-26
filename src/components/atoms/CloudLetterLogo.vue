@@ -6,6 +6,7 @@
 </template>
 
 <script setup lang="ts">
+/** 架空サービスのロゴに表示する名称と読み上げ名を表す。 */
 interface Props {
   readonly serviceName: string;
   readonly accessibleLabel: string;

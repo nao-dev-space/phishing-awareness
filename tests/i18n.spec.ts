@@ -45,7 +45,7 @@ describe("日本語ロケール", (): void => {
     });
     const ContentProbe: DefineComponent = defineComponent({
       setup(): { content: ComputedRef<AppContent> } {
-        const localizedContent: ComputedRef<AppContent> = useContent();
+        const localizedContent = useContent();
         return { content: localizedContent };
       },
       template: "<p>{{ content.appName }}</p>",

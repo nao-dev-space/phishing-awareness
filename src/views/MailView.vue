@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import { useRouter, type Router } from "vue-router";
 import AppButton from "@/components/atoms/AppButton.vue";
@@ -79,10 +79,11 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import { FOLLOW_LINK_CHOICE_ID, type AppContent } from "@/config/content";
+import { FOLLOW_LINK_CHOICE_ID } from "@/config/content";
 import { LOGIN_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
 import type { MailChoice, MailChoiceId } from "@/types/app";
 
+/** 疑似メール画面に表示する各文言の翻訳キーを表す。 */
 interface MailMessageKeys {
   readonly choiceTitle: string;
   readonly description: string;
@@ -132,9 +133,9 @@ const MESSAGE_KEYS: MailMessageKeys = {
 };
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 const selectedSafeChoiceId: Ref<MailChoiceId | null> = ref(null);
-const selectedSafeChoice: ComputedRef<MailChoice | null> = computed((): MailChoice | null => {
+const selectedSafeChoice = computed((): MailChoice | null => {
   const choice: MailChoice | undefined = content.value.mailChoices.find(
     (candidate: MailChoice): boolean => candidate.id === selectedSafeChoiceId.value,
   );

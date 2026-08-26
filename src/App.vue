@@ -91,9 +91,36 @@ import AppLayout from "@/components/templates/AppLayout.vue";
 .app-body {
   margin: 0;
 }
+.app-action {
+  align-items: center;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  font-weight: 750;
+  justify-content: center;
+  min-height: var(--control-min-height);
+  padding: var(--space-3) var(--space-6);
+  transition:
+    transform var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+.app-action:hover:not(:disabled) {
+  box-shadow: var(--shadow-button);
+  transform: translateY(-2px);
+}
+.app-action:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
 @media (prefers-reduced-motion: reduce) {
   .app-document {
     scroll-behavior: auto;
+  }
+  .app-action {
+    transition: none;
+  }
+  .app-action:hover:not(:disabled) {
+    transform: none;
   }
   .app-body *,
   .app-body *::before,

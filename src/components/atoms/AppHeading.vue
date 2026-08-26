@@ -3,10 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef } from "vue";
+import { computed } from "vue";
 export type HeadingLevel = 1 | 2 | 3 | 4;
 export type HeadingSize = "hero" | "page" | "section" | "card";
 
+/** 共通見出しの階層と表示内容を指定するプロパティを表す。 */
 interface Props {
   readonly level: HeadingLevel;
   readonly text: string;
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const props: Props = withDefaults(defineProps<Props>(), { size: "section" });
-const tag: ComputedRef<string> = computed((): string => `h${props.level}`);
+const tag = computed((): string => `h${props.level}`);
 </script>
 
 <style scoped>

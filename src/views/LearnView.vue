@@ -40,16 +40,15 @@
 </template>
 
 <script setup lang="ts">
-import { type ComputedRef } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
 
+/** 学習画面に表示する各文言の翻訳キーを表す。 */
 interface LearnMessageKeys {
   readonly actionLabel: string;
   readonly basicsTitle: string;
@@ -72,7 +71,7 @@ const MESSAGE_KEYS: LearnMessageKeys = {
   title: "learn.title",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 </script>
 
 <style scoped>

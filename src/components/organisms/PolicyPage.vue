@@ -18,6 +18,7 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import type { PolicyItem } from "@/types/app";
 
+/** 方針ページの導入文と項目一覧を指定するプロパティを表す。 */
 interface Props {
   readonly eyebrow: string;
   readonly title: string;

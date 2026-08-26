@@ -10,6 +10,6 @@ export function useContent(): ComputedRef<AppContent> {
     parameters?: Readonly<Record<string, string | number>>,
   ): string => (parameters ? t(messageKey, parameters) : t(messageKey));
 
-  const content: ComputedRef<AppContent> = computed((): AppContent => createContent(translate));
+  const content = computed((): AppContent => createContent(translate));
   return content;
 }

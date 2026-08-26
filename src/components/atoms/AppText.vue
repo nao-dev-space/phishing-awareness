@@ -9,6 +9,7 @@ export type TextTag = "p" | "span";
 export type TextTone = "default" | "muted" | "accent" | "warning" | "success";
 export type TextSize = "small" | "body" | "lead";
 
+/** 共通テキストの内容と表示形式を指定するプロパティを表す。 */
 interface Props {
   readonly text: string;
   readonly tag?: TextTag;

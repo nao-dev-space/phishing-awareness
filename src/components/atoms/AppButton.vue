@@ -12,6 +12,7 @@
 <script setup lang="ts">
 export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
 
+/** 共通ボタンの表示内容と操作状態を指定するプロパティを表す。 */
 interface Props {
   readonly label: string;
   readonly type?: "button" | "submit";
@@ -19,6 +20,7 @@ interface Props {
   readonly disabled?: boolean;
 }
 
+/** 共通ボタンが親へ通知するイベントを表す。 */
 interface Emits {
   (event: "click", mouseEvent: MouseEvent): void;
 }

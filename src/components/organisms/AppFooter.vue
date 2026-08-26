@@ -22,13 +22,12 @@
 </template>
 
 <script setup lang="ts">
-import { type ComputedRef } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppText from "@/components/atoms/AppText.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { ABOUT_ROUTE_NAME, DISCLAIMER_ROUTE_NAME, PRIVACY_ROUTE_NAME } from "@/config/routes";
 
+/** フッターに表示する各文言の翻訳キーを表す。 */
 interface FooterMessageKeys {
   readonly aboutLabel: string;
   readonly disclaimerLabel: string;
@@ -47,7 +46,7 @@ const MESSAGE_KEYS: FooterMessageKeys = {
   purpose: "layout.footerPurpose",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 </script>
 
 <style scoped>

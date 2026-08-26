@@ -15,6 +15,7 @@ import PageIntro from "@/components/organisms/PageIntro.vue";
 import { HOME_ROUTE_NAME } from "@/config/routes";
 import { useI18n, type Composer } from "vue-i18n";
 
+/** 存在しないページの案内画面に表示する各文言の翻訳キーを表す。 */
 interface NotFoundMessageKeys {
   readonly description: string;
   readonly eyebrow: string;

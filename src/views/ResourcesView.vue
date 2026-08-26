@@ -29,15 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import { type ComputedRef } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 
+/** 外部情報源画面に表示する各文言の翻訳キーを表す。 */
 interface ResourcesMessageKeys {
   readonly description: string;
   readonly externalLink: string;
@@ -58,7 +57,7 @@ const MESSAGE_KEYS: ResourcesMessageKeys = {
   urgentTitle: "resources.urgentTitle",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 </script>
 
 <style scoped>

@@ -39,7 +39,6 @@
 </template>
 
 <script setup lang="ts">
-import { type ComputedRef } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
@@ -48,9 +47,9 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
 
+/** 種明かし画面に表示する各文言の翻訳キーを表す。 */
 interface RevealMessageKeys {
   readonly description: string;
   readonly eyebrow: string;
@@ -77,7 +76,7 @@ const MESSAGE_KEYS: RevealMessageKeys = {
   title: "reveal.title",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 </script>
 
 <style scoped>

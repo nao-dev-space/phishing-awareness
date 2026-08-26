@@ -9,12 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef } from "vue";
+import { computed } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppText, { type TextTone } from "@/components/atoms/AppText.vue";
 
 type NoticeTone = "info" | "warning" | "success";
 
+/** 通知ボックスの内容と通知種別を指定するプロパティを表す。 */
 interface Props {
   readonly title: string;
   readonly message: string;
@@ -35,19 +36,19 @@ const titleTones: Readonly<Record<NoticeTone, TextTone>> = {
   success: "success",
 };
 /** 通知の種類に対応する装飾アイコンを取得する。 */
-const icon: ComputedRef<string> = computed((): string => {
+const icon = computed((): string => {
   const noticeIcon: string = t(iconMessageKeys[props.tone]);
   return noticeIcon;
 });
 
 /** 通知の種類に対応する見出し色を取得する。 */
-const titleTone: ComputedRef<TextTone> = computed((): TextTone => {
+const titleTone = computed((): TextTone => {
   const noticeTitleTone: TextTone = titleTones[props.tone];
   return noticeTitleTone;
 });
 
 /** 即時通知の必要性に応じてアクセシビリティロールを選択する。 */
-const role: ComputedRef<"alert" | "status"> = computed((): "alert" | "status" => {
+const role = computed((): "alert" | "status" => {
   const noticeRole: "alert" | "status" = props.isAlert ? "alert" : "status";
   return noticeRole;
 });

@@ -41,13 +41,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
 import AppButton from "@/components/atoms/AppButton.vue";
 import { useContent } from "@/composables/useContent";
-import type { AppContent } from "@/config/content";
 import { HOME_ROUTE_NAME } from "@/config/routes";
 
+/** ヘッダーとナビゲーションに表示する各文言の翻訳キーを表す。 */
 interface HeaderMessageKeys {
   readonly closeMenu: string;
   readonly desktopNav: string;
@@ -62,11 +62,11 @@ const MESSAGE_KEYS: HeaderMessageKeys = {
   openMenu: "layout.openMenu",
 };
 const { t }: Composer = useI18n();
-const content: ComputedRef<AppContent> = useContent();
+const content = useContent();
 const mobileMenuId: string = "mobile-navigation";
 const isMenuOpen: Ref<boolean> = ref(false);
 /** 現在の開閉状態に対応するメニューボタンの操作名を返す。 */
-const menuButtonLabel: ComputedRef<string> = computed((): string => {
+const menuButtonLabel = computed((): string => {
   const messageKey: string = isMenuOpen.value ? MESSAGE_KEYS.closeMenu : MESSAGE_KEYS.openMenu;
   const label: string = t(messageKey);
   return label;

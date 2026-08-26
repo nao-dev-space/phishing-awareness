@@ -10,6 +10,7 @@
 import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 
+/** ページ冒頭の見出しと説明を指定するプロパティを表す。 */
 interface Props {
   readonly title: string;
   readonly description: string;

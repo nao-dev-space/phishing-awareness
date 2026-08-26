@@ -3,7 +3,6 @@ import App from "@/App.vue";
 import { i18n, translateMessage } from "@/i18n";
 import router from "@/router";
 import { updateDescriptionMetadata } from "@/services/pageMetadata";
-import "@/styles/actions.css";
 
 const APPLICATION_DESCRIPTION_MESSAGE_KEY: string = "app.description";
 const application: VueApp<Element> = createApp(App);

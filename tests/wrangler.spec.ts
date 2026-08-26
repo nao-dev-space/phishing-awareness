@@ -2,11 +2,13 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
+/** テストで検証する静的アセット設定の構造を表す。 */
 interface WranglerAssetsConfiguration {
   readonly directory: string;
   readonly not_found_handling: string;
 }
 
+/** テストで検証するwrangler設定全体の構造を表す。 */
 interface WranglerConfiguration {
   readonly name: string;
   readonly compatibility_date: string;
