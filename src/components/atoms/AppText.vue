@@ -1,6 +1,6 @@
 ﻿<template>
-  <component :is="tag" :class="['app-text', `app-text-${tone}`, `app-text-${size}`]">
-    {{ text }}
+  <component :is="props.tag" :class="getTextClasses()">
+    {{ props.text }}
   </component>
 </template>
 
@@ -10,18 +10,20 @@ export type TextTone = "default" | "muted" | "accent" | "warning" | "success";
 export type TextSize = "small" | "body" | "lead";
 
 /** 共通テキストの内容と表示形式を指定するプロパティを表す。 */
-interface Props {
-  readonly text: string;
-  readonly tag?: TextTag;
-  readonly tone?: TextTone;
-  readonly size?: TextSize;
-}
+const props = withDefaults(
+  defineProps<{
+    text: string;
+    tag?: TextTag;
+    tone?: TextTone;
+    size?: TextSize;
+  }>(),
+  { tag: "p", tone: "default", size: "body" },
+);
 
-withDefaults(defineProps<Props>(), {
-  tag: "p",
-  tone: "default",
-  size: "body",
-});
+/** テキストの色とサイズに対応するクラスを取得する。 */
+function getTextClasses(): string[] {
+  return ["app-text", `app-text-${props.tone}`, `app-text-${props.size}`];
+}
 </script>
 
 <style scoped>

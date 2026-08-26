@@ -3,13 +3,13 @@
     <input
       class="app-radio-option-input"
       type="radio"
-      :name="name"
-      :value="value"
+      :name="props.name"
+      :value="props.value"
       :checked="isChecked"
-      :disabled="disabled"
+      :disabled="props.disabled"
       @change="handleChange"
     />
-    <span class="app-radio-option-label">{{ label }}</span>
+    <span class="app-radio-option-label">{{ props.label }}</span>
   </label>
 </template>
 
@@ -17,21 +17,21 @@
 import { computed } from "vue";
 
 /** ラジオ選択肢の値と表示状態を指定するプロパティを表す。 */
-interface Props {
-  readonly disabled?: boolean;
-  readonly label: string;
-  readonly modelValue: string;
-  readonly name: string;
-  readonly value: string;
-}
+const props = withDefaults(
+  defineProps<{
+    disabled?: boolean;
+    label: string;
+    modelValue: string;
+    name: string;
+    value: string;
+  }>(),
+  { disabled: false },
+);
 
 /** ラジオ選択肢が親へ通知する選択変更イベントを表す。 */
-interface Emits {
-  (event: "update:modelValue", selectedValue: string): void;
-}
-
-const props: Props = withDefaults(defineProps<Props>(), { disabled: false });
-const emit: Emits = defineEmits<Emits>();
+const emit = defineEmits<{
+  (e: "update:modelValue", selectedValue: string): void;
+}>();
 
 /** 親から受け取った選択値とこの選択肢の値が一致するか判定する。 */
 const isChecked = computed((): boolean => {

@@ -65,6 +65,9 @@ describe("疑似ログインの安全性", (): void => {
       "疑似ログインする（送信なし）",
     );
 
+    expect(wrapper.get(".login-view-credential-action").classes()).not.toContain(
+      "login-view-credential-action-required",
+    );
     await continueButton.trigger("click");
 
     const fillButton: DOMWrapper<Element> = findButtonByLabel(wrapper, "疑似認証情報を入力する");
@@ -74,6 +77,11 @@ describe("疑似ログインの安全性", (): void => {
     );
     expect(wrapper.text()).toContain("先に疑似認証情報を入力してください。");
     expect(document.activeElement).toBe(fillButton.element);
+
+    await fillButton.trigger("click");
+    expect(wrapper.get(".login-view-credential-action").classes()).not.toContain(
+      "login-view-credential-action-required",
+    );
   });
 
   it("架空情報だけを疑似入力し、処理中と正常表示を経て中間画面へ進む", async (): Promise<void> => {
@@ -96,9 +104,14 @@ describe("疑似ログインの安全性", (): void => {
     const cookieSnapshot: string = document.cookie;
 
     expect(wrapper.text()).not.toContain(content.trainingCredentialPreview.email);
+    expect(wrapper.findAll(".login-view-credential-value-empty")).toHaveLength(2);
     await findButtonByLabel(wrapper, "疑似認証情報を入力する").trigger("click");
     expect(wrapper.text()).toContain(content.trainingCredentialPreview.email);
     expect(wrapper.text()).toContain(content.trainingCredentialPreview.passwordMask);
+    expect(wrapper.findAll(".login-view-credential-value-empty")).toHaveLength(0);
+    expect(wrapper.get(".login-view-password-mask").classes()).toContain(
+      "login-view-credential-value",
+    );
 
     const continueButton: DOMWrapper<Element> = findButtonByLabel(
       wrapper,

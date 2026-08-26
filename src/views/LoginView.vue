@@ -29,12 +29,7 @@
           <dl class="login-view-credential-preview" :aria-label="t(MESSAGE_KEYS.previewLabel)">
             <div class="login-view-credential-row">
               <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.emailLabel) }}</dt>
-              <dd
-                :class="[
-                  'login-view-credential-value',
-                  { 'login-view-credential-value-empty': !hasSimulatedCredentials },
-                ]"
-              >
+              <dd :class="getCredentialValueClasses()">
                 {{
                   hasSimulatedCredentials
                     ? content.trainingCredentialPreview.email
@@ -45,11 +40,7 @@
             <div class="login-view-credential-row">
               <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.passwordLabel) }}</dt>
               <dd
-                :class="[
-                  'login-view-credential-value',
-                  'login-view-password-mask',
-                  { 'login-view-credential-value-empty': !hasSimulatedCredentials },
-                ]"
+                :class="getCredentialValueClasses(true)"
                 :aria-label="
                   hasSimulatedCredentials
                     ? t(MESSAGE_KEYS.passwordMaskLabel)
@@ -67,13 +58,7 @@
             </div>
           </dl>
           <AppText :text="t(MESSAGE_KEYS.previewDescription)" size="small" tone="muted" />
-          <div
-            ref="credentialActionContainer"
-            :class="[
-              'login-view-credential-action',
-              { 'login-view-credential-action-required': shouldPromptCredentials },
-            ]"
-          >
+          <div ref="credentialActionContainer" :class="getCredentialActionClasses()">
             <AppButton
               :label="t(MESSAGE_KEYS.fillCredentialsLabel)"
               variant="secondary"
@@ -262,6 +247,27 @@ const CREDENTIAL_PROMPT_ID: string = "login-credential-prompt";
 const SIMULATION_STAGE_DURATION_MS: number = 2000;
 let checkingTimer: ReturnType<typeof setTimeout> | undefined;
 let confirmedTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** 認証情報の表示状態とパスワード表示に対応するクラスを取得する。 */
+function getCredentialValueClasses(isPassword: boolean = false): string[] {
+  const classes: string[] = ["login-view-credential-value"];
+  if (isPassword) {
+    classes.push("login-view-password-mask");
+  }
+  if (!hasSimulatedCredentials.value) {
+    classes.push("login-view-credential-value-empty");
+  }
+  return classes;
+}
+
+/** 疑似入力の案内状態に対応するボタン領域のクラスを取得する。 */
+function getCredentialActionClasses(): string[] {
+  const classes: string[] = ["login-view-credential-action"];
+  if (shouldPromptCredentials.value) {
+    classes.push("login-view-credential-action-required");
+  }
+  return classes;
+}
 
 /** 固定された架空の認証情報を画面上だけに表示する。 */
 function fillSimulatedCredentials(): void {

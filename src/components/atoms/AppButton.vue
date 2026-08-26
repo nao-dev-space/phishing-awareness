@@ -1,11 +1,11 @@
 ﻿<template>
   <button
-    :class="['app-action', 'app-button', `app-button-${variant}`]"
-    :type="type"
-    :disabled="disabled"
+    :class="getButtonClasses()"
+    :type="props.type"
+    :disabled="props.disabled"
     @click="handleClick"
   >
-    {{ label }}
+    {{ props.label }}
   </button>
 </template>
 
@@ -13,25 +13,25 @@
 export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
 
 /** 共通ボタンの表示内容と操作状態を指定するプロパティを表す。 */
-interface Props {
-  readonly label: string;
-  readonly type?: "button" | "submit";
-  readonly variant?: ButtonVariant;
-  readonly disabled?: boolean;
-}
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    type?: "button" | "submit";
+    variant?: ButtonVariant;
+    disabled?: boolean;
+  }>(),
+  { type: "button", variant: "primary", disabled: false },
+);
 
 /** 共通ボタンが親へ通知するイベントを表す。 */
-interface Emits {
-  (event: "click", mouseEvent: MouseEvent): void;
+const emit = defineEmits<{
+  (e: "click", mouseEvent: MouseEvent): void;
+}>();
+
+/** ボタンの表示種別に対応するクラスを取得する。 */
+function getButtonClasses(): string[] {
+  return ["app-action", "app-button", `app-button-${props.variant}`];
 }
-
-withDefaults(defineProps<Props>(), {
-  type: "button",
-  variant: "primary",
-  disabled: false,
-});
-
-const emit: Emits = defineEmits<Emits>();
 
 /** ボタンのクリックを、元のイベントとともに親へ通知する。 */
 function handleClick(mouseEvent: MouseEvent): void {

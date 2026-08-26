@@ -1,9 +1,9 @@
 ﻿<template>
-  <div :class="['notice-box', `notice-box-${tone}`]" :role="role">
+  <div :class="getNoticeClasses()" :role="role">
     <div class="notice-box-icon" aria-hidden="true">{{ icon }}</div>
     <div class="notice-box-content">
-      <AppText :text="title" :tone="titleTone" />
-      <AppText :text="message" size="small" />
+      <AppText :text="props.title" :tone="titleTone" />
+      <AppText :text="props.message" size="small" />
     </div>
   </div>
 </template>
@@ -16,14 +16,15 @@ import AppText, { type TextTone } from "@/components/atoms/AppText.vue";
 type NoticeTone = "info" | "warning" | "success";
 
 /** 通知ボックスの内容と通知種別を指定するプロパティを表す。 */
-interface Props {
-  readonly title: string;
-  readonly message: string;
-  readonly tone?: NoticeTone;
-  readonly isAlert?: boolean;
-}
-
-const props: Props = withDefaults(defineProps<Props>(), { tone: "info", isAlert: false });
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    message: string;
+    tone?: NoticeTone;
+    isAlert?: boolean;
+  }>(),
+  { tone: "info", isAlert: false },
+);
 const { t }: Composer = useI18n();
 const iconMessageKeys: Readonly<Record<NoticeTone, string>> = {
   info: "visuals.information",
@@ -52,6 +53,11 @@ const role = computed((): "alert" | "status" => {
   const noticeRole: "alert" | "status" = props.isAlert ? "alert" : "status";
   return noticeRole;
 });
+
+/** 通知の種類に対応するクラスを取得する。 */
+function getNoticeClasses(): string[] {
+  return ["notice-box", `notice-box-${props.tone}`];
+}
 </script>
 
 <style scoped>

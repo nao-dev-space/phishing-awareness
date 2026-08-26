@@ -1,13 +1,13 @@
 ﻿<template>
   <div class="policy-page">
-    <PageIntro :eyebrow="eyebrow" :title="title" :description="description" />
+    <PageIntro :eyebrow="props.eyebrow" :title="props.title" :description="props.description" />
     <div class="policy-page-content">
-      <div v-for="item in items" :key="item.title" class="policy-page-item">
+      <div v-for="item in props.items" :key="item.title" class="policy-page-item">
         <AppHeading :level="2" :text="item.title" size="card" />
         <AppText :text="item.body" />
       </div>
     </div>
-    <NoticeBox :title="noticeTitle" :message="noticeMessage" />
+    <NoticeBox :title="props.noticeTitle" :message="props.noticeMessage" />
   </div>
 </template>
 
@@ -19,15 +19,14 @@ import PageIntro from "@/components/organisms/PageIntro.vue";
 import type { PolicyItem } from "@/types/app";
 
 /** 方針ページの導入文と項目一覧を指定するプロパティを表す。 */
-interface Props {
-  readonly eyebrow: string;
-  readonly title: string;
-  readonly description: string;
-  readonly items: readonly PolicyItem[];
-  readonly noticeTitle: string;
-  readonly noticeMessage: string;
-}
-defineProps<Props>();
+const props = defineProps<{
+  eyebrow: string;
+  title: string;
+  description: string;
+  items: readonly PolicyItem[];
+  noticeTitle: string;
+  noticeMessage: string;
+}>();
 </script>
 
 <style scoped>

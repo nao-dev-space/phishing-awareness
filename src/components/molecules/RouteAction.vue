@@ -1,9 +1,6 @@
 ﻿<template>
-  <RouterLink
-    :class="['app-action', 'route-action', `route-action-${variant}`]"
-    :to="{ name: routeName }"
-  >
-    {{ label }}
+  <RouterLink :class="getRouteActionClasses()" :to="{ name: props.routeName }">
+    {{ props.label }}
   </RouterLink>
 </template>
 
@@ -11,13 +8,19 @@
 import type { RouteName } from "@/types/app";
 
 /** アプリ内の画面遷移リンクを指定するプロパティを表す。 */
-interface Props {
-  readonly label: string;
-  readonly routeName: RouteName;
-  readonly variant?: "primary" | "secondary" | "quiet";
-}
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    routeName: RouteName;
+    variant?: "primary" | "secondary" | "quiet";
+  }>(),
+  { variant: "primary" },
+);
 
-withDefaults(defineProps<Props>(), { variant: "primary" });
+/** 画面遷移リンクの表示種別に対応するクラスを取得する。 */
+function getRouteActionClasses(): string[] {
+  return ["app-action", "route-action", `route-action-${props.variant}`];
+}
 </script>
 
 <style scoped>

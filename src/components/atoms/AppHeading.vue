@@ -1,5 +1,5 @@
 ﻿<template>
-  <component :is="tag" :class="['app-heading', `app-heading-${size}`]">{{ text }}</component>
+  <component :is="tag" :class="getHeadingClasses()">{{ props.text }}</component>
 </template>
 
 <script setup lang="ts">
@@ -8,14 +8,20 @@ export type HeadingLevel = 1 | 2 | 3 | 4;
 export type HeadingSize = "hero" | "page" | "section" | "card";
 
 /** 共通見出しの階層と表示内容を指定するプロパティを表す。 */
-interface Props {
-  readonly level: HeadingLevel;
-  readonly text: string;
-  readonly size?: HeadingSize;
-}
-
-const props: Props = withDefaults(defineProps<Props>(), { size: "section" });
+const props = withDefaults(
+  defineProps<{
+    level: HeadingLevel;
+    text: string;
+    size?: HeadingSize;
+  }>(),
+  { size: "section" },
+);
 const tag = computed((): string => `h${props.level}`);
+
+/** 見出しのサイズに対応するクラスを取得する。 */
+function getHeadingClasses(): string[] {
+  return ["app-heading", `app-heading-${props.size}`];
+}
 </script>
 
 <style scoped>

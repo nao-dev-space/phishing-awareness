@@ -1,8 +1,8 @@
 ﻿<template>
   <div class="info-card">
-    <AppHeading :level="2" :text="title" size="card" />
-    <AppText :text="body" />
-    <AppText v-if="action" :text="action" tone="accent" size="small" />
+    <AppHeading :level="2" :text="props.title" size="card" />
+    <AppText :text="props.body" />
+    <AppText v-if="props.action" :text="props.action" tone="accent" size="small" />
   </div>
 </template>
 
@@ -11,12 +11,11 @@ import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 
 /** 情報カードの見出しと本文を指定するプロパティを表す。 */
-interface Props {
-  readonly title: string;
-  readonly body: string;
-  readonly action?: string;
-}
-defineProps<Props>();
+const props = defineProps<{
+  title: string;
+  body: string;
+  action?: string;
+}>();
 </script>
 
 <style scoped>

@@ -1,8 +1,8 @@
 ﻿<template>
   <div class="page-intro">
-    <AppText v-if="eyebrow" :text="eyebrow" tone="accent" />
-    <AppHeading :level="1" :text="title" size="page" />
-    <AppText :text="description" size="lead" />
+    <AppText v-if="props.eyebrow" :text="props.eyebrow" tone="accent" />
+    <AppHeading :level="1" :text="props.title" size="page" />
+    <AppText :text="props.description" size="lead" />
   </div>
 </template>
 
@@ -11,13 +11,11 @@ import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 
 /** ページ冒頭の見出しと説明を指定するプロパティを表す。 */
-interface Props {
-  readonly title: string;
-  readonly description: string;
-  readonly eyebrow?: string;
-}
-
-defineProps<Props>();
+const props = defineProps<{
+  title: string;
+  description: string;
+  eyebrow?: string;
+}>();
 </script>
 
 <style scoped>
