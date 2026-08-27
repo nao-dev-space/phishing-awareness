@@ -64,17 +64,7 @@ import {
 } from "@/config/ui";
 
 /** ホーム画面に表示する各文言の翻訳キーを表す。 */
-interface HomeMessageKeys {
-  readonly eyebrow: string;
-  readonly independence: string;
-  readonly learnLabel: string;
-  readonly psychology: string;
-  readonly purpose: string;
-  readonly startLabel: string;
-  readonly warningTitle: string;
-}
-
-const MESSAGE_KEYS: HomeMessageKeys = {
+const MESSAGE_KEYS = {
   eyebrow: "home.eyebrow",
   independence: "home.independence",
   learnLabel: "home.learn",
@@ -82,7 +72,7 @@ const MESSAGE_KEYS: HomeMessageKeys = {
   purpose: "home.purpose",
   startLabel: "home.start",
   warningTitle: "home.warningTitle",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

@@ -14,21 +14,13 @@ import PolicyPage from "@/components/organisms/PolicyPage.vue";
 import { useContent } from "@/composables/useContent";
 
 /** プライバシー方針画面に表示する各文言の翻訳キーを表す。 */
-interface PrivacyMessageKeys {
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly noticeMessage: string;
-  readonly noticeTitle: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: PrivacyMessageKeys = {
+const MESSAGE_KEYS = {
   description: "privacy.description",
   eyebrow: "privacy.eyebrow",
   noticeMessage: "privacy.noticeMessage",
   noticeTitle: "privacy.noticeTitle",
   title: "privacy.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

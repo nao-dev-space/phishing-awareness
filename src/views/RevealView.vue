@@ -51,20 +51,7 @@ import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/ro
 import { HEADING_LEVELS, NOTICE_TONES, ROUTE_ACTION_VARIANTS, TEXT_SIZES } from "@/config/ui";
 
 /** 種明かし画面に表示する各文言の翻訳キーを表す。 */
-interface RevealMessageKeys {
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly explanationTitle: string;
-  readonly homeLabel: string;
-  readonly realRisk: string;
-  readonly retryLabel: string;
-  readonly reviewLabel: string;
-  readonly safetyMessage: string;
-  readonly safetyTitle: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: RevealMessageKeys = {
+const MESSAGE_KEYS = {
   description: "reveal.description",
   eyebrow: "reveal.eyebrow",
   explanationTitle: "reveal.explanationTitle",
@@ -75,7 +62,7 @@ const MESSAGE_KEYS: RevealMessageKeys = {
   safetyMessage: "reveal.safetyMessage",
   safetyTitle: "reveal.safetyTitle",
   title: "reveal.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

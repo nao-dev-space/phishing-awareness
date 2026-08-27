@@ -24,7 +24,7 @@
           :accessible-label="t(MESSAGE_KEYS.logoLabel)"
           :mark="t(MESSAGE_KEYS.logoMark)"
         />
-        <template v-if="simulationState === 'idle'">
+        <template v-if="simulationState === LOGIN_SIMULATION_STATES.AWAITING_ACTION">
           <AppHeading
             :level="HEADING_LEVELS.TWO"
             :text="t(MESSAGE_KEYS.panelTitle)"
@@ -89,7 +89,7 @@
         </template>
         <div v-else class="login-view-progress" role="status" aria-live="polite">
           <span
-            v-if="simulationState === 'checking'"
+            v-if="simulationState === LOGIN_SIMULATION_STATES.CHECKING_CREDENTIALS"
             class="login-view-spinner"
             aria-hidden="true"
           ></span>
@@ -100,7 +100,7 @@
             :level="HEADING_LEVELS.TWO"
             :text="
               t(
-                simulationState === 'checking'
+                simulationState === LOGIN_SIMULATION_STATES.CHECKING_CREDENTIALS
                   ? MESSAGE_KEYS.checkingTitle
                   : MESSAGE_KEYS.confirmedTitle,
               )
@@ -110,7 +110,7 @@
           <AppText
             :text="
               t(
-                simulationState === 'checking'
+                simulationState === LOGIN_SIMULATION_STATES.CHECKING_CREDENTIALS
                   ? MESSAGE_KEYS.checkingDescription
                   : MESSAGE_KEYS.confirmedDescription,
               )
@@ -120,7 +120,10 @@
         </div>
       </div>
     </div>
-    <div v-if="simulationState === 'idle'" class="login-view-alternatives">
+    <div
+      v-if="simulationState === LOGIN_SIMULATION_STATES.AWAITING_ACTION"
+      class="login-view-alternatives"
+    >
       <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.alternativesTitle)" />
       <AppText :text="t(MESSAGE_KEYS.alternativesDescription)" />
       <div class="login-view-alternative-actions">
@@ -176,46 +179,18 @@ import {
   TEXT_SIZES,
   TEXT_TONES,
 } from "@/config/ui";
-import type { SimulationState } from "@/types/app";
+
+/** 疑似ログインの進行段階を表す。 */
+const LOGIN_SIMULATION_STATES = {
+  AWAITING_ACTION: "idle",
+  CHECKING_CREDENTIALS: "checking",
+  CONFIRMED: "confirmed",
+} as const;
+
+type SimulationState = (typeof LOGIN_SIMULATION_STATES)[keyof typeof LOGIN_SIMULATION_STATES];
 
 /** 疑似ログイン画面に表示する各文言の翻訳キーを表す。 */
-interface LoginMessageKeys {
-  readonly alternativesDescription: string;
-  readonly alternativesTitle: string;
-  readonly browserDots: string;
-  readonly checkingDescription: string;
-  readonly checkingTitle: string;
-  readonly checkUrlExplanation: string;
-  readonly checkUrlLabel: string;
-  readonly checkmark: string;
-  readonly confirmedDescription: string;
-  readonly confirmedTitle: string;
-  readonly continueLabel: string;
-  readonly credentialPrompt: string;
-  readonly credentialsFilled: string;
-  readonly description: string;
-  readonly emailLabel: string;
-  readonly emptyValue: string;
-  readonly enterChoiceLabel: string;
-  readonly eyebrow: string;
-  readonly fakeAddress: string;
-  readonly fillCredentialsLabel: string;
-  readonly logoLabel: string;
-  readonly logoMark: string;
-  readonly officialSiteExplanation: string;
-  readonly officialSiteLabel: string;
-  readonly panelTitle: string;
-  readonly passwordMaskLabel: string;
-  readonly passwordLabel: string;
-  readonly previewDescription: string;
-  readonly previewLabel: string;
-  readonly revealLabel: string;
-  readonly safeChoiceTitle: string;
-  readonly title: string;
-  readonly warningTitle: string;
-}
-
-const MESSAGE_KEYS: LoginMessageKeys = {
+const MESSAGE_KEYS = {
   alternativesDescription: "login.alternativesDescription",
   alternativesTitle: "login.alternativesTitle",
   browserDots: "visuals.browserDots",
@@ -249,14 +224,14 @@ const MESSAGE_KEYS: LoginMessageKeys = {
   safeChoiceTitle: "login.safeChoiceTitle",
   title: "login.title",
   warningTitle: "login.warningTitle",
-};
+} as const;
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
 const content = useContent();
 const safeActionMessage: Ref<string> = ref("");
 const hasSimulatedCredentials: Ref<boolean> = ref(false);
 const shouldPromptCredentials: Ref<boolean> = ref(false);
-const simulationState: Ref<SimulationState> = ref("idle");
+const simulationState: Ref<SimulationState> = ref(LOGIN_SIMULATION_STATES.AWAITING_ACTION);
 const credentialActionContainer: Ref<HTMLElement | null> = ref(null);
 const CREDENTIAL_PROMPT_ID: string = "login-credential-prompt";
 const SIMULATION_STAGE_DURATION_MS: number = 2000;
@@ -292,7 +267,7 @@ function fillSimulatedCredentials(): void {
 
 /** 疑似認証の処理中表示を開始し、中間画面まで順に進める。 */
 async function continueSimulation(): Promise<void> {
-  if (simulationState.value !== "idle") {
+  if (simulationState.value !== LOGIN_SIMULATION_STATES.AWAITING_ACTION) {
     return;
   }
   if (!hasSimulatedCredentials.value) {
@@ -302,9 +277,9 @@ async function continueSimulation(): Promise<void> {
     return;
   }
 
-  simulationState.value = "checking";
+  simulationState.value = LOGIN_SIMULATION_STATES.CHECKING_CREDENTIALS;
   checkingTimer = setTimeout((): void => {
-    simulationState.value = "confirmed";
+    simulationState.value = LOGIN_SIMULATION_STATES.CONFIRMED;
     confirmedTimer = setTimeout((): void => {
       hasSimulatedCredentials.value = false;
       void router.push({ name: CHECKPOINT_ROUTE_NAME });

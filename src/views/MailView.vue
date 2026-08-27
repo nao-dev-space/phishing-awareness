@@ -89,31 +89,7 @@ import { BUTTON_VARIANTS, HEADING_LEVELS, NOTICE_TONES, TEXT_SIZES, TEXT_TONES }
 import type { MailChoice, MailChoiceId } from "@/types/app";
 
 /** 疑似メール画面に表示する各文言の翻訳キーを表す。 */
-interface MailMessageKeys {
-  readonly choiceTitle: string;
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly fakeLinkLabel: string;
-  readonly goodChoiceTitle: string;
-  readonly greeting: string;
-  readonly logoLabel: string;
-  readonly logoMark: string;
-  readonly mailBodyLabel: string;
-  readonly paragraphOne: string;
-  readonly paragraphThree: string;
-  readonly paragraphTwo: string;
-  readonly reviewLabel: string;
-  readonly safetyMessage: string;
-  readonly safetyTitle: string;
-  readonly sender: string;
-  readonly senderTerm: string;
-  readonly simulationLabel: string;
-  readonly subject: string;
-  readonly subjectTerm: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: MailMessageKeys = {
+const MESSAGE_KEYS = {
   choiceTitle: "mail.choiceTitle",
   description: "mail.description",
   eyebrow: "mail.eyebrow",
@@ -135,7 +111,7 @@ const MESSAGE_KEYS: MailMessageKeys = {
   subject: "mail.subject",
   subjectTerm: "mail.subjectTerm",
   title: "mail.title",
-};
+} as const;
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
 const content = useContent();

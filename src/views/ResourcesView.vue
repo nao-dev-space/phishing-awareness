@@ -46,17 +46,7 @@ import { useContent } from "@/composables/useContent";
 import { HEADING_LEVELS, HEADING_SIZES, NOTICE_TONES, TEXT_SIZES, TEXT_TONES } from "@/config/ui";
 
 /** 外部情報源画面に表示する各文言の翻訳キーを表す。 */
-interface ResourcesMessageKeys {
-  readonly description: string;
-  readonly externalLink: string;
-  readonly eyebrow: string;
-  readonly latestInformation: string;
-  readonly title: string;
-  readonly urgentMessage: string;
-  readonly urgentTitle: string;
-}
-
-const MESSAGE_KEYS: ResourcesMessageKeys = {
+const MESSAGE_KEYS = {
   description: "resources.description",
   externalLink: "resources.externalLink",
   eyebrow: "resources.eyebrow",
@@ -64,7 +54,7 @@ const MESSAGE_KEYS: ResourcesMessageKeys = {
   title: "resources.title",
   urgentMessage: "resources.urgentMessage",
   urgentTitle: "resources.urgentTitle",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

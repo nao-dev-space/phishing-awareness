@@ -68,20 +68,7 @@ import { LEARN_ROUTE_NAME, MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/rou
 import { HEADING_LEVELS, HEADING_SIZES, NOTICE_TONES, ROUTE_ACTION_VARIANTS } from "@/config/ui";
 
 /** 振り返り画面に表示する各文言の翻訳キーを表す。 */
-interface ReviewMessageKeys {
-  readonly actionLabel: string;
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly habitMessage: string;
-  readonly habitTitle: string;
-  readonly learnLabel: string;
-  readonly quizLabel: string;
-  readonly retryLabel: string;
-  readonly riskLabel: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: ReviewMessageKeys = {
+const MESSAGE_KEYS = {
   actionLabel: "review.actionLabel",
   description: "review.description",
   eyebrow: "review.eyebrow",
@@ -92,7 +79,7 @@ const MESSAGE_KEYS: ReviewMessageKeys = {
   retryLabel: "review.retry",
   riskLabel: "review.riskLabel",
   title: "review.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

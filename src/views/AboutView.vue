@@ -14,21 +14,13 @@ import PolicyPage from "@/components/organisms/PolicyPage.vue";
 import { useContent } from "@/composables/useContent";
 
 /** アプリ紹介画面に表示する各文言の翻訳キーを表す。 */
-interface AboutMessageKeys {
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly noticeMessage: string;
-  readonly noticeTitle: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: AboutMessageKeys = {
+const MESSAGE_KEYS = {
   description: "about.description",
   eyebrow: "about.eyebrow",
   noticeMessage: "about.noticeMessage",
   noticeTitle: "about.noticeTitle",
   title: "about.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

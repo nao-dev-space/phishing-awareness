@@ -108,30 +108,7 @@ import { calculateQuizScore, evaluateQuizAnswer, findIncorrectQuestions } from "
 import type { QuizAnswerState, QuizQuestion } from "@/types/app";
 
 /** クイズ画面に表示する各文言の翻訳キーを表す。 */
-interface QuizMessageKeys {
-  readonly answerLabel: string;
-  readonly correct: string;
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly incorrect: string;
-  readonly learnLabel: string;
-  readonly next: string;
-  readonly optionGroup: string;
-  readonly perfectMessage: string;
-  readonly perfectResult: string;
-  readonly perfectTitle: string;
-  readonly progress: string;
-  readonly questionCount: string;
-  readonly resultTitle: string;
-  readonly retryLabel: string;
-  readonly reviewResult: string;
-  readonly reviewTitle: string;
-  readonly score: string;
-  readonly showResult: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: QuizMessageKeys = {
+const MESSAGE_KEYS = {
   answerLabel: "quiz.answer",
   correct: "quiz.correct",
   description: "quiz.description",
@@ -152,7 +129,7 @@ const MESSAGE_KEYS: QuizMessageKeys = {
   score: "quiz.score",
   showResult: "quiz.showResult",
   title: "quiz.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 const questions = computed((): readonly QuizQuestion[] => content.value.quizQuestions);

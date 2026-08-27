@@ -50,18 +50,7 @@ import { MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
 import { HEADING_LEVELS, ROUTE_ACTION_VARIANTS } from "@/config/ui";
 
 /** 学習画面に表示する各文言の翻訳キーを表す。 */
-interface LearnMessageKeys {
-  readonly actionLabel: string;
-  readonly basicsTitle: string;
-  readonly checkmark: string;
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly experienceLabel: string;
-  readonly quizLabel: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: LearnMessageKeys = {
+const MESSAGE_KEYS = {
   actionLabel: "learn.actionLabel",
   basicsTitle: "learn.basicsTitle",
   checkmark: "visuals.checkmark",
@@ -70,7 +59,7 @@ const MESSAGE_KEYS: LearnMessageKeys = {
   experienceLabel: "learn.experience",
   quizLabel: "learn.quiz",
   title: "learn.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

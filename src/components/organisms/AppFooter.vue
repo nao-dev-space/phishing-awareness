@@ -33,23 +33,14 @@ import { ABOUT_ROUTE_NAME, DISCLAIMER_ROUTE_NAME, PRIVACY_ROUTE_NAME } from "@/c
 import { TEXT_SIZES, TEXT_TONES } from "@/config/ui";
 
 /** フッターに表示する各文言の翻訳キーを表す。 */
-interface FooterMessageKeys {
-  readonly aboutLabel: string;
-  readonly disclaimerLabel: string;
-  readonly footerNav: string;
-  readonly independence: string;
-  readonly privacyLabel: string;
-  readonly purpose: string;
-}
-
-const MESSAGE_KEYS: FooterMessageKeys = {
+const MESSAGE_KEYS = {
   aboutLabel: "layout.about",
   disclaimerLabel: "layout.disclaimer",
   footerNav: "layout.footerNav",
   independence: "layout.footerIndependence",
   privacyLabel: "layout.privacy",
   purpose: "layout.footerPurpose",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 </script>

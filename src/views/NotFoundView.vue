@@ -16,21 +16,13 @@ import { HOME_ROUTE_NAME } from "@/config/routes";
 import { useI18n, type Composer } from "vue-i18n";
 
 /** 存在しないページの案内画面に表示する各文言の翻訳キーを表す。 */
-interface NotFoundMessageKeys {
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly homeLabel: string;
-  readonly notFoundCode: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: NotFoundMessageKeys = {
+const MESSAGE_KEYS = {
   description: "notFound.description",
   eyebrow: "notFound.eyebrow",
   homeLabel: "notFound.home",
   notFoundCode: "visuals.notFoundCode",
   title: "notFound.title",
-};
+} as const;
 const { t }: Composer = useI18n();
 </script>
 <style scoped>

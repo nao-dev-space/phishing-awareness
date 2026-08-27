@@ -49,19 +49,12 @@ import { HOME_ROUTE_NAME } from "@/config/routes";
 import { BUTTON_VARIANTS } from "@/config/ui";
 
 /** ヘッダーとナビゲーションに表示する各文言の翻訳キーを表す。 */
-interface HeaderMessageKeys {
-  readonly closeMenu: string;
-  readonly desktopNav: string;
-  readonly mobileNav: string;
-  readonly openMenu: string;
-}
-
-const MESSAGE_KEYS: HeaderMessageKeys = {
+const MESSAGE_KEYS = {
   closeMenu: "layout.closeMenu",
   desktopNav: "layout.desktopNav",
   mobileNav: "layout.mobileNav",
   openMenu: "layout.openMenu",
-};
+} as const;
 const { t }: Composer = useI18n();
 const content = useContent();
 const mobileMenuId: string = "mobile-navigation";

@@ -29,23 +29,14 @@ import { REVEAL_ROUTE_NAME } from "@/config/routes";
 import { HEADING_LEVELS, HEADING_SIZES, TEXT_SIZES } from "@/config/ui";
 
 /** 立ち止まり画面に表示する各文言の翻訳キーを表す。 */
-interface CheckpointMessageKeys {
-  readonly description: string;
-  readonly eyebrow: string;
-  readonly hypotheticalQuestion: string;
-  readonly nextLabel: string;
-  readonly reflectionQuestion: string;
-  readonly title: string;
-}
-
-const MESSAGE_KEYS: CheckpointMessageKeys = {
+const MESSAGE_KEYS = {
   description: "checkpoint.description",
   eyebrow: "checkpoint.eyebrow",
   hypotheticalQuestion: "checkpoint.hypotheticalQuestion",
   nextLabel: "checkpoint.next",
   reflectionQuestion: "checkpoint.reflectionQuestion",
   title: "checkpoint.title",
-};
+} as const;
 const REFLECTION_TITLE_ID: string = "checkpoint-reflection-title";
 const router: Router = useRouter();
 const { t }: Composer = useI18n();
