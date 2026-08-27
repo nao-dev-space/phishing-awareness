@@ -1,13 +1,12 @@
 ﻿<template>
-  <component :is="props.tag" :class="getTextClasses()">
-    {{ props.text }}
+  <component :is="tag" :class="getTextClasses()">
+    {{ text }}
   </component>
 </template>
 
 <script setup lang="ts">
-export type TextTag = "p" | "span";
-export type TextTone = "default" | "muted" | "accent" | "warning" | "success";
-export type TextSize = "small" | "body" | "lead";
+import { TEXT_SIZES, TEXT_TAGS, TEXT_TONES } from "@/config/ui";
+import type { TextSize, TextTag, TextTone } from "@/config/ui";
 
 /** 共通テキストの内容と表示形式を指定するプロパティを表す。 */
 const props = withDefaults(
@@ -17,7 +16,7 @@ const props = withDefaults(
     tone?: TextTone;
     size?: TextSize;
   }>(),
-  { tag: "p", tone: "default", size: "body" },
+  { tag: TEXT_TAGS.PARAGRAPH, tone: TEXT_TONES.DEFAULT, size: TEXT_SIZES.BODY },
 );
 
 /** テキストの色とサイズに対応するクラスを取得する。 */

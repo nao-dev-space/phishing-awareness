@@ -8,7 +8,7 @@
     <NoticeBox
       :title="t(MESSAGE_KEYS.urgentTitle)"
       :message="t(MESSAGE_KEYS.urgentMessage)"
-      tone="warning"
+      :tone="NOTICE_TONES.WARNING"
     />
     <div class="resources-view-list">
       <a
@@ -19,12 +19,20 @@
         target="_blank"
         rel="noopener noreferrer"
       >
-        <AppHeading :level="2" :text="resource.name" size="card" />
+        <AppHeading :level="HEADING_LEVELS.TWO" :text="resource.name" :size="HEADING_SIZES.CARD" />
         <AppText :text="resource.description" />
-        <AppText :text="t(MESSAGE_KEYS.externalLink)" tone="accent" size="small" />
+        <AppText
+          :text="t(MESSAGE_KEYS.externalLink)"
+          :tone="TEXT_TONES.ACCENT"
+          :size="TEXT_SIZES.SMALL"
+        />
       </a>
     </div>
-    <AppText :text="t(MESSAGE_KEYS.latestInformation)" tone="muted" size="small" />
+    <AppText
+      :text="t(MESSAGE_KEYS.latestInformation)"
+      :tone="TEXT_TONES.MUTED"
+      :size="TEXT_SIZES.SMALL"
+    />
   </div>
 </template>
 
@@ -35,6 +43,7 @@ import AppText from "@/components/atoms/AppText.vue";
 import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
+import { HEADING_LEVELS, HEADING_SIZES, NOTICE_TONES, TEXT_SIZES, TEXT_TONES } from "@/config/ui";
 
 /** 外部情報源画面に表示する各文言の翻訳キーを表す。 */
 interface ResourcesMessageKeys {

@@ -8,11 +8,11 @@
     <NoticeBox
       :title="t(MESSAGE_KEYS.safetyTitle)"
       :message="t(MESSAGE_KEYS.safetyMessage)"
-      tone="success"
+      :tone="NOTICE_TONES.SUCCESS"
     />
     <div class="reveal-view-explanation">
-      <AppHeading :level="2" :text="t(MESSAGE_KEYS.explanationTitle)" />
-      <AppText :text="t(MESSAGE_KEYS.realRisk)" size="lead" />
+      <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.explanationTitle)" />
+      <AppText :text="t(MESSAGE_KEYS.realRisk)" :size="TEXT_SIZES.LEAD" />
       <div class="reveal-view-cards">
         <InfoCard
           v-for="point in content.revealPoints"
@@ -27,12 +27,12 @@
       <RouteAction
         :label="t(MESSAGE_KEYS.retryLabel)"
         :route-name="MAIL_ROUTE_NAME"
-        variant="secondary"
+        :variant="ROUTE_ACTION_VARIANTS.SECONDARY"
       />
       <RouteAction
         :label="t(MESSAGE_KEYS.homeLabel)"
         :route-name="HOME_ROUTE_NAME"
-        variant="quiet"
+        :variant="ROUTE_ACTION_VARIANTS.QUIET"
       />
     </div>
   </div>
@@ -48,6 +48,7 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { HOME_ROUTE_NAME, MAIL_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
+import { HEADING_LEVELS, NOTICE_TONES, ROUTE_ACTION_VARIANTS, TEXT_SIZES } from "@/config/ui";
 
 /** 種明かし画面に表示する各文言の翻訳キーを表す。 */
 interface RevealMessageKeys {

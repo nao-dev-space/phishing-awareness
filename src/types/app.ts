@@ -1,5 +1,7 @@
 import type { Component } from "vue";
 
+export type SimulationState = "idle" | "checking" | "confirmed";
+
 export type RouteName =
   | "home"
   | "experience-mail"

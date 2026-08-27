@@ -8,11 +8,11 @@
     <section class="checkpoint-view-reflection" :aria-labelledby="REFLECTION_TITLE_ID">
       <AppHeading
         :id="REFLECTION_TITLE_ID"
-        :level="2"
+        :level="HEADING_LEVELS.TWO"
         :text="t(MESSAGE_KEYS.hypotheticalQuestion)"
-        size="card"
+        :size="HEADING_SIZES.CARD"
       />
-      <AppText :text="t(MESSAGE_KEYS.reflectionQuestion)" size="lead" />
+      <AppText :text="t(MESSAGE_KEYS.reflectionQuestion)" :size="TEXT_SIZES.LEAD" />
     </section>
     <AppButton :label="t(MESSAGE_KEYS.nextLabel)" @click="continueToReveal" />
   </div>
@@ -26,6 +26,7 @@ import AppHeading from "@/components/atoms/AppHeading.vue";
 import AppText from "@/components/atoms/AppText.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { REVEAL_ROUTE_NAME } from "@/config/routes";
+import { HEADING_LEVELS, HEADING_SIZES, TEXT_SIZES } from "@/config/ui";
 
 /** 立ち止まり画面に表示する各文言の翻訳キーを表す。 */
 interface CheckpointMessageKeys {

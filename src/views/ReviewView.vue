@@ -9,7 +9,11 @@
       <div v-for="point in content.suspiciousPoints" :key="point.id" class="review-view-point">
         <div class="review-view-number" aria-hidden="true">{{ point.id }}</div>
         <div class="review-view-point-copy">
-          <AppHeading :level="2" :text="point.location" size="card" />
+          <AppHeading
+            :level="HEADING_LEVELS.TWO"
+            :text="point.location"
+            :size="HEADING_SIZES.CARD"
+          />
           <dl class="review-view-details">
             <div class="review-view-detail">
               <dt class="review-view-detail-label review-view-detail-label-risk">
@@ -34,19 +38,19 @@
     <NoticeBox
       :title="t(MESSAGE_KEYS.habitTitle)"
       :message="t(MESSAGE_KEYS.habitMessage)"
-      tone="success"
+      :tone="NOTICE_TONES.SUCCESS"
     />
     <div class="review-view-actions">
       <RouteAction :label="t(MESSAGE_KEYS.learnLabel)" :route-name="LEARN_ROUTE_NAME" />
       <RouteAction
         :label="t(MESSAGE_KEYS.quizLabel)"
         :route-name="QUIZ_ROUTE_NAME"
-        variant="secondary"
+        :variant="ROUTE_ACTION_VARIANTS.SECONDARY"
       />
       <RouteAction
         :label="t(MESSAGE_KEYS.retryLabel)"
         :route-name="MAIL_ROUTE_NAME"
-        variant="quiet"
+        :variant="ROUTE_ACTION_VARIANTS.QUIET"
       />
     </div>
   </div>
@@ -61,6 +65,7 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { LEARN_ROUTE_NAME, MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
+import { HEADING_LEVELS, HEADING_SIZES, NOTICE_TONES, ROUTE_ACTION_VARIANTS } from "@/config/ui";
 
 /** 振り返り画面に表示する各文言の翻訳キーを表す。 */
 interface ReviewMessageKeys {

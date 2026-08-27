@@ -1,11 +1,11 @@
 ﻿<template>
-  <component :is="tag" :class="getHeadingClasses()">{{ props.text }}</component>
+  <component :is="tag" :class="getHeadingClasses()">{{ text }}</component>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-export type HeadingLevel = 1 | 2 | 3 | 4;
-export type HeadingSize = "hero" | "page" | "section" | "card";
+import { HEADING_SIZES } from "@/config/ui";
+import type { HeadingLevel, HeadingSize } from "@/config/ui";
 
 /** 共通見出しの階層と表示内容を指定するプロパティを表す。 */
 const props = withDefaults(
@@ -14,7 +14,7 @@ const props = withDefaults(
     text: string;
     size?: HeadingSize;
   }>(),
-  { size: "section" },
+  { size: HEADING_SIZES.SECTION },
 );
 const tag = computed((): string => `h${props.level}`);
 

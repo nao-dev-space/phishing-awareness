@@ -1,26 +1,22 @@
 ﻿<template>
-  <button
-    :class="getButtonClasses()"
-    :type="props.type"
-    :disabled="props.disabled"
-    @click="handleClick"
-  >
-    {{ props.label }}
+  <button :class="getButtonClasses()" :type="type" :disabled="disabled" @click="handleClick">
+    {{ label }}
   </button>
 </template>
 
 <script setup lang="ts">
-export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
+import { BUTTON_TYPES, BUTTON_VARIANTS } from "@/config/ui";
+import type { ButtonType, ButtonVariant } from "@/config/ui";
 
 /** 共通ボタンの表示内容と操作状態を指定するプロパティを表す。 */
 const props = withDefaults(
   defineProps<{
     label: string;
-    type?: "button" | "submit";
+    type?: ButtonType;
     variant?: ButtonVariant;
     disabled?: boolean;
   }>(),
-  { type: "button", variant: "primary", disabled: false },
+  { type: BUTTON_TYPES.BUTTON, variant: BUTTON_VARIANTS.PRIMARY, disabled: false },
 );
 
 /** 共通ボタンが親へ通知するイベントを表す。 */

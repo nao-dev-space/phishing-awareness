@@ -1,13 +1,13 @@
 ﻿<template>
-  <div class="cloud-logo" :aria-label="props.accessibleLabel" role="img">
-    <span class="cloud-logo-mark" aria-hidden="true">{{ props.mark }}</span>
-    <span class="cloud-logo-name">{{ props.serviceName }}</span>
+  <div class="cloud-logo" :aria-label="accessibleLabel" role="img">
+    <span class="cloud-logo-mark" aria-hidden="true">{{ mark }}</span>
+    <span class="cloud-logo-name">{{ serviceName }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 /** 架空サービスのロゴに表示する名称と読み上げ名を表す。 */
-const props = defineProps<{
+defineProps<{
   serviceName: string;
   accessibleLabel: string;
   mark: string;

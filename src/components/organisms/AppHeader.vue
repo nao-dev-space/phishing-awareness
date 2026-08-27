@@ -16,7 +16,7 @@
       <AppButton
         class="site-header-menu-button"
         :label="menuButtonLabel"
-        variant="quiet"
+        :variant="BUTTON_VARIANTS.QUIET"
         :aria-expanded="isMenuOpen"
         :aria-controls="mobileMenuId"
         @click="toggleMenu"
@@ -46,6 +46,7 @@ import { useI18n, type Composer } from "vue-i18n";
 import AppButton from "@/components/atoms/AppButton.vue";
 import { useContent } from "@/composables/useContent";
 import { HOME_ROUTE_NAME } from "@/config/routes";
+import { BUTTON_VARIANTS } from "@/config/ui";
 
 /** ヘッダーとナビゲーションに表示する各文言の翻訳キーを表す。 */
 interface HeaderMessageKeys {

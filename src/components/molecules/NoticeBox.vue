@@ -2,8 +2,8 @@
   <div :class="getNoticeClasses()" :role="role">
     <div class="notice-box-icon" aria-hidden="true">{{ icon }}</div>
     <div class="notice-box-content">
-      <AppText :text="props.title" :tone="titleTone" />
-      <AppText :text="props.message" size="small" />
+      <AppText :text="title" :tone="titleTone" />
+      <AppText :text="message" :size="TEXT_SIZES.SMALL" />
     </div>
   </div>
 </template>
@@ -11,9 +11,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n, type Composer } from "vue-i18n";
-import AppText, { type TextTone } from "@/components/atoms/AppText.vue";
-
-type NoticeTone = "info" | "warning" | "success";
+import AppText from "@/components/atoms/AppText.vue";
+import { NOTICE_ROLES, NOTICE_TONES, TEXT_SIZES, TEXT_TONES } from "@/config/ui";
+import type { NoticeRole, NoticeTone, TextTone } from "@/config/ui";
 
 /** 通知ボックスの内容と通知種別を指定するプロパティを表す。 */
 const props = withDefaults(
@@ -23,18 +23,18 @@ const props = withDefaults(
     tone?: NoticeTone;
     isAlert?: boolean;
   }>(),
-  { tone: "info", isAlert: false },
+  { tone: NOTICE_TONES.INFO, isAlert: false },
 );
 const { t }: Composer = useI18n();
 const iconMessageKeys: Readonly<Record<NoticeTone, string>> = {
-  info: "visuals.information",
-  warning: "visuals.warning",
-  success: "visuals.checkmark",
+  [NOTICE_TONES.INFO]: "visuals.information",
+  [NOTICE_TONES.WARNING]: "visuals.warning",
+  [NOTICE_TONES.SUCCESS]: "visuals.checkmark",
 };
 const titleTones: Readonly<Record<NoticeTone, TextTone>> = {
-  info: "accent",
-  warning: "warning",
-  success: "success",
+  [NOTICE_TONES.INFO]: TEXT_TONES.ACCENT,
+  [NOTICE_TONES.WARNING]: TEXT_TONES.WARNING,
+  [NOTICE_TONES.SUCCESS]: TEXT_TONES.SUCCESS,
 };
 /** 通知の種類に対応する装飾アイコンを取得する。 */
 const icon = computed((): string => {
@@ -49,8 +49,8 @@ const titleTone = computed((): TextTone => {
 });
 
 /** 即時通知の必要性に応じてアクセシビリティロールを選択する。 */
-const role = computed((): "alert" | "status" => {
-  const noticeRole: "alert" | "status" = props.isAlert ? "alert" : "status";
+const role = computed((): NoticeRole => {
+  const noticeRole: NoticeRole = props.isAlert ? NOTICE_ROLES.ALERT : NOTICE_ROLES.STATUS;
   return noticeRole;
 });
 

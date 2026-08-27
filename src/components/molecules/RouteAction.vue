@@ -1,10 +1,12 @@
 ﻿<template>
-  <RouterLink :class="getRouteActionClasses()" :to="{ name: props.routeName }">
-    {{ props.label }}
+  <RouterLink :class="getRouteActionClasses()" :to="{ name: routeName }">
+    {{ label }}
   </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { ROUTE_ACTION_VARIANTS } from "@/config/ui";
+import type { RouteActionVariant } from "@/config/ui";
 import type { RouteName } from "@/types/app";
 
 /** アプリ内の画面遷移リンクを指定するプロパティを表す。 */
@@ -12,9 +14,9 @@ const props = withDefaults(
   defineProps<{
     label: string;
     routeName: RouteName;
-    variant?: "primary" | "secondary" | "quiet";
+    variant?: RouteActionVariant;
   }>(),
-  { variant: "primary" },
+  { variant: ROUTE_ACTION_VARIANTS.PRIMARY },
 );
 
 /** 画面遷移リンクの表示種別に対応するクラスを取得する。 */

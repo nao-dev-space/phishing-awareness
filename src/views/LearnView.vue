@@ -20,7 +20,7 @@
       </details>
     </div>
     <div class="learn-view-basics">
-      <AppHeading :level="2" :text="t(MESSAGE_KEYS.basicsTitle)" />
+      <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.basicsTitle)" />
       <ul class="learn-view-action-list">
         <li v-for="action in content.basicActions" :key="action" class="learn-view-action-item">
           <div class="learn-view-check" aria-hidden="true">{{ t(MESSAGE_KEYS.checkmark) }}</div>
@@ -33,7 +33,7 @@
       <RouteAction
         :label="t(MESSAGE_KEYS.quizLabel)"
         :route-name="QUIZ_ROUTE_NAME"
-        variant="secondary"
+        :variant="ROUTE_ACTION_VARIANTS.SECONDARY"
       />
     </div>
   </div>
@@ -47,6 +47,7 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { MAIL_ROUTE_NAME, QUIZ_ROUTE_NAME } from "@/config/routes";
+import { HEADING_LEVELS, ROUTE_ACTION_VARIANTS } from "@/config/ui";
 
 /** 学習画面に表示する各文言の翻訳キーを表す。 */
 interface LearnMessageKeys {

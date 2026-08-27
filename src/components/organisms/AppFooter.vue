@@ -3,8 +3,12 @@
     <div class="site-footer-inner">
       <div class="site-footer-copy">
         <AppText :text="t(MESSAGE_KEYS.purpose)" />
-        <AppText :text="t(MESSAGE_KEYS.independence)" size="small" />
-        <AppText :text="content.realCredentialWarning" size="small" tone="warning" />
+        <AppText :text="t(MESSAGE_KEYS.independence)" :size="TEXT_SIZES.SMALL" />
+        <AppText
+          :text="content.realCredentialWarning"
+          :size="TEXT_SIZES.SMALL"
+          :tone="TEXT_TONES.WARNING"
+        />
       </div>
       <nav class="site-footer-links" :aria-label="t(MESSAGE_KEYS.footerNav)">
         <RouterLink class="site-footer-link" :to="{ name: ABOUT_ROUTE_NAME }">{{
@@ -26,6 +30,7 @@ import { useI18n, type Composer } from "vue-i18n";
 import AppText from "@/components/atoms/AppText.vue";
 import { useContent } from "@/composables/useContent";
 import { ABOUT_ROUTE_NAME, DISCLAIMER_ROUTE_NAME, PRIVACY_ROUTE_NAME } from "@/config/routes";
+import { TEXT_SIZES, TEXT_TONES } from "@/config/ui";
 
 /** フッターに表示する各文言の翻訳キーを表す。 */
 interface FooterMessageKeys {

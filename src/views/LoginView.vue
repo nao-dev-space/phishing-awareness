@@ -8,7 +8,7 @@
     <NoticeBox
       :title="t(MESSAGE_KEYS.warningTitle)"
       :message="content.realCredentialWarning"
-      tone="warning"
+      :tone="NOTICE_TONES.WARNING"
       is-alert
     />
     <div class="login-view-simulation">
@@ -25,7 +25,11 @@
           :mark="t(MESSAGE_KEYS.logoMark)"
         />
         <template v-if="simulationState === 'idle'">
-          <AppHeading :level="2" :text="t(MESSAGE_KEYS.panelTitle)" size="card" />
+          <AppHeading
+            :level="HEADING_LEVELS.TWO"
+            :text="t(MESSAGE_KEYS.panelTitle)"
+            :size="HEADING_SIZES.CARD"
+          />
           <dl class="login-view-credential-preview" :aria-label="t(MESSAGE_KEYS.previewLabel)">
             <div class="login-view-credential-row">
               <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.emailLabel) }}</dt>
@@ -57,11 +61,15 @@
               </dd>
             </div>
           </dl>
-          <AppText :text="t(MESSAGE_KEYS.previewDescription)" size="small" tone="muted" />
+          <AppText
+            :text="t(MESSAGE_KEYS.previewDescription)"
+            :size="TEXT_SIZES.SMALL"
+            :tone="TEXT_TONES.MUTED"
+          />
           <div ref="credentialActionContainer" :class="getCredentialActionClasses()">
             <AppButton
               :label="t(MESSAGE_KEYS.fillCredentialsLabel)"
-              variant="secondary"
+              :variant="BUTTON_VARIANTS.SECONDARY"
               :aria-describedby="shouldPromptCredentials ? CREDENTIAL_PROMPT_ID : undefined"
               @click="fillSimulatedCredentials"
             />
@@ -89,7 +97,7 @@
             t(MESSAGE_KEYS.checkmark)
           }}</span>
           <AppHeading
-            :level="2"
+            :level="HEADING_LEVELS.TWO"
             :text="
               t(
                 simulationState === 'checking'
@@ -97,7 +105,7 @@
                   : MESSAGE_KEYS.confirmedTitle,
               )
             "
-            size="card"
+            :size="HEADING_SIZES.CARD"
           />
           <AppText
             :text="
@@ -107,28 +115,28 @@
                   : MESSAGE_KEYS.confirmedDescription,
               )
             "
-            tone="muted"
+            :tone="TEXT_TONES.MUTED"
           />
         </div>
       </div>
     </div>
     <div v-if="simulationState === 'idle'" class="login-view-alternatives">
-      <AppHeading :level="2" :text="t(MESSAGE_KEYS.alternativesTitle)" />
+      <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.alternativesTitle)" />
       <AppText :text="t(MESSAGE_KEYS.alternativesDescription)" />
       <div class="login-view-alternative-actions">
         <AppButton
           :label="t(MESSAGE_KEYS.enterChoiceLabel)"
-          variant="secondary"
+          :variant="BUTTON_VARIANTS.SECONDARY"
           @click="continueSimulation"
         />
         <AppButton
           :label="t(MESSAGE_KEYS.checkUrlLabel)"
-          variant="secondary"
+          :variant="BUTTON_VARIANTS.SECONDARY"
           @click="chooseSafeAction(MESSAGE_KEYS.checkUrlExplanation)"
         />
         <AppButton
           :label="t(MESSAGE_KEYS.officialSiteLabel)"
-          variant="secondary"
+          :variant="BUTTON_VARIANTS.SECONDARY"
           @click="chooseSafeAction(MESSAGE_KEYS.officialSiteExplanation)"
         />
       </div>
@@ -136,7 +144,7 @@
         v-if="safeActionMessage"
         :title="t(MESSAGE_KEYS.safeChoiceTitle)"
         :message="safeActionMessage"
-        tone="success"
+        :tone="NOTICE_TONES.SUCCESS"
       />
       <RouteAction
         v-if="safeActionMessage"
@@ -160,8 +168,15 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { CHECKPOINT_ROUTE_NAME, REVEAL_ROUTE_NAME } from "@/config/routes";
-
-type SimulationState = "idle" | "checking" | "confirmed";
+import {
+  BUTTON_VARIANTS,
+  HEADING_LEVELS,
+  HEADING_SIZES,
+  NOTICE_TONES,
+  TEXT_SIZES,
+  TEXT_TONES,
+} from "@/config/ui";
+import type { SimulationState } from "@/types/app";
 
 /** 疑似ログイン画面に表示する各文言の翻訳キーを表す。 */
 interface LoginMessageKeys {

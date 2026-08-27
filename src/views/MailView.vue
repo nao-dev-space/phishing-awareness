@@ -17,7 +17,11 @@
           :accessible-label="t(MESSAGE_KEYS.logoLabel)"
           :mark="t(MESSAGE_KEYS.logoMark)"
         />
-        <AppText :text="t(MESSAGE_KEYS.simulationLabel)" size="small" tone="muted" />
+        <AppText
+          :text="t(MESSAGE_KEYS.simulationLabel)"
+          :size="TEXT_SIZES.SMALL"
+          :tone="TEXT_TONES.MUTED"
+        />
       </div>
       <dl class="mail-view-metadata">
         <div class="mail-view-metadata-row">
@@ -42,13 +46,13 @@
       </div>
     </div>
     <div class="mail-view-choices">
-      <AppHeading :level="2" :text="t(MESSAGE_KEYS.choiceTitle)" />
+      <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.choiceTitle)" />
       <div class="mail-view-choice-list">
         <AppButton
           v-for="choice in content.mailChoices"
           :key="choice.id"
           :label="choice.label"
-          variant="secondary"
+          :variant="BUTTON_VARIANTS.SECONDARY"
           @click="selectChoice(choice)"
         />
       </div>
@@ -56,7 +60,7 @@
         v-if="selectedSafeChoice"
         :title="t(MESSAGE_KEYS.goodChoiceTitle)"
         :message="selectedSafeChoice.explanation"
-        tone="success"
+        :tone="NOTICE_TONES.SUCCESS"
       />
       <RouteAction
         v-if="selectedSafeChoice"
@@ -81,6 +85,7 @@ import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { FOLLOW_LINK_CHOICE_ID } from "@/config/content";
 import { LOGIN_ROUTE_NAME, REVIEW_ROUTE_NAME } from "@/config/routes";
+import { BUTTON_VARIANTS, HEADING_LEVELS, NOTICE_TONES, TEXT_SIZES, TEXT_TONES } from "@/config/ui";
 import type { MailChoice, MailChoiceId } from "@/types/app";
 
 /** 疑似メール画面に表示する各文言の翻訳キーを表す。 */

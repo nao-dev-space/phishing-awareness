@@ -3,13 +3,13 @@
     <input
       class="app-radio-option-input"
       type="radio"
-      :name="props.name"
-      :value="props.value"
+      :name="name"
+      :value="value"
       :checked="isChecked"
-      :disabled="props.disabled"
+      :disabled="disabled"
       @change="handleChange"
     />
-    <span class="app-radio-option-label">{{ props.label }}</span>
+    <span class="app-radio-option-label">{{ label }}</span>
   </label>
 </template>
 

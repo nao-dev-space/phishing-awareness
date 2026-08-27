@@ -12,8 +12,12 @@
         :max="questions.length"
         :aria-label="progressLabel"
       ></progress>
-      <AppText :text="questionCountLabel" tone="accent" />
-      <AppHeading :level="2" :text="currentQuestion.prompt" size="card" />
+      <AppText :text="questionCountLabel" :tone="TEXT_TONES.ACCENT" />
+      <AppHeading
+        :level="HEADING_LEVELS.TWO"
+        :text="currentQuestion.prompt"
+        :size="HEADING_SIZES.CARD"
+      />
       <div class="quiz-view-options" role="radiogroup" :aria-label="t(MESSAGE_KEYS.optionGroup)">
         <AppRadioOption
           v-for="option in currentQuestion.options"
@@ -43,16 +47,20 @@
     </div>
     <div v-else class="quiz-view-result">
       <div class="quiz-view-score">{{ scoreLabel }}</div>
-      <AppHeading :level="2" :text="t(MESSAGE_KEYS.resultTitle)" />
-      <AppText :text="resultMessage" size="lead" />
+      <AppHeading :level="HEADING_LEVELS.TWO" :text="t(MESSAGE_KEYS.resultTitle)" />
+      <AppText :text="resultMessage" :size="TEXT_SIZES.LEAD" />
       <div v-if="incorrectQuestions.length" class="quiz-view-review">
-        <AppHeading :level="3" :text="t(MESSAGE_KEYS.reviewTitle)" size="card" />
+        <AppHeading
+          :level="HEADING_LEVELS.THREE"
+          :text="t(MESSAGE_KEYS.reviewTitle)"
+          :size="HEADING_SIZES.CARD"
+        />
         <div
           v-for="question in incorrectQuestions"
           :key="question.id"
           class="quiz-view-review-item"
         >
-          <AppText :text="question.prompt" tone="accent" />
+          <AppText :text="question.prompt" :tone="TEXT_TONES.ACCENT" />
           <AppText :text="question.explanation" />
         </div>
       </div>
@@ -60,14 +68,14 @@
         v-else
         :title="t(MESSAGE_KEYS.perfectTitle)"
         :message="t(MESSAGE_KEYS.perfectMessage)"
-        tone="success"
+        :tone="NOTICE_TONES.SUCCESS"
       />
       <div class="quiz-view-result-actions">
         <AppButton :label="t(MESSAGE_KEYS.retryLabel)" @click="resetQuiz" />
         <RouteAction
           :label="t(MESSAGE_KEYS.learnLabel)"
           :route-name="LEARN_ROUTE_NAME"
-          variant="secondary"
+          :variant="ROUTE_ACTION_VARIANTS.SECONDARY"
         />
       </div>
     </div>
@@ -86,6 +94,16 @@ import RouteAction from "@/components/molecules/RouteAction.vue";
 import PageIntro from "@/components/organisms/PageIntro.vue";
 import { useContent } from "@/composables/useContent";
 import { LEARN_ROUTE_NAME } from "@/config/routes";
+import {
+  HEADING_LEVELS,
+  HEADING_SIZES,
+  NOTICE_TONES,
+  QUIZ_FEEDBACK_TONES,
+  ROUTE_ACTION_VARIANTS,
+  TEXT_SIZES,
+  TEXT_TONES,
+} from "@/config/ui";
+import type { QuizFeedbackTone } from "@/config/ui";
 import { calculateQuizScore, evaluateQuizAnswer, findIncorrectQuestions } from "@/services/quiz";
 import type { QuizAnswerState, QuizQuestion } from "@/types/app";
 
@@ -196,8 +214,10 @@ const feedbackTitle = computed((): string => {
   return label;
 });
 /** 現在の回答結果に対応する通知色を選択する。 */
-const feedbackTone = computed((): "success" | "warning" => {
-  const tone: "success" | "warning" = currentAnswer.value?.isCorrect ? "success" : "warning";
+const feedbackTone = computed((): QuizFeedbackTone => {
+  const tone: QuizFeedbackTone = currentAnswer.value?.isCorrect
+    ? QUIZ_FEEDBACK_TONES.SUCCESS
+    : QUIZ_FEEDBACK_TONES.WARNING;
   return tone;
 });
 /** 残り問題の有無に応じて次操作のラベルを取得する。 */

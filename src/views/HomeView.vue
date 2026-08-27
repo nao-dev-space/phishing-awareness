@@ -2,28 +2,32 @@
   <div class="home-view">
     <div class="home-view-hero">
       <div class="home-view-hero-copy">
-        <AppText :text="t(MESSAGE_KEYS.eyebrow)" tone="accent" />
-        <AppHeading :level="1" :text="content.appName" size="hero" />
-        <AppText :text="t(MESSAGE_KEYS.purpose)" size="lead" />
+        <AppText :text="t(MESSAGE_KEYS.eyebrow)" :tone="TEXT_TONES.ACCENT" />
+        <AppHeading
+          :level="HEADING_LEVELS.ONE"
+          :text="content.appName"
+          :size="HEADING_SIZES.HERO"
+        />
+        <AppText :text="t(MESSAGE_KEYS.purpose)" :size="TEXT_SIZES.LEAD" />
         <div class="home-view-actions">
           <RouteAction :label="t(MESSAGE_KEYS.startLabel)" :route-name="MAIL_ROUTE_NAME" />
           <RouteAction
             :label="t(MESSAGE_KEYS.learnLabel)"
             :route-name="LEARN_ROUTE_NAME"
-            variant="secondary"
+            :variant="ROUTE_ACTION_VARIANTS.SECONDARY"
           />
         </div>
         <NoticeBox
           class="home-view-warning"
           :title="t(MESSAGE_KEYS.warningTitle)"
           :message="content.realCredentialWarning"
-          tone="warning"
+          :tone="NOTICE_TONES.WARNING"
           is-alert
         />
       </div>
     </div>
     <div class="home-view-lesson">
-      <AppText :text="t(MESSAGE_KEYS.psychology)" size="lead" />
+      <AppText :text="t(MESSAGE_KEYS.psychology)" :size="TEXT_SIZES.LEAD" />
       <div class="home-view-cards">
         <InfoCard
           v-for="card in content.homeCards"
@@ -33,7 +37,11 @@
         />
       </div>
     </div>
-    <AppText :text="t(MESSAGE_KEYS.independence)" tone="muted" size="small" />
+    <AppText
+      :text="t(MESSAGE_KEYS.independence)"
+      :tone="TEXT_TONES.MUTED"
+      :size="TEXT_SIZES.SMALL"
+    />
   </div>
 </template>
 
@@ -46,6 +54,14 @@ import NoticeBox from "@/components/molecules/NoticeBox.vue";
 import RouteAction from "@/components/molecules/RouteAction.vue";
 import { useContent } from "@/composables/useContent";
 import { LEARN_ROUTE_NAME, MAIL_ROUTE_NAME } from "@/config/routes";
+import {
+  HEADING_LEVELS,
+  HEADING_SIZES,
+  NOTICE_TONES,
+  ROUTE_ACTION_VARIANTS,
+  TEXT_SIZES,
+  TEXT_TONES,
+} from "@/config/ui";
 
 /** ホーム画面に表示する各文言の翻訳キーを表す。 */
 interface HomeMessageKeys {
