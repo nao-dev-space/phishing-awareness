@@ -9,7 +9,7 @@
       :title="t(MESSAGE_KEYS.warningTitle)"
       :message="content.realCredentialWarning"
       :tone="NOTICE_TONES.WARNING"
-      is-alert
+      :is-alert="NOTICE_ANNOUNCEMENT_MODES.IMMEDIATE"
     />
     <div class="login-view-simulation">
       <div class="login-view-browser-bar">
@@ -44,7 +44,7 @@
             <div class="login-view-credential-row">
               <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.passwordLabel) }}</dt>
               <dd
-                :class="getCredentialValueClasses(true)"
+                :class="getCredentialValueClasses(IS_PASSWORD_FIELD)"
                 :aria-label="
                   hasSimulatedCredentials
                     ? t(MESSAGE_KEYS.passwordMaskLabel)
@@ -175,6 +175,7 @@ import {
   BUTTON_VARIANTS,
   HEADING_LEVELS,
   HEADING_SIZES,
+  NOTICE_ANNOUNCEMENT_MODES,
   NOTICE_TONES,
   TEXT_SIZES,
   TEXT_TONES,
@@ -234,6 +235,7 @@ const shouldPromptCredentials: Ref<boolean> = ref(false);
 const simulationState: Ref<SimulationState> = ref(LOGIN_SIMULATION_STATES.AWAITING_ACTION);
 const credentialActionContainer: Ref<HTMLElement | null> = ref(null);
 const CREDENTIAL_PROMPT_ID: string = "login-credential-prompt";
+const IS_PASSWORD_FIELD: boolean = true;
 const SIMULATION_STAGE_DURATION_MS: number = 2000;
 let checkingTimer: ReturnType<typeof setTimeout> | undefined;
 let confirmedTimer: ReturnType<typeof setTimeout> | undefined;

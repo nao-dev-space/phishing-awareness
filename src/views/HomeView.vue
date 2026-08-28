@@ -22,7 +22,7 @@
           :title="t(MESSAGE_KEYS.warningTitle)"
           :message="content.realCredentialWarning"
           :tone="NOTICE_TONES.WARNING"
-          is-alert
+          :is-alert="NOTICE_ANNOUNCEMENT_MODES.IMMEDIATE"
         />
       </div>
     </div>
@@ -57,6 +57,7 @@ import { LEARN_ROUTE_NAME, MAIL_ROUTE_NAME } from "@/config/routes";
 import {
   HEADING_LEVELS,
   HEADING_SIZES,
+  NOTICE_ANNOUNCEMENT_MODES,
   NOTICE_TONES,
   ROUTE_ACTION_VARIANTS,
   TEXT_SIZES,

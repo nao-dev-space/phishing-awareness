@@ -39,6 +39,11 @@ export const NOTICE_ROLES = {
 
 export type NoticeRole = (typeof NOTICE_ROLES)[keyof typeof NOTICE_ROLES];
 
+export const NOTICE_ANNOUNCEMENT_MODES = {
+  IMMEDIATE: true,
+  POLITE: false,
+} as const;
+
 export const NOTICE_TONES = {
   INFO: "info",
   WARNING: "warning",
