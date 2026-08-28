@@ -23,16 +23,16 @@
           :tone="TEXT_TONES.MUTED"
         />
       </div>
-      <dl class="mail-view-metadata">
+      <div class="mail-view-metadata">
         <div class="mail-view-metadata-row">
-          <dt class="mail-view-term">{{ t(MESSAGE_KEYS.senderTerm) }}</dt>
-          <dd class="mail-view-detail">{{ t(MESSAGE_KEYS.sender) }}</dd>
+          <div class="mail-view-term">{{ t(MESSAGE_KEYS.senderTerm) }}</div>
+          <div class="mail-view-detail">{{ t(MESSAGE_KEYS.sender) }}</div>
         </div>
         <div class="mail-view-metadata-row">
-          <dt class="mail-view-term">{{ t(MESSAGE_KEYS.subjectTerm) }}</dt>
-          <dd class="mail-view-detail">{{ t(MESSAGE_KEYS.subject) }}</dd>
+          <div class="mail-view-term">{{ t(MESSAGE_KEYS.subjectTerm) }}</div>
+          <div class="mail-view-detail">{{ t(MESSAGE_KEYS.subject) }}</div>
         </div>
-      </dl>
+      </div>
       <div class="mail-view-body">
         <AppText :text="t(MESSAGE_KEYS.greeting)" />
         <AppText :text="t(MESSAGE_KEYS.paragraphOne)" />
@@ -127,7 +127,7 @@ const selectedSafeChoice = computed((): MailChoice | null => {
 function selectChoice(choice: MailChoice): void {
   // 危険な選択肢では外部サイトを開かず、学習用の疑似ログイン画面だけへ遷移する。
   if (!choice.isSafe) {
-    void router.push({ name: LOGIN_ROUTE_NAME });
+    router.push({ name: LOGIN_ROUTE_NAME });
     return;
   }
   selectedSafeChoiceId.value = choice.id;

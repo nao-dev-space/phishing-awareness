@@ -43,7 +43,7 @@ const { t }: Composer = useI18n();
 
 /** 立ち止まる画面から種明かしへ進む。 */
 function continueToReveal(): void {
-  void router.push({ name: REVEAL_ROUTE_NAME });
+  router.push({ name: REVEAL_ROUTE_NAME });
 }
 </script>
 

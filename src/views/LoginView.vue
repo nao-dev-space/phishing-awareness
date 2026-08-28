@@ -30,20 +30,24 @@
             :text="t(MESSAGE_KEYS.panelTitle)"
             :size="HEADING_SIZES.CARD"
           />
-          <dl class="login-view-credential-preview" :aria-label="t(MESSAGE_KEYS.previewLabel)">
+          <div
+            class="login-view-credential-preview"
+            role="group"
+            :aria-label="t(MESSAGE_KEYS.previewLabel)"
+          >
             <div class="login-view-credential-row">
-              <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.emailLabel) }}</dt>
-              <dd :class="getCredentialValueClasses()">
+              <div class="login-view-credential-label">{{ t(MESSAGE_KEYS.emailLabel) }}</div>
+              <div :class="getCredentialValueClasses()">
                 {{
                   hasSimulatedCredentials
                     ? content.trainingCredentialPreview.email
                     : t(MESSAGE_KEYS.emptyValue)
                 }}
-              </dd>
+              </div>
             </div>
             <div class="login-view-credential-row">
-              <dt class="login-view-credential-label">{{ t(MESSAGE_KEYS.passwordLabel) }}</dt>
-              <dd
+              <div class="login-view-credential-label">{{ t(MESSAGE_KEYS.passwordLabel) }}</div>
+              <div
                 :class="getCredentialValueClasses(IS_PASSWORD_FIELD)"
                 :aria-label="
                   hasSimulatedCredentials
@@ -58,9 +62,9 @@
                       : t(MESSAGE_KEYS.emptyValue)
                   }}
                 </span>
-              </dd>
+              </div>
             </div>
-          </dl>
+          </div>
           <AppText
             :text="t(MESSAGE_KEYS.previewDescription)"
             :size="TEXT_SIZES.SMALL"
@@ -284,7 +288,7 @@ async function continueSimulation(): Promise<void> {
     simulationState.value = LOGIN_SIMULATION_STATES.CONFIRMED;
     confirmedTimer = setTimeout((): void => {
       hasSimulatedCredentials.value = false;
-      void router.push({ name: CHECKPOINT_ROUTE_NAME });
+      router.push({ name: CHECKPOINT_ROUTE_NAME });
     }, SIMULATION_STAGE_DURATION_MS);
   }, SIMULATION_STAGE_DURATION_MS);
 }

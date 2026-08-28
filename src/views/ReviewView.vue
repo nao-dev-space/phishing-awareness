@@ -14,24 +14,24 @@
             :text="point.location"
             :size="HEADING_SIZES.CARD"
           />
-          <dl class="review-view-details">
+          <div class="review-view-details">
             <div class="review-view-detail">
-              <dt class="review-view-detail-label review-view-detail-label-risk">
+              <div class="review-view-detail-label review-view-detail-label-risk">
                 {{ t(MESSAGE_KEYS.riskLabel) }}
-              </dt>
-              <dd class="review-view-detail-description">
+              </div>
+              <div class="review-view-detail-description">
                 <AppText :text="point.risk" />
-              </dd>
+              </div>
             </div>
             <div class="review-view-detail">
-              <dt class="review-view-detail-label review-view-detail-label-action">
+              <div class="review-view-detail-label review-view-detail-label-action">
                 {{ t(MESSAGE_KEYS.actionLabel) }}
-              </dt>
-              <dd class="review-view-detail-description">
+              </div>
+              <div class="review-view-detail-description">
                 <AppText :text="point.safeAction" />
-              </dd>
+              </div>
             </div>
-          </dl>
+          </div>
         </div>
       </div>
     </div>

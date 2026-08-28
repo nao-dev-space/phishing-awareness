@@ -10,12 +10,12 @@
         <summary class="learn-view-summary">{{ topic.title }}</summary>
         <div class="learn-view-topic-body">
           <AppText :text="topic.summary" />
-          <dl class="learn-view-action-detail">
-            <dt class="learn-view-action-label">{{ t(MESSAGE_KEYS.actionLabel) }}</dt>
-            <dd class="learn-view-action-description">
+          <div class="learn-view-action-detail">
+            <div class="learn-view-action-label">{{ t(MESSAGE_KEYS.actionLabel) }}</div>
+            <div class="learn-view-action-description">
               <AppText :text="topic.action" />
-            </dd>
-          </dl>
+            </div>
+          </div>
         </div>
       </details>
     </div>
